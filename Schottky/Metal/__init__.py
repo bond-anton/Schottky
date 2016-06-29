@@ -19,6 +19,9 @@ class Metal(object):
     Metal electrode class
     '''
 
+    equipment = 'Metal electrode Simulator'
+    description = 'Simulates properties of a metal electrode'
+
     def __init__(self, label, WF):
         '''
         Constructor

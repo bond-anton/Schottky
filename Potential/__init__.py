@@ -1,1 +1,1 @@
-__author__ = 'anton'
+import Potential_1D

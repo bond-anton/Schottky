@@ -30,6 +30,9 @@ class SchottkyDiode(object):
     Schottky Diode class
     '''
 
+    equipment = 'Schottky Diode Simulator'
+    description = 'Simulates properties of a Schottky diode'
+
     def __init__(self, Project, label, Metal=None, Semiconductor=None, Area=None, Rs=None, T=None, Va=None,
                  DeadLayer=None, L=None):
         '''
@@ -421,6 +424,3 @@ class SchottkyDiode(object):
             dn = 0
             dp = 0
         return dn, dp
-
-
-

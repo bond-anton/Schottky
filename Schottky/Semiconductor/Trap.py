@@ -9,7 +9,7 @@ from scipy.optimize import root
 
 from Schottky.Notation import k, q
 from Schottky.Helpers import to_numeric, fermi, d_fermi_d_delta_fermi_energy, centered_linspace
-from Potential.Potential_1D import ConstantPotential, LinearPotential, SuperposedPotential
+#from Potential.Potential_1D import ConstantPotential, LinearPotential, SuperposedPotential
 
 energy_distribution_functions = {'Single Level': ['single level', 'monoenergetic level', 'single', 'monoenergetic'],
                                  'Gaussian Level': ['gaussian level', 'gaussian'],
@@ -22,15 +22,18 @@ class Trap(object):
     Describes Carrier Trap
     """
 
+    equipment = 'Single Trap Simulator'
+    description = 'Simulates properties of a single trap in Semiconductor'
+
     def __init__(self, name, charge_states=None, energy_distribution_function='Single Level', energy_spread=0.3 * q,
                  electron_capture_cross_section=1e-17, electron_capture_cross_section_activation_energy=0,
                  hole_capture_cross_section=1e-17, hole_capture_cross_section_activation_energy=0, trap_potential=None):
         if not charge_states:
             charge_states = [[+1, sym.symbols('E_d'), 1], [0, sym.symbols('E_d'), 1]]
-        if not trap_potential:
-            ef = LinearPotential('External Field', -1e6 * 0)
-            np = ConstantPotential('No potential', 0)
-            trap_potential = SuperposedPotential('Superposed', [np, ef])
+        #if not trap_potential:
+        #    ef = LinearPotential('External Field', -1e6 * 0)
+        #    np = ConstantPotential('No potential', 0)
+        #    trap_potential = SuperposedPotential('Superposed', [np, ef])
         self.name = str(name)
         self.charge_states = self.__check_charge_states(charge_states)
         self.energy_distribution_function = energy_distribution_function.lower()

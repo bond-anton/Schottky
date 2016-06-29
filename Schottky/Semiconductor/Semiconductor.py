@@ -39,6 +39,9 @@ class Semiconductor(object):
     All properties of Semiconductor are realized in this class as methods
     '''
 
+    equipment = 'Bulk Semiconductor Simulator'
+    description = 'Simulates properties of a bulk semiconductor'
+
     # Total_charge = lambda coords: 0
 
     def __init__(self, name, lookup=False):

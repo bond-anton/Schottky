@@ -13,6 +13,9 @@ class Dopant(Trap):
     Describes dopant in semiconductor
     """
 
+    equipment = 'Semiconductor Dopant Simulator'
+    description = 'Simulates properties of a dopant in bulk semiconductor'
+
     def __init__(self, name, concentration, charge_states=None,
                  energy_distribution_function='Single Level', energy_spread=0.3 * q,
                  electron_capture_cross_section=1e-17, electron_capture_cross_section_activation_energy=0,
