@@ -29,6 +29,7 @@ class Simulator(object):
         self.category = self._create_categories(category_name, category_description)
         self.equipment = self._register_equipment()
 
+
     def _create_manufacturer(self):
         name = 'Anton Bondarenko'
         name_short = 'ABS'
@@ -57,6 +58,13 @@ class Simulator(object):
                                                                         equipment=part.equipment)
             equipment.assembly = assembly
         return equipment
+
+    def _register_measurement_types(self):
+        name = 'Synthetic data'
+        description = 'Pure synthetic data'
+        measurement_type = self.client.measurement_type_manager.create_measurement_type(name=name,
+                                                                                        description=description,
+                                                                                        parent=None)
 
     def __str__(self):
         description = 'Simulator: %s' % self.name
