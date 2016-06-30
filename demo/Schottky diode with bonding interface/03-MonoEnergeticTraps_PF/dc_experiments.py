@@ -1,7 +1,9 @@
 # author: anton
 
 from __future__ import division
+
 import matplotlib
+
 print matplotlib.rcsetup.all_backends
 #matplotlib.use("Qt4Agg")
 from diode_description import *
@@ -14,7 +16,8 @@ import pandas as pd
 import mpmath as mp
 
 from ProjectManager import Project
-from Schottky.Diode import SchottkyDiode, Poisson, Visual
+from Schottky.Samples.Diode import SchottkyDiode
+from Schottky.Samples.Diode import Poisson, Visual
 from Schottky.Helpers import Psi_approx
 
 temperature_start = 40.0

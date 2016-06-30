@@ -1,11 +1,11 @@
 from __future__ import division
 
+import numpy as np
 import sympy as sym
 
-from Schottky.Notation import q
-from Schottky.Semiconductor.Trap import Trap
 from Schottky.Helpers import interp_Fn
-import numpy as np
+from Schottky.Notation import q
+from Schottky.Samples.Semiconductor.Trap import Trap
 
 
 class Dopant(Trap):

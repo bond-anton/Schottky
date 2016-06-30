@@ -7,22 +7,20 @@ Created on 02 дек. 2014 г.
 '''
 
 from __future__ import division
-import warnings
+
 import datetime
+import warnings
 
-import numpy as np
 import mpmath as mp
-
+import numpy as np
 from scipy.constants.codata import epsilon0
-
 from scipy.optimize import fmin
 
 from Schottky import constants
-from Schottky.Notation import q, k
 from Schottky.Helpers import smooth_dd, Psi_zero, to_numeric  # , interp_Fn#, fermihalf, gen_interpolated_P_E_function
-
-from Schottky.Semiconductor import Semiconductor  # , Trap, Dopant, Dislocation, BondingInterface
-from Schottky.Metal import Metal as MetalElectrode
+from Schottky.Notation import q, k
+from Schottky.Samples.Metal import Metal as MetalElectrode
+from Schottky.Samples.Semiconductor import Semiconductor  # , Trap, Dopant, Dislocation, BondingInterface
 
 
 class SchottkyDiode(object):

@@ -7,12 +7,11 @@ Created on 10 апр. 2015 г.
 '''
 
 from __future__ import division
-from os.path import dirname, join
-
-from pathos.pools import ProcessPool as Pool
 
 import numpy as np
 import pandas as pd
+from pathos.pools import ProcessPool as Pool
+
 np.seterr(all='raise')
 import mpmath as mp
 # from scipy.interpolate import interp1d
@@ -31,7 +30,8 @@ from ProjectManager import Project
 #from Schottky.Notation import q, Eg
 #from Schottky.Metal import Metal
 #from Schottky.Semiconductor import Semiconductor, Trap, Dopant, Dislocation, BondingInterface
-from Schottky.Diode import SchottkyDiode, Poisson, Kinetics, Visual
+from Schottky.Samples.Diode import SchottkyDiode
+from Schottky.Samples.Diode import Kinetics, Poisson
 from Schottky.Helpers import Psi_approx
 
 colors = ['b', 'g', 'y', 'k', 'm', 'c', 'b', 'g', 'y', 'k', 'm', 'c', 'b', 'g', 'y', 'k', 'm', 'c', 'b', 'g', 'y', 'k',

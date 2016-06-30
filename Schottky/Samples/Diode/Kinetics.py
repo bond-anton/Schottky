@@ -1,11 +1,12 @@
 __author__ = 'anton'
 
 import numpy as np
+from Schottky.Diode import Visual
 from matplotlib import pyplot as plt
 
-from Schottky.Notation import q, k
 from Schottky.Helpers import to_numeric
-from Schottky.Diode import Poisson, Visual
+from Schottky.Notation import q, k
+from Schottky.Samples.Diode import Poisson
 
 
 def add_kinetics_measurement(schottky_diode, initial_condition, fast_traps,

@@ -7,23 +7,22 @@ Created on 30 окт. 2014 г.
 '''
 
 from __future__ import division
-from functools import partial
-
-import numpy as np
-import mpmath as mp
-import sympy as sym
 
 import multiprocessing
-from joblib import Parallel, delayed
+from functools import partial
 
+import mpmath as mp
+import numpy as np
+import sympy as sym
+from joblib import Parallel, delayed
 from matplotlib import pyplot as plt
 
 from Schottky import constants
 from Schottky.Helpers import to_pos_pwr, symplify_factor, solve_polynomial_eq
 from Schottky.Notation import q, k
 from Schottky.Reference import database
-from Schottky.Semiconductor.Dopant import Dopant
-from Schottky.Semiconductor.BondingInterface import BondingInterface
+from Schottky.Samples.Semiconductor import BondingInterface
+from Schottky.Samples.Semiconductor import Dopant
 
 
 def EchPotEc(Semi, T):

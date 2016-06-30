@@ -1,15 +1,16 @@
 # author: anton
 
 from __future__ import division
+
 from os.path import dirname, join
 
 import numpy as np
 
-from Schottky.Notation import q
-from Schottky.Metal import Metal
-from Schottky.Semiconductor import Semiconductor, Trap, Dopant, Dislocation, BondingInterface
 from Potential.Potential_3D import ConstantFieldPotential, SuperposedPotential, ChargedCylinderPotential, \
     DislocationDeformationPotential
+from Schottky.Notation import q
+from Schottky.Samples.Metal import Metal
+from Schottky.Samples.Semiconductor import Semiconductor, Trap, Dopant, Dislocation, BondingInterface
 
 data_dir = join(dirname(__file__), '03-data')
 prefix = '03_Au_nSi_BW'
