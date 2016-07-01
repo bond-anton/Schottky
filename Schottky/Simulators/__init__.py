@@ -82,7 +82,7 @@ class Simulator(object):
             else:
                 self.client.equipment_manager.add_measurement_type_to_equipment(self.equipment, new_parent)
 
-    def _register_measurement(self):
+    def _register_measurement(self, measurement_details, samples, parameters, force_new=False):
         print(self.name)
 
     def __str__(self):
