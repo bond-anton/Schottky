@@ -3,10 +3,13 @@ import numpy as np
 
 from ScientificProjects.Client import Client
 
+from Schottky.Samples import Sample
+
 
 class Simulator(object):
 
-    def __init__(self, client, name=None, description=None, parts=None,
+    def __init__(self, client, name=None, description=None,
+                 samples=None, parts=None,
                  category=None, measurement_types=None, measurements=None):
         assert isinstance(client, Client), 'Valid ScientificProjects Client instance is required'
         self.client = client.user_manager
@@ -16,11 +19,16 @@ class Simulator(object):
         if description is None:
             description = 'Simulates properties of corresponding entity'
         self.description = description
+        self.samples = {}
+        if isinstance(samples, (list, tuple, np.ndarray)):
+            for sample in samples:
+                if isinstance(sample, Sample):
+                    self.samples[sample.name] = Sample
         self.parts = {}
         if isinstance(parts, (list, tuple, np.ndarray)):
             for part in parts:
                 if isinstance(part, Simulator):
-                    self.parts['name'] = part
+                    self.parts[part.name] = part
         self.manufacturer = self._create_manufacturer()
         if category is None:
             category = {
@@ -82,7 +90,7 @@ class Simulator(object):
             else:
                 self.client.equipment_manager.add_measurement_type_to_equipment(self.equipment, new_parent)
 
-    def _register_measurement(self, measurement_details, samples, parameters, input_data=None,
+    def _register_measurement(self, measurement_details, parameters, input_data=None,
                               force_new=False):
         measurement = None
         no_matches_found = True
@@ -97,7 +105,7 @@ class Simulator(object):
                 input_data_match = False
                 if measurement.parameters == parameters:
                     parameters_match = True
-                if measurement.samples == samples:
+                if measurement.samples == self.samples:
                     samples_match = True
                 if measurement.input_data == input_data:
                     input_data_match = True
@@ -119,7 +127,7 @@ class Simulator(object):
                 self.client.measurement_manager.add_parameter_to_measurement(
                     measurement=measurement,
                     parameter=parameter)
-            for sample in samples:
+            for sample in self.samples.values():
                 self.client.measurement_manager.add_sample_to_measurement(
                     measurement=measurement,
                     sample=sample)
