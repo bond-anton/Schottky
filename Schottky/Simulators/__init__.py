@@ -11,7 +11,8 @@ class Simulator(object):
     def __init__(self, client, name=None, description=None,
                  samples=None, parts=None,
                  category=None, measurement_types=None, measurements=None):
-        assert isinstance(client, Client), 'Valid ScientificProjects Client instance is required'
+        assert isinstance(client, Client), 'Valid ScientificProjects Client instance is required.'
+        assert client.user_manager.project_manager.project_opened(), 'Please open project to work with.'
         self.client = client.user_manager
         if name is None:
             name = 'Software Simulator'
@@ -23,7 +24,7 @@ class Simulator(object):
         if isinstance(samples, (list, tuple, np.ndarray)):
             for sample in samples:
                 if isinstance(sample, Sample):
-                    self.samples[sample.name] = Sample
+                    self.samples[sample.name] = sample
         self.parts = {}
         if isinstance(parts, (list, tuple, np.ndarray)):
             for part in parts:
