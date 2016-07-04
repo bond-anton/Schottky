@@ -1,31 +1,13 @@
-# -*- coding: utf-8 -*-
-
-'''
-Created on 1 дек. 2014 г.
-
-@author: anton
-'''
-
 from __future__ import division
-import sympy as sym
+import numpy as np
 
-from Schottky.Notation import q
 from Schottky import constants
-from Schottky.Helpers import to_numeric
+from Schottky.Samples import Sample
 
 
-class Metal(object):
-    '''
-    Metal electrode class
-    '''
+class Metal(Sample):
 
-    equipment = 'Metal electrode Simulator'
-    description = 'Simulates properties of a metal electrode'
-
-    def __init__(self, label, WF):
-        '''
-        Constructor
-        '''
+    def __init__(self, name, ):
         self.label = label
         self.WF = WF
 
