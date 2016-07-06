@@ -12,6 +12,14 @@ class Metal(Sample):
         self.work_function = None
         self._read_in_work_function(work_function)
 
+    def _read_in_work_function(self, work_function):
+        try:
+            self.work_function = self.parameters['Work function'].float_value
+        except KeyError:
+            pass
+        if self.work_function != work_function and work_function is not None:
+            self.set_work_function(work_function)
+
     def set_work_function(self, work_function):
         assert isinstance(work_function, numbers.Number), 'Work function must be a number'
         try:
@@ -26,11 +34,3 @@ class Metal(Sample):
                                                                parameter=parameter)
             self.load_create_sample()
         self.work_function = work_function
-
-    def _read_in_work_function(self, work_function):
-        try:
-            self.work_function = self.parameters['Work function'].float_value
-        except KeyError:
-            pass
-        if self.work_function != work_function and work_function is not None:
-            self.set_work_function(work_function)

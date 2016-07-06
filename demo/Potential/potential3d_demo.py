@@ -64,6 +64,6 @@ for T in T_range:
     theta = np.linspace(0, np.pi, num=100, endpoint=True)
     barrier_lowering = np.array([sp.barrier_lowering(theta_i) for theta_i in theta])
     poole_frenkel.append(0.5 * np.trapz(np.sin(theta) * np.exp(abs(barrier_lowering[:, 0]) / kT), theta))
-    print 'emission boost @T=%2.2f K: %2.4g' % (T, poole_frenkel[-1])
+    print('emission boost @T=%2.2f K: %2.4g' % (T, poole_frenkel[-1]))
 plt.semilogy(T_range, np.array(poole_frenkel), 'r-o')
 plt.show()
