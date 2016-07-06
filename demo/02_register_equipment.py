@@ -5,7 +5,7 @@ from ScientificProjects.Client import Client
 from Schottky import constants
 from Schottky import Simulators
 from Schottky.Samples.Metal import Metal
-from Schottky.Samples.Semiconductor.Trap import Trap
+from Schottky.Samples.Trap import Trap
 
 client = Client(config_file_name='config.ini')
 
