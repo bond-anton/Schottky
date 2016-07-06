@@ -14,7 +14,12 @@ client.user_manager.project_manager.open_project('Schottky diode')
 my_metal = Metal(client=client, name='Gold',
                  work_function=5.2)
 
+my_metal = Metal(client=client, name='Gold3')
+
 print(my_metal)
+print(my_metal.work_function)
+my_metal.set_work_function(work_function=5.1)
+print(my_metal.work_function)
 
 #sim = Simulators.Simulator(client)
 

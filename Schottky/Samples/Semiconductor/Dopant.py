@@ -5,7 +5,7 @@ import sympy as sym
 
 from Schottky.Helpers import interp_Fn
 from Schottky.Notation import q
-from Schottky.Samples.Semiconductor.Trap import Trap
+from Schottky.Samples.Semiconductor.Trap_old import Trap
 
 
 class Dopant(Trap):
