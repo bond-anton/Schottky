@@ -38,3 +38,9 @@ class Sample(object):
 
     def save_sample_changes(self):
         self.client.session.commit()
+
+    def __str__(self):
+        description = str(self.sample)
+        for parameter in self.parameters.values():
+            description += '\n' + str(parameter)
+        return description
