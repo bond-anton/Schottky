@@ -1,6 +1,4 @@
 numpy
-sympy
-mpmath
 matplotlib
 mayavi
 scipy
