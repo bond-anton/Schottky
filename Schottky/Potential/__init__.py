@@ -73,8 +73,8 @@ class ChargedCylinder(Field):
         return self.l * np.log(rpz[:, 0] / self.r)
 
     def vector_field(self, xyz):
-        rpz = gt.cartesian_to_cylindrical(xyz)
-        rpz[np.where(rpz[:, 0] < self.r), 0] = self.r
-        r = rpz[:, 0]
-        r = np.array([r, r, r]).T
-        return self.l * xyz / r
+        field = gt.cartesian_to_cylindrical(xyz)
+        field[np.where(field[:, 0] < self.r), 0] = self.r
+        field[:, 0] = self.l / field[:, 0]
+        field[:, 2] = 0
+        return gt.cylindrical_to_cartesian(field)

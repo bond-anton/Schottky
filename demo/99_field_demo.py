@@ -18,8 +18,8 @@ grid = np.mgrid[-10:10:20j, -10:10:20j, -5:5:10j]
 
 superposed_field = SuperposedField('Superposed Field', [
     pos_charged_cylinder_field,
-    #pos_charged_sphere_field,
-    #external_field
+    pos_charged_sphere_field,
+    external_field
 ])
 
 superposed_field_vis = Visual.FieldView(fig, superposed_field,
