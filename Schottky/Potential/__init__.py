@@ -82,21 +82,21 @@ class ChargedCylinder(Field):
         return gt.cylindrical_to_cartesian(field)
 
 
-class ReciprocalCylinder(Field):
+class HyperbolicCylinder(Field):
 
     def __init__(self, a, r, name='1/r Cylindrical potential', field_type='electrostatic'):
         self.r = r  # radius of cylinder
         self.a = constants['q'] * a
-        super(ReciprocalCylinder, self).__init__(name, field_type)
+        super(HyperbolicCylinder, self).__init__(name, field_type)
 
     def scalar_field(self, xyz):
         rpz = gt.cartesian_to_cylindrical(xyz)
         rpz[np.where(rpz[:, 0] < self.r), 0] = self.r
-        return -self.a / rpz[:, 0]
+        return self.a / rpz[:, 0]
 
     def vector_field(self, xyz):
         field = gt.cartesian_to_cylindrical(xyz)
         field[np.where(field[:, 0] < self.r), 0] = self.r
         field[:, 0] = self.a / (field[:, 0]) ** 2
         field[:, 2] = 0
-        return -1*gt.cylindrical_to_cartesian(field)
+        return gt.cylindrical_to_cartesian(field)
