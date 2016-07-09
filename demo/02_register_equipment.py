@@ -27,7 +27,8 @@ my_trap = Trap(client=client, name='Test trap')
 my_trap.set_band('Ec')
 print(my_trap)
 
-my_field = UniformElectrostaticField(client=client, strength=1, direction=[1, 0, 0])
+my_field = UniformElectrostaticField(client=client, name='Uniform electrostatic field',
+                                     strength=1, direction=[1, 0, 0])
 print(my_field)
 
 #sim = Simulators.Simulator(client)

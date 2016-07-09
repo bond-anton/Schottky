@@ -11,9 +11,8 @@ from Schottky.Samples import Sample
 
 class ChargedSphere(Field, Sample):
 
-    def __init__(self, client, charge=None, radius=None, epsilon=None,
-                 name='Charged sphere field', description=None, field_type='electrostatic'):
-        Field.__init__(self, name=name, field_type=field_type)
+    def __init__(self, client, name, charge=None, radius=None, epsilon=None, description=None):
+        Field.__init__(self, name=name, field_type='electrostatic')
         Sample.__init__(self, client=client, name=name, description=description)
         self.radius = None
         self.charge = None

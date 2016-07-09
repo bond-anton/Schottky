@@ -10,10 +10,9 @@ from Schottky.Samples import Sample
 
 class UniformElectrostaticField(Field, Sample):
 
-    def __init__(self, client, strength=None, direction=None,
-                 name='Uniform electrostatic field', description=None, field_type='electrostatic'):
+    def __init__(self, client, name, strength=None, direction=None, description=None):
         assert isinstance(strength, numbers.Number)
-        Field.__init__(self, name=name, field_type=field_type)
+        Field.__init__(self, name=name, field_type='electrostatic')
         Sample.__init__(self, client=client, name=name, description=description)
         self.strength = None
         self.direction = [None, None, None]
@@ -53,6 +52,7 @@ class UniformElectrostaticField(Field, Sample):
                     self.direction[1] = field_direction.float_value
                 elif field_direction.name == 'z':
                     self.direction[2] = field_direction.float_value
+                print(self.direction)
                 self.direction = gt.unit_vector(self.direction)
         except KeyError:
             pass

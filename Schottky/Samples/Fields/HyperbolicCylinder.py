@@ -10,10 +10,8 @@ from Schottky.Samples import Sample
 
 class HyperbolicCylinder(Field, Sample):
 
-    def __init__(self, client, coefficient=None, radius=None,
-                 name='Hyperbolic Cylinder potential', description='Field of 1/r potential with cylindrical symmetry',
-                 field_type='electrostatic'):
-        Field.__init__(self, name=name, field_type=field_type)
+    def __init__(self, client, name, coefficient=None, radius=None, description=None):
+        Field.__init__(self, name=name, field_type='electrostatic')
         Sample.__init__(self, client=client, name=name, description=description)
         self.radius = None
         self.coefficient = None

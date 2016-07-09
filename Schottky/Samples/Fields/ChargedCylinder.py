@@ -11,9 +11,8 @@ from Schottky.Samples import Sample
 
 class ChargedCylinder(Field, Sample):
 
-    def __init__(self, client, charge_density=None, radius=None, epsilon=None,
-                 name='Charged Cylinder field', description=None, field_type='electrostatic'):
-        Field.__init__(self, name=name, field_type=field_type)
+    def __init__(self, client, name, charge_density=None, radius=None, epsilon=None, description=None):
+        Field.__init__(self, name=name, field_type='electrostatic')
         Sample.__init__(self, client=client, name=name, description=description)
         self.radius = None
         self.charge_density = None
