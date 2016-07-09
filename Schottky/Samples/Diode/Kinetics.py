@@ -164,8 +164,8 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
 
     if debug_plot:
         plt.ion()
-        axes = Visual.prepare_debug_axes(['Potential', 'Dopants', 'Localized traps'])
-        potential_lines = Visual.create_lines(axes['Potential'], ['Start potential', 'Current potential'])
+        axes = Visual.prepare_debug_axes(['Fields', 'Dopants', 'Localized traps'])
+        potential_lines = Visual.create_lines(axes['Fields'], ['Start potential', 'Current potential'])
         dopants_lines_names = [dopant.name + '_F' for dopant in schottky_diode.Semiconductor.dopants]
         localized_traps_lines_names = []
         for bi in schottky_diode.Semiconductor.bonding_interfaces:

@@ -1,11 +1,11 @@
 from __future__ import division, print_function
-import numpy as np
-from mayavi import mlab
 
-from Schottky.Potential import UniformField, ChargedSphere, ChargedCylinder, HyperbolicCylinder
+import numpy as np
 from Space.Coordinates import transforms as gt
 from Space.Field import SuperposedField
-import Space_visualization as Visual
+from mayavi import mlab
+
+from Schottky.Samples.Fields import UniformElectrostaticField, ChargedCylinder, HyperbolicCylinder
 
 
 def find_first_local_extremum(surface, r_grid, radius):
@@ -21,10 +21,10 @@ def find_first_local_extremum(surface, r_grid, radius):
     return np.argmax(surface, axis=1)
 
 radius = 0.5
-# pos_charged_sphere_field = ChargedSphere(q=1, r=1)
+# pos_charged_sphere_field = ChargedSphere(coefficient=1, radius=1)
 charged_cylinder_field = ChargedCylinder(l=3e7, r=radius)
 deformation_cylinder_field = HyperbolicCylinder(a=-0.1 / 1.6e-19, r=radius)
-external_field = UniformField(strength=0.1, direction=[0, 1, 0])
+external_field = UniformElectrostaticField(strength=0.1, direction=[0, 1, 0])
 
 
 fig = mlab.figure('CS demo', bgcolor=(0.0, 0.0, 0.0))  # Create the mayavi figure

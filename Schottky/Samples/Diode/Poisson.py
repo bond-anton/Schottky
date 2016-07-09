@@ -28,17 +28,17 @@ def add_Electric_Field_Measurement(SchDiode, Va, equilibrium_filling=True, t=mp.
     '''
     '''
     if equilibrium_filling:
-        measurement_name = 'Potential and Field t=%s [T=%2.2f, Va=%2.2f]' % (t, SchDiode.T, Va)
-        measurement_description = 'DC Potential and Electric Field at t=%s, T=%2.2f, Va=%2.2f' % (t, SchDiode.T, Va)
+        measurement_name = 'Fields and Field t=%s [T=%2.2f, Va=%2.2f]' % (t, SchDiode.T, Va)
+        measurement_description = 'DC Fields and Electric Field at t=%s, T=%2.2f, Va=%2.2f' % (t, SchDiode.T, Va)
     else:
         if initial_condition_id < 0:
             raise Exception('Nonequilibrium experiments require initial condition')
-        measurement_name = 'Potential and Field ic_id=%d t=%s [T=%2.2f, Va=%2.2f]' \
+        measurement_name = 'Fields and Field ic_id=%d t=%s [T=%2.2f, Va=%2.2f]' \
                            % (initial_condition_id, t, SchDiode.T, Va)
-        measurement_description = 'Nonequilibrium Potential and Electric Field at t=%s, T=%2.2f, Va=%2.2f' \
+        measurement_description = 'Nonequilibrium Fields and Electric Field at t=%s, T=%2.2f, Va=%2.2f' \
                                   % (t, SchDiode.T, Va)
     measurement_id = SchDiode.Project.add_measurement(
-        SchDiode.measurements_types['Potential and Electric Field measurement'],
+        SchDiode.measurements_types['Fields and Electric Field measurement'],
         measurement_name, measurement_description,
         measurement_datetime=None, create_new=False)
     return measurement_id
@@ -48,7 +48,7 @@ def gen_point_names_Electric_Field_measurement(SchDiode):
     point_names_long = {
         'ic_id': ['initial condition id', 'ic_id', ''],
         'z': ['z coordinate', 'z', 'm'],
-        'Psi': ['Potential', 'Psi', 'V'],
+        'Psi': ['Fields', 'Psi', 'V'],
         'E': ['Electric Field', 'E', 'V/m'],
         'rho_rel_err': ['Charge density relative error', 'rho_rel_err', ''],
         'J': ['Current density', 'J', 'A/m'],
@@ -336,7 +336,7 @@ def Poisson_eq_num_solver(SchDiode, nodes, Psi=Psi_zero, Vd=0,
         Psi_line, = ax1.plot(mesh.local_nodes, Psi(mesh.phys_nodes()))
         DPsi_line, = ax2.plot(mesh.local_nodes, DPsi)
         f_line, = ax3.plot(mesh.local_nodes, DPsi, 'b-')
-        d2Psi_line, = ax3.plot(mesh.local_nodes, DPsi, 'r-')
+        d2Psi_line, = ax3.plot(mesh.local_nodes, DPsi, 'radius-')
         E_line, = ax4.plot(mesh.local_nodes, DPsi)
         R_line, = ax5.plot(int_residual_array)
         plt.draw()
@@ -525,7 +525,7 @@ def Poisson_eq_num_solver_amr(SchDiode, nodes, Psi=Psi_zero, Vd=0,
                 if debug:
                     _, ax = plt.subplots(1)
                     ax.plot(mesh.phys_nodes(), mesh.solution, 'b-o')
-                    # ax.plot(refinement_mesh.phys_nodes(), Psi(refinement_mesh.phys_nodes()), 'r-o')
+                    # ax.plot(refinement_mesh.phys_nodes(), Psi(refinement_mesh.phys_nodes()), 'radius-o')
                     plt.show()
         flat_grid, flat_sol, flat_res = Meshes.flatten(debug=False)
         Psi = interp1d(flat_grid, flat_sol)
@@ -538,7 +538,7 @@ def Poisson_eq_num_solver_amr(SchDiode, nodes, Psi=Psi_zero, Vd=0,
             _, (ax1, ax2, ax3) = plt.subplots(3)
             ax1.plot(flat_grid * 1e6, flat_sol, 'b-')
             ax2.plot(flat_grid * 1e6, flat_res, 'b-')
-            # ax.plot(refinement_mesh.phys_nodes(), Psi(refinement_mesh.phys_nodes()), 'r-o')
+            # ax.plot(refinement_mesh.phys_nodes(), Psi(refinement_mesh.phys_nodes()), 'radius-o')
             Meshes.plot_tree(ax3)
             plt.show()
 

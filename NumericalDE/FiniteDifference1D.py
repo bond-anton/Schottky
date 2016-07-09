@@ -379,7 +379,7 @@ def dirichlet_non_linear_poisson_solver_amr(nodes, Psi, f, dfdDPsi, bc1, bc2,
                     if debug:
                         _, ax = plt.subplots(1)
                         ax.plot(mesh.phys_nodes(), mesh.solution, 'b-o')
-                        ax.plot(refinement_mesh.phys_nodes(), Psi(refinement_mesh.phys_nodes()), 'r-o')
+                        ax.plot(refinement_mesh.phys_nodes(), Psi(refinement_mesh.phys_nodes()), 'radius-o')
                         plt.show()
                 if debug: Meshes.plot_tree()
         level += 1

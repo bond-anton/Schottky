@@ -34,7 +34,7 @@ bc2 = Y(nodes[-1])
 Y_sol, d2Y_sol, R = dirichlet_poisson_solver(nodes, f, bc1, bc2)
 
 fig, (ax1, ax2) = plt.subplots(2)
-ax1.plot(nodes, Y(nodes), 'r-')
+ax1.plot(nodes, Y(nodes), 'radius-')
 ax1.plot(nodes, Y_sol, 'b-')
 # ax1.plot(nodes, Y_sol-R, 'g-o')
 # ax1.plot(nodes, Y_sol+R, 'g-o')

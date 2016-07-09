@@ -120,9 +120,9 @@ class SchottkyDiode(object):
                                                                               measurement_type_description='Built-in voltage measurement'),
             'Bias voltage': self.Project.add_measurement_type('Bias voltage monitor',
                                                               measurement_type_description='Applied bias voltage measurement'),
-            'Potential and Electric Field measurement': self.Project.add_measurement_type(
-                'Potential and Electric Field',
-                measurement_type_description='Potential and Electric Field in the diode measurement'),
+            'Fields and Electric Field measurement': self.Project.add_measurement_type(
+                'Fields and Electric Field',
+                measurement_type_description='Fields and Electric Field in the diode measurement'),
             'Traps kinetics measurement': self.Project.add_measurement_type(
                 'Transient experiment',
                 measurement_type_description='Time-resolved measurement of traps kinetic'),

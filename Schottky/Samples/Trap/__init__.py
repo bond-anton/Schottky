@@ -68,7 +68,8 @@ class Trap(Sample):
             self.save_sample_changes()
         except KeyError:
             parameter = self.client.parameter_manager._create_parameter(name='Charge state',
-                                                                        description='Charge states of the trap')
+                                                                        description='Charge states of the trap',
+                                                                        parameter_type='Dictionary')
             self.client.sample_manager.add_parameter_to_sample(sample=self.sample,
                                                                parameter=parameter)
             self.client.parameter_manager.create_numeric_parameter(name='empty',
@@ -111,7 +112,8 @@ class Trap(Sample):
             self.save_sample_changes()
         except KeyError:
             parameter = self.client.parameter_manager._create_parameter(name='Activation energy',
-                                                                        description='Activation energy of the trap')
+                                                                        description='Activation energy of the trap',
+                                                                        parameter_type='Dictionary')
             self.client.sample_manager.add_parameter_to_sample(sample=self.sample,
                                                                parameter=parameter)
             self.client.parameter_manager.create_numeric_parameter(name='empty',

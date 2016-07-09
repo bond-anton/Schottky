@@ -75,7 +75,7 @@ class Trap(object):
 
         for each state there is a list of [state_charge, energy distance from Ec, degeneracy]
         """
-        # TODO: add charge states validation code
+        # TODO: add coefficient states validation code
         return charge_states
 
     def energy_level(self, temperature, semiconductor, charge_state_idx=0, electron_volts=False):

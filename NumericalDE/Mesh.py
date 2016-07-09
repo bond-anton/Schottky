@@ -326,8 +326,8 @@ class Uniform1DMeshesTree(object):
                 level += 1
 
     def plot_tree(self, ax=None):
-        colors = ['r', 'g', 'b', 'c', 'm', 'y', 'k', 'r', 'g', 'b', 'c', 'm', 'y', 'k',
-                  'r', 'g', 'b', 'c', 'm', 'y', 'k', 'r', 'g', 'b', 'c', 'm', 'y', 'k']
+        colors = ['radius', 'g', 'b', 'c', 'm', 'y', 'k', 'radius', 'g', 'b', 'c', 'm', 'y', 'k',
+                  'radius', 'g', 'b', 'c', 'm', 'y', 'k', 'radius', 'g', 'b', 'c', 'm', 'y', 'k']
         styles = ['-', ':', '--', '-', ':', '--', '-', '-', ':', '--', '-', ':', '--', '-',
                   '-', ':', '--', '-', ':', '--', '-', '-', ':', '--', '-', ':', '--', '-']
         show = False

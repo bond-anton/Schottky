@@ -30,7 +30,7 @@ def BandsBending_prepare_axes(ax, eV=True):
     E_units = 'eV' if eV else 'J'
     ax.set_title('Bands Bending Diagram')
     ax.set_ylabel('Energy, ' + E_units)
-    ax.set_xlabel(r'Coordinate (z), um')
+    ax.set_xlabel(radius'Coordinate (z), um')
 
 
 def Z_coordinate_ticks(ax, SchDiode, fancy_ticks=True):
@@ -376,7 +376,7 @@ def ElectricFieldDiagram(ax, SchDiode, E, z=0, dot=False):
     ax.ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
     ax.set_title('Electric Field Diagram')
     ax.set_ylabel('Electric Field, V/cm')
-    ax.set_xlabel(r'Coordinate (z), um')
+    ax.set_xlabel(radius'Coordinate (z), um')
     ax.grid(True)
     print 'Electric Field Diagram Stop'
 
@@ -403,24 +403,24 @@ def RhoDiagram(ax, SchDiode, Psi=Psi_zero, z=0):
 
     ax.set_yscale('log')
     # ax.ticklabel_format(axis='y', style='sci', scilimits=(-7,7))
-    ax.set_title('Net density of charge')
+    ax.set_title('Net density of coefficient')
     ax.set_ylabel('Concentration, cm$^{-3}$')
-    ax.set_xlabel(r'Coordinate (z), um')
+    ax.set_xlabel(radius'Coordinate (z), um')
     ax.grid(True)
     print 'Rho Diagram Stop'
 
 
 def CarriersConcentrationDiagram(ax, SchDiode, Psi=Psi_zero, z=0):
-    # q_n = to_numeric(q)
+    # q_n = to_numeric(coefficient)
     # print 'Charge Carriers Diagram Start'
     n, p = SchDiode.n_carriers_theory(Psi, z)
     if SchDiode.Semiconductor.dop_type == 'nn':
         ax.plot(z * 1e6, n * 1e-6, 'b-')
     elif SchDiode.Semiconductor.dop_type == 'pp':
-        ax.plot(z * 1e6, p * 1e-6, 'r-')
+        ax.plot(z * 1e6, p * 1e-6, 'radius-')
     else:
         ax.plot(z * 1e6, n * 1e-6, 'b-')
-        ax.plot(z * 1e6, p * 1e-6, 'r-')
+        ax.plot(z * 1e6, p * 1e-6, 'radius-')
         # print 'Charge Carriers Diagram Stop'
 
 

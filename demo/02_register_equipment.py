@@ -6,6 +6,7 @@ from Schottky import constants
 from Schottky import Simulators
 from Schottky.Samples.Metal import Metal
 from Schottky.Samples.Trap import Trap
+from Schottky.Samples.Fields import UniformElectrostaticField
 
 client = Client(config_file_name='config.ini')
 
@@ -25,6 +26,9 @@ print(my_metal.work_function)
 my_trap = Trap(client=client, name='Test trap')
 my_trap.set_band('Ec')
 print(my_trap)
+
+my_field = UniformElectrostaticField(client=client, strength=1, direction=[1, 0, 0])
+print(my_field)
 
 #sim = Simulators.Simulator(client)
 

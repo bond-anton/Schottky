@@ -74,7 +74,7 @@ class Semiconductor(object):
         assert isinstance(dopant, Dopant), "dopant must be an object of Dopant class"
         self.dopants.append(dopant)
         self.Total_charge = self.__neutr_eq()
-        # print 'Calculating total charge done'
+        # print 'Calculating total coefficient done'
         dop_level = dopant.concentration(1e3)
         if dopant.energy_level(300, self, 0, electron_volts=False) < self.band_gap(300, symbolic=False, electron_volts=False) / 2:
             dop_type = 'n'
@@ -170,7 +170,7 @@ class Semiconductor(object):
             T1, Y = sym.symbols('T Y')
             # x, y, z = sym.symbols('x y z')
             Total_charge = self.__to_numeric(self.Total_charge.subs([('z', z), (T1, T)]))
-            if debug: print 'Total charge:', Total_charge
+            if debug: print 'Total coefficient:', Total_charge
             coeffs = {p: Total_charge.collect(Y).coeff(Y ** p) for p in range(1, 5)}
             coeffs = dict((k, v) for k, v in coeffs.iteritems() if v)
             if debug: print coeffs
