@@ -72,12 +72,15 @@ class ChargedCylinder(Field):
     def scalar_field(self, xyz):
         rpz = gt.cartesian_to_cylindrical(xyz)
         rpz[np.where(rpz[:, 0] < self.r), 0] = self.r
-        return self.b * np.log(rpz[:, 0] / self.r)
+        return -self.b * np.log(rpz[:, 0] / self.r)
 
     def vector_field(self, xyz):
         field = gt.cartesian_to_cylindrical(xyz)
         field[np.where(field[:, 0] < self.r), 0] = self.r
-        field[:, 0] = self.b / field[:, 0]
+        field[:, 0] = abs(self.b / field[:, 0])
+        if self.b < 0:
+            field[:, 1] += np.pi
+        field[:, 1] = gt.reduce_angle(field[:, 1])
         field[:, 2] = 0
         return gt.cylindrical_to_cartesian(field)
 
@@ -97,6 +100,9 @@ class HyperbolicCylinder(Field):
     def vector_field(self, xyz):
         field = gt.cartesian_to_cylindrical(xyz)
         field[np.where(field[:, 0] < self.r), 0] = self.r
-        field[:, 0] = self.a / (field[:, 0]) ** 2
+        field[:, 0] = abs(self.a / (field[:, 0]) ** 2)
+        if self.a < 0:
+            field[:, 1] += np.pi
+        field[:, 1] = gt.reduce_angle(field[:, 1])
         field[:, 2] = 0
         return gt.cylindrical_to_cartesian(field)
