@@ -52,7 +52,6 @@ class UniformElectrostaticField(Field, Sample):
                     self.direction[1] = field_direction.float_value
                 elif field_direction.name == 'z':
                     self.direction[2] = field_direction.float_value
-            print(self.direction)
             self.direction = gt.unit_vector(self.direction)
         except KeyError:
             pass
