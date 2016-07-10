@@ -58,12 +58,13 @@ class SuperpositionField(Sample, SuperposedField):
         self.client.sample_manager.add_parameter_to_sample(sample=self.sample,
                                                            parameter=parameter)
         for field in fields:
-            field_link = self.client.parameter_manager.create_numeric_parameter(name=field.name,
-                                                                                value=float(field.sample.id),
-                                                                                description=field.description,
-                                                                                parent=parameter)
-            field_link.string_value = field.__class__.__module__ + '::' + field.__class__.__name__
-            self.save_sample_changes()
+            self.client.parameter_manager._create_parameter(
+                name=field.name,
+                parameter_type='Generic',
+                float_value=float(field.sample.id),
+                string_value=field.__class__.__module__ + '::' + field.__class__.__name__,
+                description=field.description,
+                parent=parameter)
         self.parameters = {}
         self.load_create_sample()
         self.fields = fields
