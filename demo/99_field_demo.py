@@ -1,14 +1,15 @@
 from __future__ import division, print_function
 
+from ScientificProjects.Client import Client
+
 import numpy as np
 from Space.Coordinates import transforms as gt
-from Space.Field import SuperposedField
 from mayavi import mlab
 
-from Schottky.Samples.Fields import UniformElectrostaticField, ChargedCylinder, HyperbolicCylinder
+from Schottky.Samples.Fields import UniformElectrostaticField, ChargedCylinder, HyperbolicCylinder, SuperpositionField
 
 
-def find_first_local_extremum(surface, r_grid, radius):
+def find_first_local_extrema(surface, r_grid, radius):
     surface_gradient = np.gradient(surface)[1]
     start = min(np.where(r_grid[0, :, 0] > radius)[0])
     step = 10
@@ -20,20 +21,32 @@ def find_first_local_extremum(surface, r_grid, radius):
         stop += step
     return np.argmax(surface, axis=1)
 
+
+client = Client(config_file_name='config.ini')
+
+client.user_manager.sign_in('bond_anton', 'secret_password')
+client.user_manager.project_manager.open_project('Schottky diode')
+
+
 radius = 0.5
-# pos_charged_sphere_field = ChargedSphere(coefficient=1, radius=1)
-charged_cylinder_field = ChargedCylinder(l=3e7, r=radius)
-deformation_cylinder_field = HyperbolicCylinder(a=-0.1 / 1.6e-19, r=radius)
-external_field = UniformElectrostaticField(strength=0.1, direction=[0, 1, 0])
 
 
-fig = mlab.figure('CS demo', bgcolor=(0.0, 0.0, 0.0))  # Create the mayavi figure
+charged_cylinder_field = ChargedCylinder(client=client, name='Charged cylinder field',
+                                         charge_density=3e7, radius=radius, epsilon=1)
+deformation_cylinder_field = HyperbolicCylinder(client=client, name='Deformation potential',
+                                                coefficient=-0.1, radius=radius)
+external_field = UniformElectrostaticField(client=client, name='Uniform electrostatic field',
+                                           strength=0.01, direction=[0, 1, 0])
 
-superposed_field = SuperposedField('Superposed Field', [
-    charged_cylinder_field,
-    deformation_cylinder_field,
-    #external_field
-])
+
+fig = mlab.figure('CS demo', bgcolor=(0.2, 0.2, 0.2))  # Create the mayavi figure
+
+superposed_field = SuperpositionField(client=client, name='Superposed Field',
+                                      fields=[
+                                              charged_cylinder_field,
+                                              deformation_cylinder_field,
+                                              external_field
+                                              ])
 
 '''
 superposed_field_vis = Visual.FieldView(fig, superposed_field,
@@ -54,8 +67,7 @@ positions = np.vstack([r_grid.ravel(), p_grid.ravel(), z_grid.ravel()]).T
 xyz = gt.cylindrical_to_cartesian(positions)
 
 scalar_field = superposed_field.scalar_field(xyz).reshape((num_phi, num_r, 1))
-
-r_max_arg = find_first_local_extremum(scalar_field[:, :, 0], r_grid, radius)
+r_max_arg = find_first_local_extrema(scalar_field[:, :, 0], r_grid, radius)
 
 r_max = r_grid[0, r_max_arg, 0]
 field_max = np.diagonal(scalar_field[:, r_max_arg, 0])
@@ -96,5 +108,8 @@ mlab.plot3d(
     field_max * energy_scale,
     tube_radius=energy_scale * 2e-3,
     color=(1, 0, 0))
+
+
+client.user_manager.sign_out()
 
 mlab.show()

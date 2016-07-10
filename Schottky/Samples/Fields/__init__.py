@@ -4,3 +4,4 @@ from Schottky.Samples.Fields.UniformElectrostaticField import UniformElectrostat
 from Schottky.Samples.Fields.ChargedSphere import ChargedSphere
 from Schottky.Samples.Fields.ChargedCylinder import ChargedCylinder
 from Schottky.Samples.Fields.HyperbolicCylinder import HyperbolicCylinder
+from Schottky.Samples.Fields.SuperpositionField import SuperpositionField

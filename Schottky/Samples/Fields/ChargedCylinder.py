@@ -1,4 +1,5 @@
 from __future__ import division, print_function
+import time
 import numpy as np
 import numbers
 
@@ -9,17 +10,19 @@ from Schottky import constants
 from Schottky.Samples import Sample
 
 
-class ChargedCylinder(Field, Sample):
+class ChargedCylinder(Sample, Field):
 
     def __init__(self, client, name, charge_density=None, radius=None, epsilon=None, description=None):
-        Field.__init__(self, name=name, field_type='electrostatic')
         Sample.__init__(self, client=client, name=name, description=description)
+        self.load_create_sample()
         self.radius = None
         self.charge_density = None
         self.epsilon = None
+        self.client.session.commit()
         self._read_in_radius(radius=radius)
         self._read_in_charge_density(charge_density=charge_density)
         self._read_in_epsilon(epsilon=epsilon)
+        Field.__init__(self, name=name, field_type='electrostatic')
 
     def _read_in_radius(self, radius):
         try:

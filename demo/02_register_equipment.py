@@ -29,7 +29,8 @@ print(my_trap)
 
 my_field = UniformElectrostaticField(client=client, name='Uniform electrostatic field',
                                      strength=1, direction=[1, 0, 0])
-print(my_field)
+print(my_field.sample.id)
+print(my_field.__class__.__module__)
 
 #sim = Simulators.Simulator(client)
 

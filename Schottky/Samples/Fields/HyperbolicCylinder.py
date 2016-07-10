@@ -8,15 +8,16 @@ from Space.Field import Field
 from Schottky.Samples import Sample
 
 
-class HyperbolicCylinder(Field, Sample):
+class HyperbolicCylinder(Sample, Field):
 
     def __init__(self, client, name, coefficient=None, radius=None, description=None):
-        Field.__init__(self, name=name, field_type='electrostatic')
         Sample.__init__(self, client=client, name=name, description=description)
+        self.load_create_sample()
         self.radius = None
         self.coefficient = None
         self._read_in_radius(radius=radius)
         self._read_in_coefficient(coefficient=coefficient)
+        Field.__init__(self, name=name, field_type='electrostatic')
 
     def _read_in_radius(self, radius):
         try:

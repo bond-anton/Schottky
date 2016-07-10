@@ -8,16 +8,16 @@ from Space.Field import Field
 from Schottky.Samples import Sample
 
 
-class UniformElectrostaticField(Field, Sample):
+class UniformElectrostaticField(Sample, Field):
 
     def __init__(self, client, name, strength=None, direction=None, description=None):
-        assert isinstance(strength, numbers.Number)
-        Field.__init__(self, name=name, field_type='electrostatic')
         Sample.__init__(self, client=client, name=name, description=description)
+        self.load_create_sample()
         self.strength = None
         self.direction = [None, None, None]
         self._read_in_strength(strength=strength)
         self._read_in_direction(direction=direction)
+        Field.__init__(self, name=name, field_type='electrostatic')
 
     def _read_in_strength(self, strength):
         try:

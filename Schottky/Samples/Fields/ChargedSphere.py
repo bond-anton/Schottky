@@ -9,17 +9,18 @@ from Schottky import constants
 from Schottky.Samples import Sample
 
 
-class ChargedSphere(Field, Sample):
+class ChargedSphere(Sample, Field):
 
     def __init__(self, client, name, charge=None, radius=None, epsilon=None, description=None):
-        Field.__init__(self, name=name, field_type='electrostatic')
         Sample.__init__(self, client=client, name=name, description=description)
+        self.load_create_sample()
         self.radius = None
         self.charge = None
         self.epsilon = None
         self._read_in_radius(radius=radius)
         self._read_in_charge(charge=charge)
         self._read_in_epsilon(epsilon=epsilon)
+        Field.__init__(self, name=name, field_type='electrostatic')
 
     def _read_in_radius(self, radius):
         try:
