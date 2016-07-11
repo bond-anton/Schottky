@@ -1,4 +1,5 @@
 from __future__ import division, print_function
+import timeit
 import numpy as np
 
 from Space.Coordinates import transforms as gt
@@ -43,10 +44,13 @@ class FieldSimulator(Simulator):
 
     def measure_field_cylindrical_coordinates(self, r_range, phi_range, z_range,
                                               length_unit='m', force_recalculate=False):
+        start_time = timeit.default_timer()
         measurement_details = {
             'name': 'Field values on cylindrical grid',
             'description': 'measure vector and scalar field on given cylindrical grid',
             'type': 'Space fields measurement'}
+        record = 'Starting Measurement "%s"' % (measurement_details['name'])
+        self.client.log_manager.log_record(record=record, category='Information')
         measurement = self.register_measurement(measurement_details=measurement_details,
                                                 parameters=None, input_data=None,
                                                 force_new=force_recalculate)
@@ -70,16 +74,19 @@ class FieldSimulator(Simulator):
         if stored.size == r_range.size and (stored == r_range).all():
             matches[0] = True
         else:
+            self.client.measurement_manager.delete_data_points(channel=r_channel)
             self.client.measurement_manager.create_data_points(channel=r_channel, float_value=r_range)
         stored = self.client.measurement_manager.get_data_points_array(phi_channel)[:, 0]
         if stored.size == phi_range.size and (stored == phi_range).all():
             matches[1] = True
         else:
+            self.client.measurement_manager.delete_data_points(channel=phi_channel)
             self.client.measurement_manager.create_data_points(channel=phi_channel, float_value=phi_range)
         stored = self.client.measurement_manager.get_data_points_array(z_channel)[:, 0]
         if stored.size == z_range.size and (stored == z_range).all():
             matches[2] = True
         else:
+            self.client.measurement_manager.delete_data_points(channel=z_channel)
             self.client.measurement_manager.create_data_points(channel=z_channel, float_value=z_range)
         r_grid, phi_grid, z_grid = np.meshgrid(r_range, phi_range, z_range)
         if matches.all():
@@ -88,6 +95,8 @@ class FieldSimulator(Simulator):
             stored = self.client.measurement_manager.get_data_points_array(vector_field_channel)[:, 0]
             vector_field = stored.reshape((len(phi_range), len(r_range), len(z_range), 3)).astype(np.float)
         else:
+            self.client.measurement_manager.delete_data_points(channel=scalar_field_channel)
+            self.client.measurement_manager.delete_data_points(channel=vector_field_channel)
             positions = np.vstack([r_grid.ravel(), phi_grid.ravel(), z_grid.ravel()]).T
             xyz = gt.cylindrical_to_cartesian(positions)
             scalar_field = self.field.scalar_field(xyz).reshape((len(phi_range), len(r_range), len(z_range)))
@@ -96,4 +105,7 @@ class FieldSimulator(Simulator):
             vector_field = self.field.vector_field(xyz).reshape((len(phi_range), len(r_range), len(z_range), 3))
             self.client.measurement_manager.create_data_points(channel=vector_field_channel,
                                                                float_value=vector_field.ravel())
+        elapsed = timeit.default_timer() - start_time
+        record = 'Measurement "%s" complete in %3.3f s' % (measurement_details['name'], elapsed)
+        self.client.log_manager.log_record(record=record, category='Information')
         return r_grid, phi_grid, z_grid, scalar_field, vector_field

@@ -57,16 +57,14 @@ superposed_field_vis.set_cs_visible(False)
 superposed_field_vis.draw()
 '''
 
-r = np.linspace(0, 10, num=20, endpoint=True)
+r = np.linspace(0, 5, num=20, endpoint=True)
 phi = np.linspace(0, 2 * np.pi, num=20, endpoint=True)
-z = np.linspace(0, 1, num=1, endpoint=True)
+z = np.linspace(0, 5, num=12, endpoint=True)
 #z = np.array([0])
 
 r_grid, p_grid, z_grid, scalar_field, vector_field = field_simulator.measure_field_cylindrical_coordinates(
     r_range=r, phi_range=phi, z_range=z, length_unit='nm', force_recalculate=False
 )
-
-print(vector_field.shape)
 
 r_max_arg = find_first_local_extrema(scalar_field[:, :, 0], r_grid, radius)
 
@@ -99,7 +97,6 @@ vector_field = mlab.quiver3d(r_grid * np.cos(p_grid),
                              vector_field[:, :, :, 1],
                              vector_field[:, :, :, 2],
                              name=superposed_field.name)
-
 
 '''
 mlab.mesh(
