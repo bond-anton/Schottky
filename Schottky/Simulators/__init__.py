@@ -91,8 +91,10 @@ class Simulator(object):
             else:
                 self.client.equipment_manager.add_measurement_type_to_equipment(self.equipment, new_parent)
 
-    def _register_measurement(self, measurement_details, parameters, input_data=None,
-                              force_new=False):
+    def register_measurement(self, measurement_details, parameters=None, input_data=None,
+                             force_new=False):
+        if parameters is None:
+            parameters = []
         measurement = None
         no_matches_found = True
         if not force_new:
@@ -105,11 +107,23 @@ class Simulator(object):
                 samples_match = False
                 input_data_match = False
                 if measurement.parameters == parameters:
+                    print('***params')
                     parameters_match = True
-                if measurement.samples == self.samples:
+                else:
+                    print('$$$params')
+                    print(measurement.parameters)
+                if measurement.samples == [i.sample for i in self.samples.values()]:
+                    print('***samples')
                     samples_match = True
+                else:
+                    print('$$$samples')
+                    print(measurement.samples)
                 if measurement.input_data == input_data:
+                    print('***input')
                     input_data_match = True
+                else:
+                    print('$$$input')
+                    print(measurement.input_data)
                 if parameters_match and samples_match and input_data_match:
                     matched_measurements.append(measurement)
             if matched_measurements:
@@ -124,14 +138,15 @@ class Simulator(object):
                 measurement_type=measurement_details['type'],
                 equipment=self.equipment,
                 description=measurement_details['description'])
-            for parameter in parameters:
-                self.client.measurement_manager.add_parameter_to_measurement(
-                    measurement=measurement,
-                    parameter=parameter)
+            if parameters:
+                for parameter in parameters:
+                    self.client.measurement_manager.add_parameter_to_measurement(
+                        measurement=measurement,
+                        parameter=parameter)
             for sample in self.samples.values():
                 self.client.measurement_manager.add_sample_to_measurement(
                     measurement=measurement,
-                    sample=sample)
+                    sample=sample.sample)
             if input_data is not None:
                 self.client.measurement_manager.add_input_data_to_measurement(
                     measurement=measurement,

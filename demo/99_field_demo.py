@@ -3,10 +3,11 @@ from __future__ import division, print_function
 from ScientificProjects.Client import Client
 
 import numpy as np
-from Space.Coordinates import transforms as gt
+
 from mayavi import mlab
 
 from Schottky.Samples.Fields import UniformElectrostaticField, ChargedCylinder, HyperbolicCylinder, SuperpositionField
+from Schottky.Simulators.Field import FieldSimulator
 
 
 def find_first_local_extrema(surface, r_grid, radius):
@@ -29,8 +30,6 @@ client.user_manager.project_manager.open_project('Schottky diode')
 
 
 radius = 0.5
-
-
 charged_cylinder_field = ChargedCylinder(client=client, name='Charged cylinder field',
                                          charge_density=3e7, radius=radius, epsilon=1)
 deformation_cylinder_field = HyperbolicCylinder(client=client, name='Deformation potential',
@@ -38,15 +37,15 @@ deformation_cylinder_field = HyperbolicCylinder(client=client, name='Deformation
 external_field = UniformElectrostaticField(client=client, name='Uniform electrostatic field',
                                            strength=0.01, direction=[0, 1, 0])
 
-
-fig = mlab.figure('CS demo', bgcolor=(0.2, 0.2, 0.2))  # Create the mayavi figure
-
 superposed_field = SuperpositionField(client=client, name='Superposed Field',
                                       fields=[
                                               charged_cylinder_field,
                                               deformation_cylinder_field,
                                               external_field
                                               ])
+
+field_simulator = FieldSimulator(client=client, field=superposed_field)
+
 
 '''
 superposed_field_vis = Visual.FieldView(fig, superposed_field,
@@ -58,15 +57,17 @@ superposed_field_vis.set_cs_visible(False)
 superposed_field_vis.draw()
 '''
 
-num_r = 500
-num_phi = 720
-r = np.linspace(0, 10, num=num_r, endpoint=True)
-phi = np.linspace(0, 2 * np.pi, num=num_phi, endpoint=True)
-r_grid, p_grid, z_grid = np.meshgrid(r, phi, np.array([0]))
-positions = np.vstack([r_grid.ravel(), p_grid.ravel(), z_grid.ravel()]).T
-xyz = gt.cylindrical_to_cartesian(positions)
+r = np.linspace(0, 10, num=20, endpoint=True)
+phi = np.linspace(0, 2 * np.pi, num=20, endpoint=True)
+z = np.linspace(0, 1, num=1, endpoint=True)
+#z = np.array([0])
 
-scalar_field = superposed_field.scalar_field(xyz).reshape((num_phi, num_r, 1))
+r_grid, p_grid, z_grid, scalar_field, vector_field = field_simulator.measure_field_cylindrical_coordinates(
+    r_range=r, phi_range=phi, z_range=z, length_unit='nm', force_recalculate=False
+)
+
+print(vector_field.shape)
+
 r_max_arg = find_first_local_extrema(scalar_field[:, :, 0], r_grid, radius)
 
 r_max = r_grid[0, r_max_arg, 0]
@@ -87,6 +88,19 @@ mlab.mesh(
     colormap='RdBu',
     representation='wireframe'
 )
+'''
+
+mlab.figure(bgcolor=(0.2, 0.2, 0.2))
+
+vector_field = mlab.quiver3d(r_grid * np.cos(p_grid),
+                             r_grid * np.sin(p_grid),
+                             z_grid,
+                             vector_field[:, :, :, 0],
+                             vector_field[:, :, :, 1],
+                             vector_field[:, :, :, 2],
+                             name=superposed_field.name)
+
+
 '''
 mlab.mesh(
     # r_grid[:, :, 0],
@@ -109,6 +123,11 @@ mlab.plot3d(
     tube_radius=energy_scale * 2e-3,
     color=(1, 0, 0))
 
+
+client.user_manager.sign_out()
+
+
+'''
 
 client.user_manager.sign_out()
 
