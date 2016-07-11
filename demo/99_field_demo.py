@@ -1,5 +1,6 @@
 from __future__ import division, print_function
 
+import Space_visualization as Visual
 from ScientificProjects.Client import Client
 
 import numpy as np
@@ -46,17 +47,17 @@ superposed_field = SuperpositionField(client=client, name='Superposed Field',
 
 field_simulator = FieldSimulator(client=client, field=superposed_field)
 
+fig = mlab.figure(bgcolor=(0.2, 0.2, 0.2))
 
-'''
-superposed_field_vis = Visual.FieldView(fig, superposed_field,
+superposed_field_vis = Visual.FieldView(fig, field_simulator,
                                         scalar_field_visible=True,
                                         vector_field_visible=True)
 grid = np.mgrid[-10:10:20j, -10:10:20j, -5:5:10j]
-superposed_field_vis.set_grid(grid)
+#superposed_field_vis.set_grid(grid)
 superposed_field_vis.set_cs_visible(False)
 superposed_field_vis.draw()
-'''
 
+'''
 x = np.linspace(-5, 5, num=20, endpoint=True)
 y = np.linspace(-5, 5, num=20, endpoint=True)
 r = np.linspace(0, 5, num=20, endpoint=True)
@@ -75,7 +76,7 @@ r_max = r_grid[0, r_max_arg, 0]
 field_max = np.diagonal(scalar_field[:, r_max_arg, 0])
 
 energy_scale = 50
-
+'''
 '''
 mlab.mesh(
     # r_grid[:, :, 0],
@@ -91,7 +92,7 @@ mlab.mesh(
 )
 '''
 
-mlab.figure(bgcolor=(0.2, 0.2, 0.2))
+
 '''
 vector_field = mlab.quiver3d(r_grid * np.cos(p_grid),
                              r_grid * np.sin(p_grid),
@@ -100,11 +101,11 @@ vector_field = mlab.quiver3d(r_grid * np.cos(p_grid),
                              vector_field[:, :, :, 1],
                              vector_field[:, :, :, 2],
                              name=superposed_field.name)
-'''
+
 x_grid, y_grid, z_grid, scalar_field, vector_field = field_simulator.measure_field_cartesian_coordinates(
     x_range=x, y_range=y, z_range=z, length_unit='nm', force_recalculate=False
 )
-'''
+
 vector_field = mlab.quiver3d(x_grid,
                              y_grid,
                              z_grid,
@@ -112,7 +113,7 @@ vector_field = mlab.quiver3d(x_grid,
                              vector_field[:, :, :, 1],
                              vector_field[:, :, :, 2],
                              name=superposed_field.name)
-'''
+
 r_grid, theta_grid, phi_grid, scalar_field, vector_field = field_simulator.measure_field_spherical_coordinates(
     r_range=r, theta_range=theta, phi_range=phi, length_unit='nm', force_recalculate=False
 )
@@ -125,7 +126,7 @@ vector_field = mlab.quiver3d(r_grid * np.sin(theta_grid) * np.cos(phi_grid),
                              vector_field[:, :, :, 2],
                              name=superposed_field.name)
 
-'''
+
 mlab.mesh(
     # r_grid[:, :, 0],
     # p_grid[:, :, 0],

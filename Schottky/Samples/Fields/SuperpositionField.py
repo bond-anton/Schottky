@@ -1,7 +1,5 @@
 from __future__ import division, print_function
 
-from sqlalchemy.orm.exc import StaleDataError
-
 from Space.Field import Field, SuperposedField
 
 from Schottky.Samples import Sample
@@ -42,29 +40,43 @@ class SuperpositionField(Sample, SuperposedField):
             assert isinstance(field, Field), 'Expected a list of fields'
             assert isinstance(field, Sample), 'Expected a list of fields'
         try:
-            for field in self.parameters['Fields'].children:
-                self.client.parameter_manager.delete_parameter(field)
-            try:
-                self.client.parameter_manager.delete_parameter(self.parameters['Fields'])
-            except StaleDataError:
-                self.client.session.rollback()
-                pass
+            parameter = self.parameters['Fields']
+            for field in fields:
+                matched = False
+                for field_parameter in parameter.children:
+                    if field.sample.id == int(field_parameter.float_value):
+                        matched = True
+                        field_parameter.name = field.name
+                        field_parameter.string_value = field.__class__.__module__ + '::' + field.__class__.__name__
+                        field_parameter.description = field.description
+                        break
+                if not matched:
+                    self.client.parameter_manager._create_parameter(
+                        name=field.name,
+                        parameter_type='Generic',
+                        float_value=float(field.sample.id),
+                        string_value=field.__class__.__module__ + '::' + field.__class__.__name__,
+                        description=field.description,
+                        parent=parameter)
+            field_sample_ids = [field.sample.id for field in fields]
+            for field_parameter in parameter.children:
+                if int(field_parameter.float_value) not in field_sample_ids:
+                    self.client.parameter_manager.delete_parameter(field_parameter)
             self.save_sample_changes()
         except KeyError:
-            pass
-        parameter = self.client.parameter_manager._create_parameter(name='Fields',
-                                                                    description='Fields dictionary',
-                                                                    parameter_type='Dictionary')
-        self.client.sample_manager.add_parameter_to_sample(sample=self.sample,
-                                                           parameter=parameter)
-        for field in fields:
-            self.client.parameter_manager._create_parameter(
-                name=field.name,
-                parameter_type='Generic',
-                float_value=float(field.sample.id),
-                string_value=field.__class__.__module__ + '::' + field.__class__.__name__,
-                description=field.description,
-                parent=parameter)
+            parameter = self.client.parameter_manager._create_parameter(name='Fields',
+                                                                        description='Fields dictionary',
+                                                                        parameter_type='Dictionary')
+            self.client.sample_manager.add_parameter_to_sample(sample=self.sample,
+                                                               parameter=parameter)
+            for field in fields:
+                self.client.parameter_manager._create_parameter(
+                    name=field.name,
+                    parameter_type='Generic',
+                    float_value=float(field.sample.id),
+                    string_value=field.__class__.__module__ + '::' + field.__class__.__name__,
+                    description=field.description,
+                    parent=parameter)
         self.parameters = {}
         self.load_create_sample()
         self.fields = fields

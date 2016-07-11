@@ -106,15 +106,35 @@ class Simulator(object):
                 parameters_match = False
                 samples_match = False
                 input_data_match = False
-                if measurement.parameters == parameters:
+                if len(measurement.parameters) == len(parameters):
                     print('***params')
                     parameters_match = True
+                    for parameter in measurement.parameters:
+                        if parameter not in parameters:
+                            parameters_match = False
+                            print('$$$params')
+                            print(measurement.parameters)
+                            print(parameters)
+                            break
                 else:
                     print('$$$params')
-                    print(measurement.parameters)
-                if measurement.samples == [i.sample for i in self.samples.values()]:
+                    for parameter in measurement.parameters:
+                        print(parameter.name)
+                    print(len(measurement.parameters))
+                    print(len(parameters))
+                    #print(measurement.parameters)
+                    #print(parameters)
+                samples = [i.sample for i in self.samples.values()]
+                if len(measurement.samples) == len(samples):
                     print('***samples')
                     samples_match = True
+                    for sample in measurement.samples:
+                        if sample not in samples:
+                            samples_match = False
+                            print('$$$samples')
+                            print(measurement.samples)
+                            print(samples)
+                            break
                 else:
                     print('$$$samples')
                     print(measurement.samples)
@@ -139,10 +159,13 @@ class Simulator(object):
                 equipment=self.equipment,
                 description=measurement_details['description'])
             if parameters:
+                print(len(parameters))
                 for parameter in parameters:
                     self.client.measurement_manager.add_parameter_to_measurement(
                         measurement=measurement,
                         parameter=parameter)
+            for parameter in measurement.parameters:
+                print(parameter.name)
             for sample in self.samples.values():
                 self.client.measurement_manager.add_sample_to_measurement(
                     measurement=measurement,
