@@ -57,8 +57,11 @@ superposed_field_vis.set_cs_visible(False)
 superposed_field_vis.draw()
 '''
 
+x = np.linspace(-5, 5, num=20, endpoint=True)
+y = np.linspace(-5, 5, num=20, endpoint=True)
 r = np.linspace(0, 5, num=20, endpoint=True)
-phi = np.linspace(0, 2 * np.pi, num=20, endpoint=True)
+theta = np.linspace(0, np.pi, num=10, endpoint=True)
+phi = np.linspace(0, np.pi, num=20, endpoint=True)
 z = np.linspace(0, 5, num=12, endpoint=True)
 #z = np.array([0])
 
@@ -89,10 +92,34 @@ mlab.mesh(
 '''
 
 mlab.figure(bgcolor=(0.2, 0.2, 0.2))
-
+'''
 vector_field = mlab.quiver3d(r_grid * np.cos(p_grid),
                              r_grid * np.sin(p_grid),
                              z_grid,
+                             vector_field[:, :, :, 0],
+                             vector_field[:, :, :, 1],
+                             vector_field[:, :, :, 2],
+                             name=superposed_field.name)
+'''
+x_grid, y_grid, z_grid, scalar_field, vector_field = field_simulator.measure_field_cartesian_coordinates(
+    x_range=x, y_range=y, z_range=z, length_unit='nm', force_recalculate=False
+)
+'''
+vector_field = mlab.quiver3d(x_grid,
+                             y_grid,
+                             z_grid,
+                             vector_field[:, :, :, 0],
+                             vector_field[:, :, :, 1],
+                             vector_field[:, :, :, 2],
+                             name=superposed_field.name)
+'''
+r_grid, theta_grid, phi_grid, scalar_field, vector_field = field_simulator.measure_field_spherical_coordinates(
+    r_range=r, theta_range=theta, phi_range=phi, length_unit='nm', force_recalculate=False
+)
+
+vector_field = mlab.quiver3d(r_grid * np.sin(theta_grid) * np.cos(phi_grid),
+                             r_grid * np.sin(theta_grid) * np.sin(phi_grid),
+                             r_grid * np.cos(theta_grid),
                              vector_field[:, :, :, 0],
                              vector_field[:, :, :, 1],
                              vector_field[:, :, :, 2],
