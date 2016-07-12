@@ -99,6 +99,9 @@ class FieldSimulator(Simulator, Field):
             scalar_field = self.field.scalar_field(xyz)
             self.client.measurement_manager.create_data_points(channel=scalar_field_channel,
                                                                float_value=scalar_field.ravel())
+            self.client.measurement_manager.update_measurement_progress(measurement=measurement,
+                                                                        progress=100)
+            self.client.measurement_manager.finish_measurement(measurement=measurement)
         elapsed = timeit.default_timer() - start_time
         record = 'Measurement "%s" complete in %3.3f s' % (measurement_details['name'], elapsed)
         self.client.log_manager.log_record(record=record, category='Information')
@@ -158,6 +161,9 @@ class FieldSimulator(Simulator, Field):
             vector_field = self.field.vector_field(xyz)
             self.client.measurement_manager.create_data_points(channel=vector_field_channel,
                                                                float_value=vector_field.ravel())
+            self.client.measurement_manager.update_measurement_progress(measurement=measurement,
+                                                                        progress=100)
+            self.client.measurement_manager.finish_measurement(measurement=measurement)
         elapsed = timeit.default_timer() - start_time
         record = 'Measurement "%s" complete in %3.3f s' % (measurement_details['name'], elapsed)
         self.client.log_manager.log_record(record=record, category='Information')
@@ -229,6 +235,9 @@ class FieldSimulator(Simulator, Field):
             vector_field = self.field.vector_field(xyz).reshape((len(y_range), len(x_range), len(z_range), 3))
             self.client.measurement_manager.create_data_points(channel=vector_field_channel,
                                                                float_value=vector_field.ravel())
+            self.client.measurement_manager.update_measurement_progress(measurement=measurement,
+                                                                        progress=100)
+            self.client.measurement_manager.finish_measurement(measurement=measurement)
         elapsed = timeit.default_timer() - start_time
         record = 'Measurement "%s" complete in %3.3f s' % (measurement_details['name'], elapsed)
         self.client.log_manager.log_record(record=record, category='Information')
@@ -301,6 +310,9 @@ class FieldSimulator(Simulator, Field):
             vector_field = self.field.vector_field(xyz).reshape((len(phi_range), len(r_range), len(z_range), 3))
             self.client.measurement_manager.create_data_points(channel=vector_field_channel,
                                                                float_value=vector_field.ravel())
+            self.client.measurement_manager.update_measurement_progress(measurement=measurement,
+                                                                        progress=100)
+            self.client.measurement_manager.finish_measurement(measurement=measurement)
         elapsed = timeit.default_timer() - start_time
         record = 'Measurement "%s" complete in %3.3f s' % (measurement_details['name'], elapsed)
         self.client.log_manager.log_record(record=record, category='Information')
@@ -373,6 +385,9 @@ class FieldSimulator(Simulator, Field):
             vector_field = self.field.vector_field(xyz).reshape((len(theta_range), len(r_range), len(phi_range), 3))
             self.client.measurement_manager.create_data_points(channel=vector_field_channel,
                                                                float_value=vector_field.ravel())
+            self.client.measurement_manager.update_measurement_progress(measurement=measurement,
+                                                                        progress=100)
+            self.client.measurement_manager.finish_measurement(measurement=measurement)
         elapsed = timeit.default_timer() - start_time
         record = 'Measurement "%s" complete in %3.3f s' % (measurement_details['name'], elapsed)
         self.client.log_manager.log_record(record=record, category='Information')
