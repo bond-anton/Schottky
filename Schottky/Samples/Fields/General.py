@@ -181,6 +181,10 @@ class SampleField(Sample, Field):
         self.coordinate_system.rotate_euler_angles(euler_angles=euler_angles, rot_center=rot_center)
         self._update_orientation()
 
+    def set_origin(self, origin):
+        self.coordinate_system.origin = origin
+        self._update_orientation()
+
 
 class SuperpositionField(Sample, SuperposedField):
 
@@ -394,4 +398,8 @@ class SuperpositionField(Sample, SuperposedField):
 
     def rotate_euler_angles(self, euler_angles, rot_center=None):
         self.coordinate_system.rotate_euler_angles(euler_angles=euler_angles, rot_center=rot_center)
+        self._update_orientation()
+
+    def set_origin(self, origin):
+        self.coordinate_system.origin = origin
         self._update_orientation()
