@@ -178,7 +178,7 @@ class FieldSimulator(Simulator, Field):
             'type': 'Space fields measurement'}
         record = 'Starting Measurement "%s"' % (measurement_details['name'])
         self.client.log_manager.log_record(record=record, category='Information')
-        parameters = self.field.sample.parameters
+        parameters = [] + self.field.sample.parameters
         if isinstance(self.field, SuperpositionField):
             for field_component in self.field.fields:
                 parameters += field_component.sample.parameters
@@ -252,7 +252,7 @@ class FieldSimulator(Simulator, Field):
             'type': 'Space fields measurement'}
         record = 'Starting Measurement "%s"' % (measurement_details['name'])
         self.client.log_manager.log_record(record=record, category='Information')
-        parameters = self.field.sample.parameters
+        parameters = [] + self.field.sample.parameters
         if isinstance(self.field, SuperpositionField):
             for field_component in self.field.fields:
                 parameters += field_component.sample.parameters
@@ -327,7 +327,7 @@ class FieldSimulator(Simulator, Field):
             'type': 'Space fields measurement'}
         record = 'Starting Measurement "%s"' % (measurement_details['name'])
         self.client.log_manager.log_record(record=record, category='Information')
-        parameters = self.field.sample.parameters
+        parameters = [] + self.field.sample.parameters
         if isinstance(self.field, SuperpositionField):
             for field_component in self.field.fields:
                 parameters += field_component.sample.parameters

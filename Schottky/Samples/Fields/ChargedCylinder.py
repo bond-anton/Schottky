@@ -1,20 +1,19 @@
 from __future__ import division, print_function
-import time
 import numpy as np
 import numbers
 
 from Space.Coordinates import transforms as gt
-from Space.Field import Field
 
 from Schottky import constants
-from Schottky.Samples import Sample
+from Schottky.Samples.Fields.General import SampleField
 
 
-class ChargedCylinder(Sample, Field):
+class ChargedCylinder(SampleField):
 
-    def __init__(self, client, name, charge_density=None, radius=None, epsilon=None, description=None):
-        Sample.__init__(self, client=client, name=name, description=description)
-        self.load_create_sample()
+    def __init__(self, client, name, charge_density=None, radius=None, epsilon=None,
+                 description=None, orientation=None):
+        SampleField.__init__(self, client=client, name=name, description=description,
+                             field_type='electrostatic', orientation=orientation)
         self.radius = None
         self.charge_density = None
         self.epsilon = None
@@ -22,7 +21,6 @@ class ChargedCylinder(Sample, Field):
         self._read_in_radius(radius=radius)
         self._read_in_charge_density(charge_density=charge_density)
         self._read_in_epsilon(epsilon=epsilon)
-        Field.__init__(self, name=name, field_type='electrostatic')
 
     def _read_in_radius(self, radius):
         try:

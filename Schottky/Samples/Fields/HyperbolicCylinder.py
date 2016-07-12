@@ -3,21 +3,20 @@ import numpy as np
 import numbers
 
 from Space.Coordinates import transforms as gt
-from Space.Field import Field
 
-from Schottky.Samples import Sample
+from Schottky.Samples.Fields.General import SampleField
 
 
-class HyperbolicCylinder(Sample, Field):
+class HyperbolicCylinder(SampleField):
 
-    def __init__(self, client, name, coefficient=None, radius=None, description=None):
-        Sample.__init__(self, client=client, name=name, description=description)
+    def __init__(self, client, name, coefficient=None, radius=None, description=None, orientation=None):
+        SampleField.__init__(self, client=client, name=name, description=description,
+                             field_type='electrostatic', orientation=orientation)
         self.load_create_sample()
         self.radius = None
         self.coefficient = None
         self._read_in_radius(radius=radius)
         self._read_in_coefficient(coefficient=coefficient)
-        Field.__init__(self, name=name, field_type='electrostatic')
 
     def _read_in_radius(self, radius):
         try:

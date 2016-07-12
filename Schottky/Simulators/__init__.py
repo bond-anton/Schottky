@@ -107,43 +107,30 @@ class Simulator(object):
                 samples_match = False
                 input_data_match = False
                 if len(measurement.parameters) == len(parameters):
-                    print('***params')
-                    parameters_match = True
+                    test_parameters = [] + parameters
                     for parameter in measurement.parameters:
-                        if parameter not in parameters:
-                            parameters_match = False
-                            print('$$$params')
-                            print(measurement.parameters)
-                            print(parameters)
+                        parameters_match = False
+                        for i in range(len(test_parameters)):
+                            if parameter.equals(test_parameters[i]):
+                                parameters_match = True
+                                del test_parameters[i]
+                                break
+                        if not parameters_match:
                             break
-                else:
-                    print('$$$params')
-                    for parameter in measurement.parameters:
-                        print(parameter.name)
-                    print(len(measurement.parameters))
-                    print(len(parameters))
-                    #print(measurement.parameters)
-                    #print(parameters)
                 samples = [i.sample for i in self.samples.values()]
                 if len(measurement.samples) == len(samples):
-                    print('***samples')
+                    # print('***samples')
                     samples_match = True
                     for sample in measurement.samples:
                         if sample not in samples:
                             samples_match = False
-                            print('$$$samples')
-                            print(measurement.samples)
-                            print(samples)
+                            # print('$$$samples')
+                            # print(measurement.samples)
+                            # print(samples)
                             break
-                else:
-                    print('$$$samples')
-                    print(measurement.samples)
                 if measurement.input_data == input_data:
-                    print('***input')
+                    # print('***input')
                     input_data_match = True
-                else:
-                    print('$$$input')
-                    print(measurement.input_data)
                 if parameters_match and samples_match and input_data_match:
                     matched_measurements.append(measurement)
             if matched_measurements:
@@ -159,8 +146,9 @@ class Simulator(object):
                 equipment=self.equipment,
                 description=measurement_details['description'])
             if parameters:
-                print(len(parameters))
-                for parameter in parameters:
+                copied_parameters = [self.client.parameter_manager.copy_parameter(p) for p in parameters]
+                print(len(copied_parameters))
+                for parameter in copied_parameters:
                     self.client.measurement_manager.add_parameter_to_measurement(
                         measurement=measurement,
                         parameter=parameter)

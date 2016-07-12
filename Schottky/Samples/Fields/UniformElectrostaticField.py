@@ -3,21 +3,19 @@ import numpy as np
 import numbers
 
 from Space.Coordinates import transforms as gt
-from Space.Field import Field
 
-from Schottky.Samples import Sample
+from Schottky.Samples.Fields.General import SampleField
 
 
-class UniformElectrostaticField(Sample, Field):
+class UniformElectrostaticField(SampleField):
 
-    def __init__(self, client, name, strength=None, direction=None, description=None):
-        Sample.__init__(self, client=client, name=name, description=description)
-        self.load_create_sample()
+    def __init__(self, client, name, strength=None, direction=None, description=None, orientation=None):
+        SampleField.__init__(self, client=client, name=name, description=description,
+                             field_type='electrostatic', orientation=orientation)
         self.strength = None
         self.direction = [None, None, None]
         self._read_in_strength(strength=strength)
         self._read_in_direction(direction=direction)
-        Field.__init__(self, name=name, field_type='electrostatic')
 
     def _read_in_strength(self, strength):
         try:
@@ -52,7 +50,10 @@ class UniformElectrostaticField(Sample, Field):
                     self.direction[1] = field_direction.float_value
                 elif field_direction.name == 'z':
                     self.direction[2] = field_direction.float_value
-            self.direction = gt.unit_vector(self.direction)
+            try:
+                self.direction = gt.unit_vector(self.direction)
+            except ValueError:
+                pass
         except KeyError:
             pass
         if direction is not None:
@@ -71,12 +72,11 @@ class UniformElectrostaticField(Sample, Field):
                 elif field_direction.name == 'y':
                     field_direction.float_value = float(direction[1])
                 elif field_direction.name == 'z':
-                    field_direction.float_value = float(direction[1])
+                    field_direction.float_value = float(direction[2])
             self.save_sample_changes()
         except KeyError:
-            parameter = self.client.parameter_manager._create_parameter(name='Field direction',
-                                                                        description='Field direction vector',
-                                                                        parameter_type='Dictionary')
+            parameter = self.client.parameter_manager.create_dict_parameter(name='Field direction',
+                                                                            description='Field direction vector')
             self.client.sample_manager.add_parameter_to_sample(sample=self.sample,
                                                                parameter=parameter)
             self.client.parameter_manager.create_numeric_parameter(name='x',

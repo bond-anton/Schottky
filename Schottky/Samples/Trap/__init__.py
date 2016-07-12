@@ -180,7 +180,7 @@ class Trap(Sample):
             self.client.sample_manager.add_parameter_to_sample(sample=self.sample,
                                                                parameter=parameter)
             self.load_create_sample()
-        self.band = energy_distribution_function
+        self.energy_distribution_function = energy_distribution_function
 
     def _read_in_energy_spread(self, energy_spread):
         try:

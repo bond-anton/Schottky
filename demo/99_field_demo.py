@@ -36,25 +36,25 @@ charged_cylinder_field = ChargedCylinder(client=client, name='Charged cylinder f
 deformation_cylinder_field = HyperbolicCylinder(client=client, name='Deformation potential',
                                                 coefficient=-0.1, radius=radius)
 external_field = UniformElectrostaticField(client=client, name='Uniform electrostatic field',
-                                           strength=0.01, direction=[0, 1, 0])
+                                           strength=0.01, direction=[1, 0, 0])
+
 
 superposed_field = SuperpositionField(client=client, name='Superposed Field',
-                                      fields=[
-                                              charged_cylinder_field,
+                                      fields=[charged_cylinder_field,
                                               deformation_cylinder_field,
-                                              external_field
-                                              ])
+                                              external_field])
 
 field_simulator = FieldSimulator(client=client, field=superposed_field)
 
 fig = mlab.figure(bgcolor=(0.2, 0.2, 0.2))
 
 superposed_field_vis = Visual.FieldView(fig, field_simulator,
-                                        grid=np.mgrid[-10:10:30j, -10:10:30j, -5:5:20j],
+                                        grid=np.mgrid[-5:5:10j, -5:5:10j, -5:5:10j],
                                         scalar_field_visible=True,
                                         vector_field_visible=True)
 superposed_field_vis.set_cs_visible(False)
 superposed_field_vis.draw()
+external_field.rotate_euler_angles([0, 0, np.pi / 4])
 
 '''
 x = np.linspace(-5, 5, num=20, endpoint=True)

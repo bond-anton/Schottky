@@ -3,24 +3,22 @@ import numpy as np
 import numbers
 
 from Space.Coordinates import transforms as gt
-from Space.Field import Field
 
 from Schottky import constants
-from Schottky.Samples import Sample
+from Schottky.Samples.Fields.General import SampleField
 
 
-class ChargedSphere(Sample, Field):
+class ChargedSphere(SampleField):
 
-    def __init__(self, client, name, charge=None, radius=None, epsilon=None, description=None):
-        Sample.__init__(self, client=client, name=name, description=description)
-        self.load_create_sample()
+    def __init__(self, client, name, charge=None, radius=None, epsilon=None, description=None, orientation=None):
+        SampleField.__init__(self, client=client, name=name, description=description,
+                             field_type='electrostatic', orientation=orientation)
         self.radius = None
         self.charge = None
         self.epsilon = None
         self._read_in_radius(radius=radius)
         self._read_in_charge(charge=charge)
         self._read_in_epsilon(epsilon=epsilon)
-        Field.__init__(self, name=name, field_type='electrostatic')
 
     def _read_in_radius(self, radius):
         try:
