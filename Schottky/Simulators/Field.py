@@ -2,7 +2,8 @@ from __future__ import division, print_function
 import timeit
 import numpy as np
 
-from Space.Coordinates import transforms as gt
+from Quaternions import Rotation
+from Space.Coordinates import Cartesian, transforms as gt
 from Space.Field import Field
 from Schottky.Samples import Sample
 from Schottky.Samples.Fields import SuperpositionField
@@ -244,6 +245,7 @@ class FieldSimulator(Simulator, Field):
         return x_grid, y_grid, z_grid, scalar_field, vector_field
 
     def measure_field_cylindrical_coordinates(self, r_range, phi_range, z_range, length_unit='m',
+                                              frame_of_view=None,
                                               force_recalculate=False):
         start_time = timeit.default_timer()
         measurement_details = {
@@ -252,7 +254,14 @@ class FieldSimulator(Simulator, Field):
             'type': 'Space fields measurement'}
         record = 'Starting Measurement "%s"' % (measurement_details['name'])
         self.client.log_manager.log_record(record=record, category='Information')
-        parameters = [] + self.field.sample.parameters
+
+        if frame_of_view is None:
+            frame_of_view = Cartesian()
+        else:
+            if not isinstance(frame_of_view, Cartesian):
+                frame_of_view = Cartesian()
+        fov_parameter = self.coordinate_system_to_parameter(frame_of_view, parameter_name='frame_of_view')
+        parameters = [fov_parameter] + self.field.sample.parameters
         if isinstance(self.field, SuperpositionField):
             for field_component in self.field.fields:
                 parameters += field_component.sample.parameters
@@ -392,3 +401,48 @@ class FieldSimulator(Simulator, Field):
         record = 'Measurement "%s" complete in %3.3f s' % (measurement_details['name'], elapsed)
         self.client.log_manager.log_record(record=record, category='Information')
         return r_grid, theta_grid, phi_grid, scalar_field, vector_field
+
+    def coordinate_system_to_parameter(self, coordinate_system, parameter_name='coordinate_system'):
+        assert isinstance(coordinate_system, Cartesian)
+        rotation = Rotation(euler_angles_convention=coordinate_system.euler_angles_convention['title'])
+        rotation.rotation_matrix = coordinate_system.basis.T
+        quaternion = rotation.quadruple
+        origin = coordinate_system.origin
+        parameter = self.client.parameter_manager.create_dict_parameter(name=parameter_name,
+                                                                        commit=False)
+        origin_parameter = self.client.parameter_manager.create_dict_parameter(
+            name='Origin',
+            description='Origin point of Field CS',
+            parent=parameter, commit=False)
+        self.client.parameter_manager.create_numeric_parameter(name='x',
+                                                               value=float(origin[0]),
+                                                               description='X component of origin point',
+                                                               parent=origin_parameter, commit=False)
+        self.client.parameter_manager.create_numeric_parameter(name='y',
+                                                               value=float(origin[1]),
+                                                               description='Y component of origin point',
+                                                               parent=origin_parameter, commit=False)
+        self.client.parameter_manager.create_numeric_parameter(name='z',
+                                                               value=float(origin[2]),
+                                                               description='Z component of origin point',
+                                                               parent=origin_parameter, commit=False)
+        quaternion_parameter = self.client.parameter_manager.create_dict_parameter(
+            name='Quaternion',
+            description='Rot. quaternion of Field CS', parent=parameter, commit=False)
+        self.client.parameter_manager.create_numeric_parameter(name='identity',
+                                                               value=float(quaternion[0]),
+                                                               description='1 component of quaternion',
+                                                               parent=quaternion_parameter, commit=False)
+        self.client.parameter_manager.create_numeric_parameter(name='i',
+                                                               value=float(quaternion[1]),
+                                                               description='i component of quaternion',
+                                                               parent=quaternion_parameter, commit=False)
+        self.client.parameter_manager.create_numeric_parameter(name='j',
+                                                               value=float(quaternion[2]),
+                                                               description='j component of quaternion',
+                                                               parent=quaternion_parameter, commit=False)
+        self.client.parameter_manager.create_numeric_parameter(name='k',
+                                                               value=float(quaternion[3]),
+                                                               description='k component of quaternion',
+                                                               parent=quaternion_parameter, commit=False)
+        return parameter

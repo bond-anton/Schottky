@@ -112,6 +112,7 @@ class Simulator(object):
                         parameters_match = False
                         for i in range(len(test_parameters)):
                             if parameter.equals(test_parameters[i]):
+                                print(parameter.name, 'equals', test_parameters[i].name)
                                 parameters_match = True
                                 del test_parameters[i]
                                 break
@@ -147,13 +148,13 @@ class Simulator(object):
                 description=measurement_details['description'])
             if parameters:
                 copied_parameters = [self.client.parameter_manager.copy_parameter(p) for p in parameters]
-                print(len(copied_parameters))
+                # print(len(copied_parameters))
                 for parameter in copied_parameters:
                     self.client.measurement_manager.add_parameter_to_measurement(
                         measurement=measurement,
                         parameter=parameter)
-            for parameter in measurement.parameters:
-                print(parameter.name)
+            # for parameter in measurement.parameters:
+                # print(parameter.name)
             for sample in self.samples.values():
                 self.client.measurement_manager.add_sample_to_measurement(
                     measurement=measurement,
