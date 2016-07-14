@@ -20,7 +20,7 @@ radius = 0.5
 pos_charged_cylinder_field = ChargedCylinder(client=client, name='Pos charged cylinder field',
                                              charge_density=3e7, radius=radius, epsilon=1)
 pos_charged_cylinder_field.set_origin([-2, 0, 0])
-pos_charged_cylinder_field.rotate_axis_angle([1, 0, 0], np.pi / 4)
+#pos_charged_cylinder_field.rotate_axis_angle([1, 0, 0], np.pi / 4)
 neg_charged_cylinder_field = ChargedCylinder(client=client, name='Neg charged cylinder field',
                                              charge_density=-3e7, radius=radius, epsilon=1)
 neg_charged_cylinder_field.set_origin([2, 0, 0])
@@ -31,11 +31,12 @@ external_field = UniformElectrostaticField(client=client, name='Uniform electros
 
 
 superposed_field = SuperpositionField(client=client, name='Superposed Field',
-                                      fields=[
-                                              pos_charged_cylinder_field,
-                                              neg_charged_cylinder_field,
-                                              external_field
-                                              ])
+                                      #fields=[
+                                      #        pos_charged_cylinder_field,
+                                      #        neg_charged_cylinder_field,
+                                      #        external_field
+                                      #        ]
+                                      )
 
 field_simulator = FieldSimulator(client=client, field=superposed_field)
 

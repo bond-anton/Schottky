@@ -1,13 +1,11 @@
 from __future__ import division, print_function
-
-import Space_visualization as Visual
-from ScientificProjects.Client import Client
-
 import numpy as np
-
+from matplotlib import pyplot as plt
 from mayavi import mlab
 
-from Schottky.Samples.Fields import UniformElectrostaticField, ChargedCylinder, SuperpositionField
+from ScientificProjects.Client import Client
+
+from Schottky.Samples.Fields import UniformElectrostaticField, ChargedCylinder, HyperbolicCylinder, SuperpositionField
 from Schottky.Simulators.Field import FieldSimulator
 
 
@@ -32,12 +30,12 @@ client.user_manager.project_manager.open_project('Schottky diode')
 radius = 0.5
 pos_charged_cylinder_field = ChargedCylinder(client=client, name='Pos charged cylinder field',
                                              charge_density=3e7, radius=radius, epsilon=1)
-pos_charged_cylinder_field.set_origin([-2, 0, 0])
-#pos_charged_cylinder_field.rotate_axis_angle([1, 0, 0], np.pi / 4)
-neg_charged_cylinder_field = ChargedCylinder(client=client, name='Neg charged cylinder field',
-                                             charge_density=-3e7, radius=radius, epsilon=1)
-neg_charged_cylinder_field.set_origin([2, 0, 0])
-#neg_charged_cylinder_field.rotate_axis_angle([1, 0, 0], -np.pi / 4)
+pos_charged_cylinder_field.set_origin([0, 0, 0])
+
+one_by_r_field = HyperbolicCylinder(client=client, name='the Trap',
+                                    coefficient=-0.1, radius=radius)
+one_by_r_field.set_origin([0, 0, 0])
+
 
 external_field = UniformElectrostaticField(client=client, name='Uniform electrostatic field',
                                            strength=0.01, direction=[1, 0, 0])
@@ -46,22 +44,19 @@ external_field = UniformElectrostaticField(client=client, name='Uniform electros
 superposed_field = SuperpositionField(client=client, name='Superposed Field',
                                       fields=[
                                               pos_charged_cylinder_field,
-                                              neg_charged_cylinder_field,
+                                              one_by_r_field,
                                               external_field
                                               ])
 
 field_simulator = FieldSimulator(client=client, field=superposed_field)
 
-fig = mlab.figure(bgcolor=(0.2, 0.2, 0.2))
-
-r = np.linspace(0, 50, num=500, endpoint=True)
+r = np.linspace(0, 25, num=500, endpoint=True)
 phi = np.linspace(0, 2 * np.pi, num=720, endpoint=True)
-#z = np.linspace(0, 5, num=12, endpoint=True)
 z = np.array([0])
 
 r_grid, p_grid, z_grid, scalar_field, vector_field = field_simulator.measure_field_cylindrical_coordinates(
     r_range=r, phi_range=phi, z_range=z, length_unit='nm',
-    frame_of_view=neg_charged_cylinder_field.coordinate_system, force_recalculate=False
+    frame_of_view=one_by_r_field.coordinate_system, force_recalculate=False, no_db=True
 )
 
 r_max_arg = find_first_local_extrema(scalar_field[:, :, 0], r_grid, radius)
@@ -71,6 +66,9 @@ field_max = np.diagonal(scalar_field[:, r_max_arg, 0])
 
 
 energy_scale = 50
+
+
+fig = mlab.figure(bgcolor=(0.2, 0.2, 0.2))
 mlab.mesh(
     # r_grid[:, :, 0],
     # p_grid[:, :, 0],
@@ -94,3 +92,9 @@ mlab.plot3d(
 client.user_manager.sign_out()
 
 mlab.show()
+
+
+coeff = np.ones_like(r_max)
+coeff[np.where(r_max > 45)] = 0.0
+plt.plot((p_grid[:, 0, 0] - np.pi) / np.pi * 180, np.roll(field_max * coeff, 360))
+plt.show()

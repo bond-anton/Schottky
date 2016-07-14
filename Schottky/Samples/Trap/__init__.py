@@ -1,6 +1,7 @@
 from __future__ import division
 import numbers
 
+from Space.Field import Field
 from Schottky.Samples import Sample
 
 energy_distribution_functions = {'Single Level': ['single level', 'monoenergetic level', 'single', 'monoenergetic'],
@@ -37,7 +38,8 @@ class Trap(Sample):
         self._read_in_electron_capture_cross_section_activation_energy(electron_capture_cross_section_activation_energy)
         self._read_in_hole_capture_cross_section(capture_cross_section=hole_capture_cross_section)
         self._read_in_hole_capture_cross_section_activation_energy(hole_capture_cross_section_activation_energy)
-        self.trap_potential = trap_potential
+        self.trap_potential = None
+        self._read_in_trap_potential(trap_potential)
 
     def _read_in_charge_state(self, charge_state):
         try:
@@ -302,3 +304,45 @@ class Trap(Sample):
                                                                parameter=parameter)
             self.load_create_sample()
         self.hole_capture_cross_section_activation_energy = activation_energy
+
+    def _read_in_trap_potential(self, trap_potential):
+        try:
+            field = self.parameters['Field']
+            field_module_name, field_class_name, field_name = field.string_value.split('::')
+            field_id = int(field.float_value)
+            field_module = __import__(field_module_name, fromlist=[field_class_name])
+            field_class = getattr(field_module, field_class_name)
+            field_sample = field_class(client=self.client.session_manager, name=field_name)
+            if field_sample.sample.id == field_id:
+                self.trap_potential = field_sample
+            else:
+                print('Field IDs do not match')
+        except KeyError:
+            pass
+        if trap_potential is not None:
+            if self.trap_potential != trap_potential:
+                self.set_trap_potential(trap_potential)
+
+    def set_trap_potential(self, trap_potential):
+        assert isinstance(trap_potential, Field), 'Expected a Field instance'
+        assert isinstance(trap_potential, Sample), 'Expected a Sample instance'
+        string_value = trap_potential.__class__.__module__ + '::'
+        string_value += trap_potential.__class__.__name__ + '::'
+        string_value += trap_potential.name
+        try:
+            field_parameter = self.parameters['Field']
+            field_parameter.float_value = trap_potential.sample.id
+            field_parameter.string_value = string_value
+            field_parameter.description = trap_potential.description
+            self.save_sample_changes()
+        except KeyError:
+            parameter = self.client.parameter_manager.create_generic_parameter(
+                name='Field',
+                float_value=float(trap_potential.sample.id),
+                string_value=string_value,
+                description=trap_potential.description)
+            self.client.sample_manager.add_parameter_to_sample(sample=self.sample,
+                                                               parameter=parameter)
+        self.parameters = {}
+        self.load_create_sample()
+        self.trap_potential = trap_potential
