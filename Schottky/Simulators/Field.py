@@ -16,6 +16,10 @@ class FieldSimulator(Simulator, Field):
         assert isinstance(field, Sample), 'Valid Field Sample object expected'
         assert isinstance(field, Field), 'Valid Field Sample object expected'
         self.field = field
+        samples = [self.field]
+        if isinstance(self.field, SuperpositionField):
+            for field_component in self.field.fields:
+                samples.append(field_component)
         name = 'Field Simulator'
         category = {
             'name': 'Software',
@@ -40,7 +44,7 @@ class FieldSimulator(Simulator, Field):
         Simulator.__init__(
             self,
             client=client, name=name, description=description,
-            samples=[self.field], parts=None,
+            samples=samples, parts=None,
             category=category,
             measurement_types=measurement_types,
             measurements=measurements)
@@ -54,10 +58,7 @@ class FieldSimulator(Simulator, Field):
             'type': 'Space fields measurement'}
         record = 'Starting Measurement "%s"' % (measurement_details['name'])
         self.client.log_manager.log_record(record=record, category='Information')
-        parameters = [] + self.field.sample.parameters
-        if isinstance(self.field, SuperpositionField):
-            for field_component in self.field.fields:
-                parameters += field_component.sample.parameters
+        parameters = None
         measurement = self.register_measurement(measurement_details=measurement_details,
                                                 parameters=parameters, input_data=None,
                                                 force_new=False)
@@ -116,10 +117,7 @@ class FieldSimulator(Simulator, Field):
             'type': 'Space fields measurement'}
         record = 'Starting Measurement "%s"' % (measurement_details['name'])
         self.client.log_manager.log_record(record=record, category='Information')
-        parameters = [] + self.field.sample.parameters
-        if isinstance(self.field, SuperpositionField):
-            for field_component in self.field.fields:
-                parameters += field_component.sample.parameters
+        parameters = None
         measurement = self.register_measurement(measurement_details=measurement_details,
                                                 parameters=parameters, input_data=None,
                                                 force_new=False)
@@ -179,10 +177,7 @@ class FieldSimulator(Simulator, Field):
             'type': 'Space fields measurement'}
         record = 'Starting Measurement "%s"' % (measurement_details['name'])
         self.client.log_manager.log_record(record=record, category='Information')
-        parameters = [] + self.field.sample.parameters
-        if isinstance(self.field, SuperpositionField):
-            for field_component in self.field.fields:
-                parameters += field_component.sample.parameters
+        parameters = None
         measurement = self.register_measurement(measurement_details=measurement_details,
                                                 parameters=parameters, input_data=None,
                                                 force_new=force_recalculate)
@@ -261,10 +256,7 @@ class FieldSimulator(Simulator, Field):
             if not isinstance(frame_of_view, Cartesian):
                 frame_of_view = Cartesian()
         fov_parameter = self.coordinate_system_to_parameter(frame_of_view, parameter_name='frame_of_view')
-        parameters = [fov_parameter] + self.field.sample.parameters
-        if isinstance(self.field, SuperpositionField):
-            for field_component in self.field.fields:
-                parameters += field_component.sample.parameters
+        parameters = [fov_parameter]
         measurement = self.register_measurement(measurement_details=measurement_details,
                                                 parameters=parameters, input_data=None,
                                                 force_new=force_recalculate)
@@ -336,10 +328,7 @@ class FieldSimulator(Simulator, Field):
             'type': 'Space fields measurement'}
         record = 'Starting Measurement "%s"' % (measurement_details['name'])
         self.client.log_manager.log_record(record=record, category='Information')
-        parameters = [] + self.field.sample.parameters
-        if isinstance(self.field, SuperpositionField):
-            for field_component in self.field.fields:
-                parameters += field_component.sample.parameters
+        parameters = None
         measurement = self.register_measurement(measurement_details=measurement_details,
                                                 parameters=parameters, input_data=None,
                                                 force_new=force_recalculate)

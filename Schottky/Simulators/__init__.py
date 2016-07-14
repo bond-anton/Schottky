@@ -95,6 +95,10 @@ class Simulator(object):
                              force_new=False):
         if parameters is None:
             parameters = []
+        samples_parameters = []
+        for sample in self.samples.values():
+            samples_parameters += sample.parameters.values()
+        measurement_parameters = parameters + samples_parameters
         measurement = None
         no_matches_found = True
         if not force_new:
@@ -106,8 +110,8 @@ class Simulator(object):
                 parameters_match = False
                 samples_match = False
                 input_data_match = False
-                if len(measurement.parameters) == len(parameters):
-                    test_parameters = [] + parameters
+                if len(measurement.parameters) == len(measurement_parameters):
+                    test_parameters = [] + measurement_parameters
                     for parameter in measurement.parameters:
                         parameters_match = False
                         for i in range(len(test_parameters)):
@@ -146,8 +150,8 @@ class Simulator(object):
                 measurement_type=measurement_details['type'],
                 equipment=self.equipment,
                 description=measurement_details['description'])
-            if parameters:
-                copied_parameters = [self.client.parameter_manager.copy_parameter(p) for p in parameters]
+            if measurement_parameters:
+                copied_parameters = [self.client.parameter_manager.copy_parameter(p) for p in measurement_parameters]
                 # print(len(copied_parameters))
                 for parameter in copied_parameters:
                     self.client.measurement_manager.add_parameter_to_measurement(
