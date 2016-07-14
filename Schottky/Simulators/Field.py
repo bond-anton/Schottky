@@ -255,7 +255,7 @@ class FieldSimulator(Simulator, Field):
         else:
             if not isinstance(frame_of_view, Cartesian):
                 frame_of_view = Cartesian()
-        fov_parameter = self.coordinate_system_to_parameter(frame_of_view, parameter_name='frame_of_view')
+        fov_parameter = self.coordinate_system_to_parameter(frame_of_view, parameter_name='Frame of view')
         parameters = [fov_parameter]
         measurement = self.register_measurement(measurement_details=measurement_details,
                                                 parameters=parameters, input_data=None,
@@ -305,6 +305,7 @@ class FieldSimulator(Simulator, Field):
             self.client.measurement_manager.delete_data_points(channel=vector_field_channel)
             positions = np.vstack([r_grid.ravel(), phi_grid.ravel(), z_grid.ravel()]).T
             xyz = gt.cylindrical_to_cartesian(positions)
+            xyz = frame_of_view.to_parent(xyz)
             scalar_field = self.field.scalar_field(xyz).reshape((len(phi_range), len(r_range), len(z_range)))
             self.client.measurement_manager.create_data_points(channel=scalar_field_channel,
                                                                float_value=scalar_field.ravel())
@@ -314,12 +315,14 @@ class FieldSimulator(Simulator, Field):
             self.client.measurement_manager.update_measurement_progress(measurement=measurement,
                                                                         progress=100)
             self.client.measurement_manager.finish_measurement(measurement=measurement)
+        self.client.parameter_manager.delete_parameter(fov_parameter)
         elapsed = timeit.default_timer() - start_time
         record = 'Measurement "%s" complete in %3.3f s' % (measurement_details['name'], elapsed)
         self.client.log_manager.log_record(record=record, category='Information')
         return r_grid, phi_grid, z_grid, scalar_field, vector_field
 
     def measure_field_spherical_coordinates(self, r_range, theta_range, phi_range, length_unit='m',
+                                            frame_of_view=None,
                                             force_recalculate=False):
         start_time = timeit.default_timer()
         measurement_details = {
@@ -328,7 +331,13 @@ class FieldSimulator(Simulator, Field):
             'type': 'Space fields measurement'}
         record = 'Starting Measurement "%s"' % (measurement_details['name'])
         self.client.log_manager.log_record(record=record, category='Information')
-        parameters = None
+        if frame_of_view is None:
+            frame_of_view = Cartesian()
+        else:
+            if not isinstance(frame_of_view, Cartesian):
+                frame_of_view = Cartesian()
+        fov_parameter = self.coordinate_system_to_parameter(frame_of_view, parameter_name='Frame of view')
+        parameters = [fov_parameter]
         measurement = self.register_measurement(measurement_details=measurement_details,
                                                 parameters=parameters, input_data=None,
                                                 force_new=force_recalculate)
@@ -377,6 +386,7 @@ class FieldSimulator(Simulator, Field):
             self.client.measurement_manager.delete_data_points(channel=vector_field_channel)
             positions = np.vstack([r_grid.ravel(), theta_grid.ravel(), phi_grid.ravel()]).T
             xyz = gt.spherical_to_cartesian(positions)
+            xyz = frame_of_view.to_parent(xyz)
             scalar_field = self.field.scalar_field(xyz).reshape((len(theta_range), len(r_range), len(phi_range)))
             self.client.measurement_manager.create_data_points(channel=scalar_field_channel,
                                                                float_value=scalar_field.ravel())
@@ -386,6 +396,7 @@ class FieldSimulator(Simulator, Field):
             self.client.measurement_manager.update_measurement_progress(measurement=measurement,
                                                                         progress=100)
             self.client.measurement_manager.finish_measurement(measurement=measurement)
+        self.client.parameter_manager.delete_parameter(fov_parameter)
         elapsed = timeit.default_timer() - start_time
         record = 'Measurement "%s" complete in %3.3f s' % (measurement_details['name'], elapsed)
         self.client.log_manager.log_record(record=record, category='Information')
@@ -398,40 +409,40 @@ class FieldSimulator(Simulator, Field):
         quaternion = rotation.quadruple
         origin = coordinate_system.origin
         parameter = self.client.parameter_manager.create_dict_parameter(name=parameter_name,
-                                                                        commit=False)
+                                                                        commit=True)
         origin_parameter = self.client.parameter_manager.create_dict_parameter(
             name='Origin',
             description='Origin point of Field CS',
-            parent=parameter, commit=False)
+            parent=parameter, commit=True)
         self.client.parameter_manager.create_numeric_parameter(name='x',
                                                                value=float(origin[0]),
                                                                description='X component of origin point',
-                                                               parent=origin_parameter, commit=False)
+                                                               parent=origin_parameter, commit=True)
         self.client.parameter_manager.create_numeric_parameter(name='y',
                                                                value=float(origin[1]),
                                                                description='Y component of origin point',
-                                                               parent=origin_parameter, commit=False)
+                                                               parent=origin_parameter, commit=True)
         self.client.parameter_manager.create_numeric_parameter(name='z',
                                                                value=float(origin[2]),
                                                                description='Z component of origin point',
-                                                               parent=origin_parameter, commit=False)
+                                                               parent=origin_parameter, commit=True)
         quaternion_parameter = self.client.parameter_manager.create_dict_parameter(
             name='Quaternion',
-            description='Rot. quaternion of Field CS', parent=parameter, commit=False)
+            description='Rot. quaternion of Field CS', parent=parameter, commit=True)
         self.client.parameter_manager.create_numeric_parameter(name='identity',
                                                                value=float(quaternion[0]),
                                                                description='1 component of quaternion',
-                                                               parent=quaternion_parameter, commit=False)
+                                                               parent=quaternion_parameter, commit=True)
         self.client.parameter_manager.create_numeric_parameter(name='i',
                                                                value=float(quaternion[1]),
                                                                description='i component of quaternion',
-                                                               parent=quaternion_parameter, commit=False)
+                                                               parent=quaternion_parameter, commit=True)
         self.client.parameter_manager.create_numeric_parameter(name='j',
                                                                value=float(quaternion[2]),
                                                                description='j component of quaternion',
-                                                               parent=quaternion_parameter, commit=False)
+                                                               parent=quaternion_parameter, commit=True)
         self.client.parameter_manager.create_numeric_parameter(name='k',
                                                                value=float(quaternion[3]),
                                                                description='k component of quaternion',
-                                                               parent=quaternion_parameter, commit=False)
+                                                               parent=quaternion_parameter, commit=True)
         return parameter
