@@ -116,7 +116,7 @@ class Simulator(object):
                         parameters_match = False
                         for i in range(len(test_parameters)):
                             if parameter.equals(test_parameters[i]):
-                                print(parameter.name, 'equals', test_parameters[i].name)
+                                # print(parameter.name, 'equals', test_parameters[i].name)
                                 parameters_match = True
                                 del test_parameters[i]
                                 break
