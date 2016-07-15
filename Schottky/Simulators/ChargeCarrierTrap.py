@@ -34,7 +34,7 @@ class ChargeCarrierTrap(Simulator):
         ]
         parts = None
         if trap.trap_potential:
-            parts = FieldSimulator(client=client, field=trap.trap_potential)
+            parts = [FieldSimulator(client=client, field=trap.trap_potential)]
         Simulator.__init__(
             self,
             client=client, name=name, description=description,
