@@ -1,8 +1,10 @@
 from __future__ import division
 import numbers
+import numpy as np
 
 from Space.Field import Field
 from Schottky.Samples import Sample
+from Schottky import constants
 
 energy_distribution_functions = {'Single Level': ['single level', 'monoenergetic level', 'single', 'monoenergetic'],
                                  'Gaussian Level': ['gaussian level', 'gaussian'],
@@ -346,3 +348,9 @@ class Trap(Sample):
         self.parameters = {}
         self.load_create_sample()
         self.trap_potential = trap_potential
+
+    def capture_cross_section(self, temperature):
+        energy_scale = constants['k'] * temperature
+        exp_term_e = np.exp(-self.electron_capture_cross_section_activation_energy / energy_scale)
+        exp_term_h = np.exp(-self.hole_capture_cross_section_activation_energy / energy_scale)
+        return self.electron_capture_cross_section * exp_term_e, self.hole_capture_cross_section * exp_term_h

@@ -8,19 +8,6 @@ from ScientificProjects.Client import Client
 from Schottky.Samples.Fields import UniformElectrostaticField, ChargedCylinder, HyperbolicCylinder, SuperpositionField
 from Schottky.Simulators.Field import FieldSimulator
 
-
-def find_first_local_extrema(surface, r_grid, radius):
-    surface_gradient = np.gradient(surface)[1]
-    start = min(np.where(r_grid[0, :, 0] > radius)[0])
-    step = 10
-    stop = start + step
-    while stop <= r_grid[0, :, 0].size:
-        min_arg = np.argmin(abs(surface_gradient[:, start:stop]), axis=1)
-        if (stop - start - min_arg > 3).all() and (min_arg > 0).all():
-            return min_arg + start
-        stop += step
-    return np.argmax(surface, axis=1)
-
 client = Client(config_file_name='config.ini')
 
 client.user_manager.sign_in('bond_anton', 'secret_password')
@@ -43,48 +30,31 @@ external_field = UniformElectrostaticField(client=client, name='Uniform electros
 
 superposed_field = SuperpositionField(client=client, name='Superposed Field',
                                       fields=[
-                                              pos_charged_cylinder_field,
-                                              one_by_r_field,
-                                              external_field
-                                              ])
+                                          pos_charged_cylinder_field,
+                                          one_by_r_field,
+                                          external_field
+                                      ])
 
 field_simulator = FieldSimulator(client=client, field=superposed_field)
 
 r = np.linspace(0, 25, num=500, endpoint=True)
-phi = np.linspace(0, 2 * np.pi, num=720, endpoint=True)
-z = np.array([0])
 
-r_grid, p_grid, z_grid, scalar_field, vector_field = field_simulator.measure_field_cylindrical_coordinates(
-    r_range=r, phi_range=phi, z_range=z, length_unit='nm',
-    frame_of_view=one_by_r_field.coordinate_system, force_recalculate=False, no_db=True
-)
-
-r_max_arg = find_first_local_extrema(scalar_field[:, :, 0], r_grid, radius)
-
-r_max = r_grid[0, r_max_arg, 0]
-field_max = np.diagonal(scalar_field[:, r_max_arg, 0])
-
+r_grid, p_grid, scalar_field, field_max, r_max = field_simulator.barrier_lowering_azimuthal(r_range=r, radius=radius)
 
 energy_scale = 50
 
 
 fig = mlab.figure(bgcolor=(0.2, 0.2, 0.2))
 mlab.mesh(
-    # r_grid[:, :, 0],
-    # p_grid[:, :, 0],
-    r_grid[:, :, 0] * np.cos(p_grid[:, :, 0]),
-    r_grid[:, :, 0] * np.sin(p_grid[:, :, 0]),
-    scalar_field[:, :, 0] * energy_scale,
-    #abs(scalar_field_gradient) * energy_scale,
-    colormap='RdBu',
-    # representation='wireframe'
+    r_grid * np.cos(p_grid),
+    r_grid * np.sin(p_grid),
+    scalar_field * energy_scale,
+    colormap='RdBu'
 )
 
 mlab.plot3d(
-    # r_grid[0, r_max_arg, 0],
-    # p_grid[:, 0, 0],
-    r_max * np.cos(p_grid[:, 0, 0]),
-    r_max * np.sin(p_grid[:, 0, 0]),
+    r_max * np.cos(p_grid[:, 0]),
+    r_max * np.sin(p_grid[:, 0]),
     field_max * energy_scale,
     tube_radius=energy_scale * 2e-3,
     color=(1, 0, 0))
@@ -93,8 +63,5 @@ client.user_manager.sign_out()
 
 mlab.show()
 
-
-coeff = np.ones_like(r_max)
-coeff[np.where(r_max > 45)] = 0.0
-plt.plot((p_grid[:, 0, 0] - np.pi) / np.pi * 180, np.roll(field_max * coeff, 360))
+plt.plot((p_grid[:, 0] - np.pi) / np.pi * 180, np.roll(field_max, int(len(field_max) / 2)))
 plt.show()

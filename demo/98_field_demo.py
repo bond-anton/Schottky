@@ -19,11 +19,11 @@ client.user_manager.project_manager.open_project('Schottky diode')
 radius = 0.5
 pos_charged_cylinder_field = ChargedCylinder(client=client, name='Pos charged cylinder field',
                                              charge_density=3e7, radius=radius, epsilon=1)
-pos_charged_cylinder_field.set_origin([-2, 0, 0])
+#pos_charged_cylinder_field.set_origin([-2, 0, 0])
 #pos_charged_cylinder_field.rotate_axis_angle([1, 0, 0], np.pi / 4)
 neg_charged_cylinder_field = ChargedCylinder(client=client, name='Neg charged cylinder field',
                                              charge_density=-3e7, radius=radius, epsilon=1)
-neg_charged_cylinder_field.set_origin([2, 0, 0])
+#neg_charged_cylinder_field.set_origin([2, 0, 0])
 #neg_charged_cylinder_field.rotate_axis_angle([1, 0, 0], -np.pi / 4)
 
 external_field = UniformElectrostaticField(client=client, name='Uniform electrostatic field',

@@ -31,6 +31,12 @@ class FieldSimulator(Simulator, Field):
                               'description': 'Measurement strength and potentials of fields in space',
                               'children': []}]
         measurements = [
+            {'name': 'Scalar Field values at given XYZ points',
+             'description': 'measure scalar field on given points array',
+             'type': 'Space fields measurement'},
+            {'name': 'Vector Field values at given XYZ points',
+             'description': 'measure vector field on given points array',
+             'type': 'Space fields measurement'},
             {'name': 'Field values on cartesian grid',
              'description': 'measure vector and scalar field on given cartesian grid',
              'type': 'Space fields measurement'},
@@ -470,3 +476,33 @@ class FieldSimulator(Simulator, Field):
                                                                description='k component of quaternion',
                                                                parent=quaternion_parameter, commit=True)
         return parameter
+
+    def barrier_lowering_azimuthal(self, r_range=None, frame_of_view=None, radius=None):
+        if radius is None:
+            radius = 0.0
+        if r_range is None:
+            r_range = np.linspace(0, 25, num=500, endpoint=True)
+        phi = np.linspace(0, 2 * np.pi, num=720, endpoint=True)
+        z = np.array([0])
+        r_grid, p_grid, z_grid, scalar_field, vector_field = self.measure_field_cylindrical_coordinates(
+            r_range=r_range, phi_range=phi, z_range=z, length_unit='nm',
+            frame_of_view=frame_of_view, force_recalculate=False, no_db=True)
+        r_max_arg = find_first_local_extrema(scalar_field[:, :, 0], r_grid, radius)
+        r_max = r_grid[0, r_max_arg, 0]
+        field_max = np.diagonal(scalar_field[:, r_max_arg, 0])
+        coeff = np.ones_like(r_max)
+        coeff[np.where(r_max > 45)] = 0.0
+        return r_grid[:, :, 0], p_grid[:, :, 0], scalar_field[:, :, 0], field_max * coeff, r_max
+
+
+def find_first_local_extrema(surface, r_grid, radius):
+    surface_gradient = np.gradient(surface)[1]
+    start = min(np.where(r_grid[0, :, 0] > radius)[0])
+    step = 10
+    stop = start + step
+    while stop <= r_grid[0, :, 0].size:
+        min_arg = np.argmin(abs(surface_gradient[:, start:stop]), axis=1)
+        if (stop - start - min_arg > 3).all() and (min_arg > 0).all():
+            return min_arg + start
+        stop += step
+    return np.argmax(surface, axis=1)
