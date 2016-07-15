@@ -168,7 +168,7 @@ class Trap(Sample):
 
     def set_energy_distribution_function(self, energy_distribution_function):
         variants = [j for i in energy_distribution_functions.keys() for j in energy_distribution_functions[i]]
-        assert energy_distribution_function in variants, 'Energy distribution function must be a defined string'
+        assert energy_distribution_function.lower() in variants, 'Energy distribution function must be a defined string'
         for key in energy_distribution_functions.keys():
             if energy_distribution_function.lower() in energy_distribution_functions[key]:
                 energy_distribution_function = key
