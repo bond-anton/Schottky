@@ -93,17 +93,17 @@ class SchottkyDiode(object):
     def set_semiconductor(self, Semicond=None):
         # measurement_type = self.Project.add_measurement_type('Metal work function', measurement_type_description='Metal work function measurement')
         try:
-            semiconductor_label = self.Project.get_project_info('Semiconductor')
+            semiconductor_label = self.Project.get_project_info('Semiconductor-old')
         except:
             semiconductor_label = None
         if Semicond is None:
             if semiconductor_label is None:
-                raise Exception('Semiconductor is needed for Schottky diode')
+                raise Exception('Semiconductor-old is needed for Schottky diode')
             else:
                 self.Semiconductor = Semiconductor(semiconductor_label, lookup=True)
         else:
             if Semicond.reference['name'] != semiconductor_label:
-                self.Project.add_project_info_if_changed('Semiconductor', Semicond.reference['name'])
+                self.Project.add_project_info_if_changed('Semiconductor-old', Semicond.reference['name'])
             self.Semiconductor = Semicond
 
     def register_measurement_types(self):
@@ -248,8 +248,8 @@ class SchottkyDiode(object):
             elif isinstance(z, (np.ndarray, list, tuple)):
                 F = dopant.equilibrium_f(self.T, self.Semiconductor, Ef, electron_volts=False, debug=debug)
                 dF = dopant.d_equilibrium_f_d_fermi_energy(self.T, self.Semiconductor, Ef, electron_volts=False, debug=debug)
-                # F = np.array([dopant.equilibrium_f(self.T, self.Semiconductor, Ef_z, eV=False, debug=debug) for Ef_z in Ef])
-                # dF = np.array([dopant.d_equilibrium_f_d_fermi_energy(self.T, self.Semiconductor, Ef_z, eV=False, debug=debug) for Ef_z in Ef])
+                # F = np.array([dopant.equilibrium_f(self.T, self.Semiconductor-old, Ef_z, eV=False, debug=debug) for Ef_z in Ef])
+                # dF = np.array([dopant.d_equilibrium_f_d_fermi_energy(self.T, self.Semiconductor-old, Ef_z, eV=False, debug=debug) for Ef_z in Ef])
             else:
                 raise ValueError('Wrong type of Z: ' + str(type(z)))
             dopant.set_F_interp(z, F)

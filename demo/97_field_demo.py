@@ -25,7 +25,7 @@ one_by_r_field.set_origin([0, 0, 0])
 
 
 external_field = UniformElectrostaticField(client=client, name='Uniform electrostatic field',
-                                           strength=0.01, direction=[1, 0, 0])
+                                           strength=0.01, direction=[0, 0, 1])
 
 
 superposed_field = SuperpositionField(client=client, name='Superposed Field',

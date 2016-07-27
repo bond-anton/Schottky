@@ -107,7 +107,7 @@ def BandsBending_prepare_data(SchDiode, Psi, Vd, z, eV, SchottkyEffect, draw_met
     Psi_points = Psi(z)
     E_points = -np.gradient(Psi_points, dz, edge_order=2)
     '''
-    if SchDiode.Semiconductor.dop_type == 'n':
+    if SchDiode.Semiconductor-old.dop_type == 'n':
         idx = np.where(E_points > 0)[0]
     else:
         idx = np.where(E_points < 0)[0]
@@ -131,7 +131,7 @@ def BandsBending_prepare_data(SchDiode, Psi, Vd, z, eV, SchottkyEffect, draw_met
     type_sign = 1 if SchDiode.Semiconductor.dop_type == 'n' else -1
     Ef = np.zeros_like(z) + coeff * type_sign * Vd
     if FieldInversionPoint > 0:
-        # xi = np.float(SchDiode.Semiconductor.Ech_pot(T=SchDiode.T, z=1e3, eV=eV, debug=False))
+        # xi = np.float(SchDiode.Semiconductor-old.Ech_pot(T=SchDiode.T, z=1e3, eV=eV, debug=False))
         Ef[0:idx[-1]] = coeff * FieldInversionPsi * type_sign
         # print idx[-1]
         # Ef[0:idx[-1]] = Ec[0:idx[-1]] - Ef[idx[-1]]

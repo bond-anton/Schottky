@@ -23,7 +23,7 @@ class Trap(object):
     """
 
     equipment = 'Single Trap Simulator'
-    description = 'Simulates properties of a single trap in Semiconductor'
+    description = 'Simulates properties of a single trap in Semiconductor-old'
 
     def __init__(self, name, charge_states=None, energy_distribution_function='Single Level', energy_spread=0.3 * q,
                  electron_capture_cross_section=1e-17, electron_capture_cross_section_activation_energy=0,
@@ -100,7 +100,7 @@ class Trap(object):
         """
         Calculates trap equilibrium filling for given Fermi level position
         :param temperature: Temperature, K
-        :param semiconductor: Semiconductor object
+        :param semiconductor: Semiconductor-old object
         :param fermi_level_from_conduction_band: distance from Conduction band to Fermi level
         :param electron_volts: if True assume all energy values to be in eV
         :param use_mpmath: if True integration is done using mpmath.quad function instead of numpy.trapz (default)
@@ -174,7 +174,7 @@ class Trap(object):
         Calculates trap equilibrium filling derivative for given Fermi level position
         on small Fermi level change
         :param temperature: Temperature, K
-        :param semiconductor: Semiconductor object
+        :param semiconductor: Semiconductor-old object
         :param fermi_level_from_conduction_band: distance from Conduction band to Fermi level
         :param electron_volts: if True assume all energy values to be in eV
         :param use_mpmath: if True integration is done using mpmath.quad function instead of numpy.trapz (default)
@@ -257,7 +257,7 @@ class Trap(object):
         """
         Calculates equilibrium Fermi level position for given occupation of the Trap F
         :param temperature: Temperature, K
-        :param semiconductor: Semiconductor object
+        :param semiconductor: Semiconductor-old object
         :param f: Trap occupation from 0.0 to 1.0
         :param electron_volts: if True assume all energy values to be in eV
         :param use_mpmath: if True integration is done using mpmath.quad function instead of numpy.trapz (default)
@@ -343,7 +343,7 @@ class Trap(object):
         """
         Calculate carriers capture rate for bot electrons and holes
         :param temperature: Temperature, K
-        :param semiconductor: Semiconductor object
+        :param semiconductor: Semiconductor-old object
         :param f: Trap occupation from 0.0 to 1.0
         :param n: concentration of electrons at trap coordinate (1/m^3)
         :param p: concentration of holes at trap coordinate (1/m^3)
@@ -387,7 +387,7 @@ class Trap(object):
         """
         Calculate carriers emission rate for bot electrons and holes
         :param temperature: Temperature, K
-        :param semiconductor: Semiconductor object
+        :param semiconductor: Semiconductor-old object
         :param f: Trap occupation from 0.0 to 1.0
         :param poole_frenkel_e: emission rate boost due to Poole-Frenkel effect for electron
         :param poole_frenkel_h: emission rate boost due to Poole-Frenkel effect for electron

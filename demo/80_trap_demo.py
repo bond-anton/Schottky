@@ -46,6 +46,31 @@ my_trap = Trap(client=client, name='Shallow Trap', description='Test Shallow Tra
 my_trap_simulator = ChargeCarrierTrap(client=client, trap=my_trap)
 print(my_trap_simulator.parts['Field Simulator'])
 
+f = [1.0]
+t = [0]
+temperature = 300
+band_gap = 1
+threshold = 1e-4
+v_n = 1e7
+v_p = 1e7
+n_c = 1e18
+n_v = 1e18
+#for i in range(50):
+while t[-1] < 0.2:
+    #print('t: %g s, F: %2.2f' % (t[-1], f[-1]))
+    e_n, e_p = my_trap_simulator.emission_rate(temperature, band_gap, v_n, v_p, n_c, n_v,
+                                               poole_frenkel_n=1.0, poole_frenkel_p=1.0)
+    #print(e_n, e_p)
+    d_t = min(threshold / e_n, threshold / e_p)
+    d_f_n = d_t * e_n * f[-1]
+    d_f_p = d_t * e_p * (1 - f[-1])
+    #print('d_t: %g s, d_f_n: %g, d_f_p: %g' % (d_t, d_f_n, d_f_p))
+    f.append(f[-1] - (d_f_n - d_f_p))
+    t.append(t[-1] + d_t)
+
 client.user_manager.sign_out()
+
+plt.plot(t, f, '-bo')
+plt.show()
 
 #mlab.show()

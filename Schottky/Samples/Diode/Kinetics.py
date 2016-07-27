@@ -236,7 +236,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
             if dopant.name in fast_traps:
                 if debug:
                     print 'This dopant is in a fast-traps list, skipping.'
-                # dopant_f = dopant.equilibrium_f(schottky_diode.T, schottky_diode.Semiconductor, fermi_level,
+                # dopant_f = dopant.equilibrium_f(schottky_diode.T, schottky_diode.Semiconductor-old, fermi_level,
                 #                                 electron_volts=False, debug=False)
                 # dopant.set_F_interp(z_nodes, dopant_f)
                 # dopant.set_dF_interp(z_nodes, np.zeros_like(dopant_f))
