@@ -2,7 +2,7 @@ from scipy.constants import c, N_A, k, e, m_e, epsilon_0
 
 # Units for the experiments are cm for length, g for mass, s fot time, and eV for energy
 constants = {
-    'c': c * 100,  # m/s
+    'c': c * 100,  # cm/s
     'Avogadro': N_A,
     'q': e,  # C
     'm_e': m_e * 1000,  # g
