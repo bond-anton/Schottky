@@ -29,8 +29,8 @@ class Semiconductor(Sample):
         self.electron_mobility_parameters = {}
         self.hole_mobility_parameters = {}
         self.thermo_emission_coefficient = {}
-        self.dopants = None
-        self.interfaces = None
+        self.dopants = []
+        self.interfaces = []
         self._read_in_epsilon(epsilon)
         self._read_in_affinity(affinity)
         self._read_in_effective_mass(effective_mass)
@@ -441,7 +441,7 @@ class Semiconductor(Sample):
                 dopant_module_name, dopant_class_name = dopant.string_value.split('::')
                 dopant_name = dopant.name
                 dopant_id = int(dopant.float_value)
-                dopant_module = __import__(dopant_module_name, fromlist=[dopant_class_name])
+                dopant_module = __import__(dopant_module_name, fromlist=[str(dopant_class_name)])
                 dopant_class = getattr(dopant_module, dopant_class_name)
                 dopant_sample = dopant_class(client=self.client.session_manager, name=dopant_name)
                 if dopant_sample.sample.id == dopant_id:

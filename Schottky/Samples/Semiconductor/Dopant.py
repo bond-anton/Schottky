@@ -43,7 +43,7 @@ class Dopant(Sample):
             trap_parameter = self.parameters['Trap']
             trap_module_name, trap_class_name, trap_name = trap_parameter.string_value.split('::')
             trap_id = int(trap_parameter.float_value)
-            trap_module = __import__(trap_module_name, fromlist=[trap_class_name])
+            trap_module = __import__(trap_module_name, fromlist=[str(trap_class_name)])
             trap_class = getattr(trap_module, trap_class_name)
             trap_sample = trap_class(client=self.client.session_manager, name=trap_name)
             if trap_sample.sample.id == trap_id:
