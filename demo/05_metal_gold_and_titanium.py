@@ -9,16 +9,12 @@ client = Client(config_file_name='config.ini')
 client.user_manager.sign_in('bond_anton', 'secret_password')
 client.user_manager.project_manager.open_project('Schottky diode')
 
-my_metal = Metal(client=client, name='Gold',
-                 # work_function=5.1
-                 )
+gold = Metal(client=client, name='Au', work_function=5.1, description='Gold')
 
-print(my_metal)
-print(my_metal.work_function)
-my_metal.set_work_function(work_function=5.2)
-print(my_metal.work_function)
-my_metal.work_function = 5.3
-print(my_metal.work_function)
+print(gold)
 
+titanium = Metal(client=client, name='Ti', work_function=4.33, description='Titanium')
+
+print(titanium)
 
 client.user_manager.sign_out()
