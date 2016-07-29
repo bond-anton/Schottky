@@ -200,5 +200,4 @@ class BulkSemiconductor(Simulator):
             np.seterr(divide='warn', invalid='warn', over='warn')
             return total_charge
 
-
         return bisect(equation, a=0, b=band_gap)
