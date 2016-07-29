@@ -58,8 +58,7 @@ plt.show()
 '''
 
 
-
-e_f = map(my_simulator.electrochemical_potential, temperature_range)
+e_f = my_simulator.electrochemical_potential(temperature_range)
 plt.plot(temperature_range, band_gap, color='k', linewidth=2, linestyle='-')
 for part in my_simulator.parts.values():
     if isinstance(part, ChargeCarrierTrap):
@@ -67,7 +66,6 @@ for part in my_simulator.parts.values():
                  color='k', linewidth=1, linestyle='--')
 plt.plot(temperature_range, band_gap - e_f, 'k-o')
 plt.show()
-
 
 
 e_f = my_simulator.electrochemical_potential(temperature=0)

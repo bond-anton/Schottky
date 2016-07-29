@@ -154,6 +154,8 @@ class BulkSemiconductor(Simulator):
         return result
 
     def electrochemical_potential(self, temperature):
+        if isinstance(temperature, (np.ndarray, tuple, list)):
+            return np.array([self.electrochemical_potential(t) for t in temperature])
         assert isinstance(temperature, numbers.Number), 'Temperature must be a number'
         if temperature < 8:
             e1 = self.electrochemical_potential(temperature=8)
