@@ -21,7 +21,7 @@ my_simulator = BulkSemiconductor(client=client, semiconductor=my_semiconductor,
 
 print(my_simulator)
 
-temperature_range = np.linspace(10, 700, num=1001, endpoint=True)
+temperature_range = np.linspace(0, 700, num=1001, endpoint=True)
 band_gap = my_simulator.band_gap(temperature=temperature_range)
 plt.plot(temperature_range, band_gap, color='k', linewidth=2, linestyle='-')
 for part in my_simulator.parts.values():
@@ -47,21 +47,12 @@ plt.show()
 
 mobility = my_simulator.mobility(temperature=temperature_range, field=None)
 
-print(mobility['electron']['lattice'])
-
 plt.plot(temperature_range, mobility['electron']['total'],
          color='b', linewidth=2, linestyle='-')
-plt.plot(temperature_range, mobility['electron']['lattice'],
-         color='b', linewidth=1, linestyle='--')
-plt.plot(temperature_range, mobility['electron']['impurities'],
-         color='b', linewidth=1, linestyle=':')
+plt.plot(temperature_range, mobility['hole']['total'],
+         color='r', linewidth=2, linestyle='-')
 plt.show()
 
-mobility = my_simulator.mobility(temperature=10, field=None)
-print('electrons: %2.2f cm^2 / (V*s)' % mobility['electron']['total'])
-print('electrons: %2.2f cm^2 / (V*s)' % mobility['electron']['lattice'])
-print('electrons: %2.2f cm^2 / (V*s)' % mobility['electron']['impurities'])
-print('electrons: %2.2f cm^2 / (V*s)' % mobility['electron']['carrier-carrier'])
-print('holes: %2.2f cm^2 / (V*s)' % mobility['hole']['total'])
+my_simulator._neutrality_equation(1, temperature=300)
 
 client.user_manager.sign_out()
