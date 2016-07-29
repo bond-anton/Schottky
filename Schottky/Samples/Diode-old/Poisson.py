@@ -314,7 +314,7 @@ def Poisson_eq_num_solver(SchDiode, nodes, Psi=Psi_zero, Vd=0,
     type_sign = -1 if SchDiode.Semiconductor.dop_type == 'n' else 1
     if bc1 is None:
         bc1 = -(SchDiode.V_bi(eV=True) + type_sign * Vd)
-    Eps0Eps = epsilon0 * SchDiode.Semiconductor.reference['epsilon']
+    Eps0Eps = epsilon0 * SchDiode.Semiconductor.reference['area']
     mesh = UniformMesh1D(nodes[0], nodes[-1], nodes[1] - nodes[0], bc1, bc2)
     # print nodes[0], nodes[-1], (nodes[1] - nodes[0])*1e6
     mesh.int_residual = threshold + 1

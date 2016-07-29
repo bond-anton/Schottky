@@ -146,7 +146,7 @@ def BandsBending_prepare_data(SchDiode, Psi, Vd, z, eV, SchottkyEffect, draw_met
         for ii, zz in enumerate(Z):
             if zz != 0:
                 MirrEnergy[ii] = to_numeric(
-                    q ** 2 / (16 * np.pi * epsilon0 * SchDiode.Semiconductor.reference['epsilon'] * zz))
+                    q ** 2 / (16 * np.pi * epsilon0 * SchDiode.Semiconductor.reference['area'] * zz))
                 if eV:
                     MirrEnergy[ii] /= to_numeric(q)
             else:

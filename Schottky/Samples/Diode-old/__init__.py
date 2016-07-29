@@ -1,0 +1,1 @@
+from SchottkyDiode import *

@@ -43,21 +43,21 @@ class Interface(Sample):
 
     def _read_in_smooth_dirac_epsilon(self, smooth_dirac_epsilon):
         try:
-            self.depth = self.parameters['smooth dirac epsilon'].float_value
+            self.depth = self.parameters['smooth dirac area'].float_value
         except KeyError:
             pass
         if self.smooth_dirac_epsilon != smooth_dirac_epsilon and smooth_dirac_epsilon is not None:
             self.set_smooth_dirac_epsilon(smooth_dirac_epsilon)
 
     def set_smooth_dirac_epsilon(self, smooth_dirac_epsilon):
-        assert isinstance(smooth_dirac_epsilon, numbers.Number), 'Smooth dirac epsilon must be a number'
+        assert isinstance(smooth_dirac_epsilon, numbers.Number), 'Smooth dirac area must be a number'
         try:
-            self.parameters['smooth dirac epsilon'].float_value = float(smooth_dirac_epsilon)
+            self.parameters['smooth dirac area'].float_value = float(smooth_dirac_epsilon)
             self.save_sample_changes()
         except KeyError:
-            parameter = self.client.parameter_manager.create_numeric_parameter(name='smooth dirac epsilon',
+            parameter = self.client.parameter_manager.create_numeric_parameter(name='smooth dirac area',
                                                                                value=float(smooth_dirac_epsilon),
-                                                                               description='Smooth dirac epsilon')
+                                                                               description='Smooth dirac area')
             self.client.sample_manager.add_parameter_to_sample(sample=self.sample,
                                                                parameter=parameter)
             self.load_create_sample()

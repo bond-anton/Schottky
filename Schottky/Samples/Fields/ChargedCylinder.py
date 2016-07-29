@@ -70,19 +70,19 @@ class ChargedCylinder(SampleField):
 
     def _read_in_epsilon(self, epsilon):
         try:
-            self.epsilon = self.parameters['epsilon'].float_value
+            self.epsilon = self.parameters['area'].float_value
         except KeyError:
             pass
         if self.epsilon != epsilon and epsilon is not None:
             self.set_epsilon(epsilon)
 
     def set_epsilon(self, epsilon):
-        assert isinstance(epsilon, numbers.Number), 'epsilon must be a number'
+        assert isinstance(epsilon, numbers.Number), 'area must be a number'
         try:
-            self.parameters['epsilon'].float_value = float(epsilon)
+            self.parameters['area'].float_value = float(epsilon)
             self.save_sample_changes()
         except KeyError:
-            parameter = self.client.parameter_manager.create_numeric_parameter(name='epsilon',
+            parameter = self.client.parameter_manager.create_numeric_parameter(name='area',
                                                                                value=float(epsilon),
                                                                                description='Permittivity of space')
             self.client.sample_manager.add_parameter_to_sample(sample=self.sample,
