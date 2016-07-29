@@ -46,18 +46,14 @@ class ChargeCarrierTrap(Simulator):
 
     def energy_level(self, band_gap):
         if isinstance(band_gap, (list, tuple, np.ndarray)):
-            empty_energy = np.ones_like(np.array(band_gap))
-            full_energy = np.ones_like(np.array(band_gap))
+            energy = np.ones_like(np.array(band_gap))
         else:
             assert isinstance(band_gap, numbers.Number), 'Provide a numeric value of band_gap'
-            empty_energy = 1
-            full_energy = 1
+            energy = 1
         if self.trap.band == 'Ec':
-            return {'empty': empty_energy * self.trap.activation_energy['empty'],
-                    'full': full_energy * self.trap.activation_energy['full']}
+            return energy * self.trap.activation_energy
         else:
-            return {'empty': band_gap - empty_energy * self.trap.activation_energy['empty'],
-                    'full': band_gap - full_energy * self.trap.activation_energy['full']}
+            return band_gap - energy * self.trap.activation_energy
 
     def capture_rate(self, temperature, n, p, v_n, v_p):
         sigma_n, sigma_p = self.trap.capture_cross_section(temperature)

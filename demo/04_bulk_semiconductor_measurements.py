@@ -22,11 +22,14 @@ my_simulator = BulkSemiconductor(client=client, semiconductor=my_semiconductor,
 print(my_simulator)
 
 temperature_range = np.linspace(0, 700, num=1001, endpoint=True)
+
+
 band_gap = my_simulator.band_gap(temperature=temperature_range)
+'''
 plt.plot(temperature_range, band_gap, color='k', linewidth=2, linestyle='-')
 for part in my_simulator.parts.values():
     if isinstance(part, ChargeCarrierTrap):
-        plt.plot(temperature_range, band_gap - part.energy_level(band_gap)['empty'],
+        plt.plot(temperature_range, band_gap - part.energy_level(band_gap),
                  color='k', linewidth=1, linestyle='--')
 plt.show()
 
@@ -52,7 +55,22 @@ plt.plot(temperature_range, mobility['electron']['total'],
 plt.plot(temperature_range, mobility['hole']['total'],
          color='r', linewidth=2, linestyle='-')
 plt.show()
+'''
 
-my_simulator._neutrality_equation(1, temperature=300)
+
+
+e_f = map(my_simulator.electrochemical_potential, temperature_range)
+plt.plot(temperature_range, band_gap, color='k', linewidth=2, linestyle='-')
+for part in my_simulator.parts.values():
+    if isinstance(part, ChargeCarrierTrap):
+        plt.plot(temperature_range, band_gap - part.energy_level(band_gap),
+                 color='k', linewidth=1, linestyle='--')
+plt.plot(temperature_range, band_gap - e_f, 'k-o')
+plt.show()
+
+
+
+e_f = my_simulator.electrochemical_potential(temperature=0)
+print(e_f)
 
 client.user_manager.sign_out()

@@ -2,6 +2,7 @@ from __future__ import division, print_function
 # import timeit
 import numbers
 import numpy as np
+from scipy.optimize import fsolve, root, bisect
 
 from Schottky.Samples.Semiconductor import Semiconductor
 from Schottky.Simulators import Simulator
@@ -152,26 +153,52 @@ class BulkSemiconductor(Simulator):
         np.seterr(divide='warn', invalid='warn')
         return result
 
-    def _neutrality_equation(self, mu, temperature):
-        if isinstance(temperature, (list, tuple, np.ndarray)):
-            temperature = np.array(temperature)
-        elif isinstance(temperature, numbers.Number):
-            temperature = np.array([np.float(temperature)])
-        band_gap = self.band_gap(temperature)
-        energy_scale = constants['k'] * temperature
-        exp_term = np.zeros_like(temperature)
-        nonzero_temperature = np.where(temperature > 0)
-        exp_term_cb = np.exp(-mu / energy_scale[nonzero_temperature])
-        exp_term_vb = np.exp((mu - band_gap) / energy_scale[nonzero_temperature])
-        bands_density_of_states = self.bands_density_of_states(temperature)
-        cb_charge = -bands_density_of_states['Nc'] * exp_term_cb
-        vb_charge = bands_density_of_states['Nv'] * exp_term_vb
-        for dopant in self.semiconductor.dopants:
-            for part in self.parts.values():
-                if isinstance(part, ChargeCarrierTrap):
-                    if part.trap.name == dopant.trap.name:
-                        dopant_energy = part.energy_level(band_gap)
-            print(dopant.trap.charge_state)
-            print(dopant_energy)
+    def electrochemical_potential(self, temperature):
+        assert isinstance(temperature, numbers.Number), 'Temperature must be a number'
+        if temperature < 8:
+            e1 = self.electrochemical_potential(temperature=8)
+            e2 = self.electrochemical_potential(temperature=10)
+            a = (e1 - e2) / (8 - 10)
+            b = e1 - a*8
+            return a * temperature + b
+        energy_scale = constants['k'] * np.float(temperature)
+        band_gap = self.band_gap(np.float(temperature))
+        bands_density_of_states = self.bands_density_of_states(np.float(temperature))
+
+        def equation(mu):
+            np.seterr(divide='warn', invalid='warn', over='raise')
+            # bands charge
+            if abs(temperature) > 2 * np.finfo(np.float).eps:
+                exp_term_cb = np.exp(-mu / energy_scale)
+                exp_term_vb = np.exp((mu - band_gap) / energy_scale)
+                cb_charge = -bands_density_of_states['Nc'] * exp_term_cb
+                vb_charge = bands_density_of_states['Nv'] * exp_term_vb
+                total_charge = cb_charge + vb_charge
+            else:
+                total_charge = 0
+            # dopants charge
+            for dopant in self.semiconductor.dopants:
+                for part in self.parts.values():
+                    if isinstance(part, ChargeCarrierTrap):
+                        if part.trap.name == dopant.trap.name:
+
+                            delta_energy = part.energy_level(band_gap) - mu
+                            if abs(delta_energy) < 2 * np.finfo(np.float).eps:
+                                f = 1 / 2
+                            elif energy_scale < 2 * np.finfo(np.float).eps:
+                                f = 1 if delta_energy > 0 else 0
+                            else:
+                                try:
+                                    f = 1 / (1 + np.exp(-delta_energy / energy_scale))
+                                except FloatingPointError:
+                                    f = 1 if delta_energy > 0 else 0
+                            q1 = dopant.trap.charge_state['full']
+                            q0 = dopant.trap.charge_state['empty']
+                            n = dopant.concentration
+                            total_charge += n * (q1 - q0) * f + n * q0
+            # print(mu, part.energy_level(band_gap), energy_scale, n, f, total_charge)
+            np.seterr(divide='warn', invalid='warn', over='warn')
+            return total_charge
 
 
+        return bisect(equation, a=0, b=band_gap)
