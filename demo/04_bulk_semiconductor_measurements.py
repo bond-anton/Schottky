@@ -25,7 +25,7 @@ temperature_range = np.linspace(0, 700, num=1001, endpoint=True)
 
 
 band_gap = my_simulator.band_gap(temperature=temperature_range)
-'''
+
 plt.plot(temperature_range, band_gap, color='k', linewidth=2, linestyle='-')
 for part in my_simulator.parts.values():
     if isinstance(part, ChargeCarrierTrap):
@@ -55,8 +55,6 @@ plt.plot(temperature_range, mobility['electron']['total'],
 plt.plot(temperature_range, mobility['hole']['total'],
          color='r', linewidth=2, linestyle='-')
 plt.show()
-'''
-
 
 e_f = my_simulator.electrochemical_potential(temperature_range)
 plt.plot(temperature_range, band_gap, color='k', linewidth=2, linestyle='-')
