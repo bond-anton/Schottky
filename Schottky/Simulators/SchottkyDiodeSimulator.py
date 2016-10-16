@@ -47,3 +47,6 @@ class SchottkyDiodeSimulator(Simulator):
         xi = self.parts['Bulk Semiconductor Simulator'].electrochemical_potential(temperature=temperature)
         semiconductor_wf = xi + self.diode.semiconductor.affinity
         return metal_wf - semiconductor_wf
+
+    def thermionic_emission_current(self, bias, temperature):
+        pass
