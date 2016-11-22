@@ -10,7 +10,7 @@ package_name = 'Schottky'
 version_file = path.join(here, package_name, '_version.py')
 with open(version_file, 'rt') as f:
     version_file_line = f.read()
-version_re = radius"^__version__ = ['\"]([^'\"]*)['\"]"
+version_re = r"^__version__ = ['\"]([^'\"]*)['\"]"
 mo = re.search(version_re, version_file_line, re.M)
 if mo:
     version_string = mo.group(1)
