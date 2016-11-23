@@ -33,7 +33,7 @@ for part in my_simulator.parts.values():
                  color='k', linewidth=1, linestyle='--')
 plt.show()
 
-bands_density_of_states = my_simulator.bands_density_of_states(temperature_range)
+bands_density_of_states = my_simulator.effective_bands_density_of_states(temperature_range)
 plt.plot(temperature_range, bands_density_of_states['Nc'],
          color='b', linewidth=2, linestyle='-')
 plt.plot(temperature_range, bands_density_of_states['Nv'],

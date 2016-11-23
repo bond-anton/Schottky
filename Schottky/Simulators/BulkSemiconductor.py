@@ -54,10 +54,10 @@ class BulkSemiconductor(Simulator):
         shift = alpha * temperature ** 2 / (temperature + beta)
         return band_gap - shift
 
-    def bands_density_of_states(self, temperature):
+    def effective_bands_density_of_states(self, temperature):
         t_3_2 = temperature ** (3 / 2)
-        conduction_band = self.semiconductor.bands_density_of_states['Nc'] * t_3_2
-        valence_band = self.semiconductor.bands_density_of_states['Nv'] * t_3_2
+        conduction_band = self.semiconductor.effective_bands_density_of_states['Nc'] * t_3_2
+        valence_band = self.semiconductor.effective_bands_density_of_states['Nv'] * t_3_2
         return {'Nc': conduction_band, 'Nv': valence_band}
 
     def carriers_thermal_velocity(self, temperature):
@@ -165,7 +165,7 @@ class BulkSemiconductor(Simulator):
             return a * temperature + b
         energy_scale = constants['k'] * np.float(temperature)
         band_gap = self.band_gap(np.float(temperature))
-        bands_density_of_states = self.bands_density_of_states(np.float(temperature))
+        bands_density_of_states = self.effective_bands_density_of_states(np.float(temperature))
 
         def equation(mu):
             np.seterr(divide='warn', invalid='warn', over='raise')

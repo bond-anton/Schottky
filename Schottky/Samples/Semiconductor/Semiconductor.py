@@ -7,12 +7,11 @@ from Schottky.Samples.Semiconductor.Interface import Interface
 
 
 class Semiconductor(Sample):
-
     def __init__(self, client, name,
                  epsilon=None,
                  affinity=None,
                  effective_mass=None,
-                 bands_density_of_states=None,
+                 effective_bands_density_of_states=None,
                  band_gap_parameters=None,
                  electron_mobility_parameters=None,
                  hole_mobility_parameters=None,
@@ -24,7 +23,7 @@ class Semiconductor(Sample):
         self.epsilon = None
         self.affinity = None
         self.effective_mass = {}
-        self.bands_density_of_states = {}
+        self.effective_bands_density_of_states = {}
         self.band_gap_parameters = {}
         self.electron_mobility_parameters = {}
         self.hole_mobility_parameters = {}
@@ -34,7 +33,7 @@ class Semiconductor(Sample):
         self._read_in_epsilon(epsilon)
         self._read_in_affinity(affinity)
         self._read_in_effective_mass(effective_mass)
-        self._read_in_bands_density_of_states(bands_density_of_states)
+        self._read_in_effective_bands_density_of_states(effective_bands_density_of_states)
         self._read_in_band_gap_parameters(band_gap_parameters)
         self._read_in_electron_mobility_parameters(electron_mobility_parameters)
         self._read_in_hole_mobility_parameters(hole_mobility_parameters)
@@ -129,33 +128,37 @@ class Semiconductor(Sample):
                                                                    parent=parameter)
             self.load_create_sample()
 
-    def _read_in_bands_density_of_states(self, bands_density_of_states):
+    def _read_in_effective_bands_density_of_states(self, effective_bands_density_of_states):
         try:
             bands_parameters = self.parameters['Bands density of states'].children
             for band in bands_parameters:
                 if band.name == 'Nc':
-                    self.bands_density_of_states['Nc'] = band.float_value
+                    self.effective_bands_density_of_states['Nc'] = band.float_value
                 elif band.name == 'Nv':
-                    self.bands_density_of_states['Nv'] = band.float_value
+                    self.effective_bands_density_of_states['Nv'] = band.float_value
         except KeyError:
             pass
-        if bands_density_of_states is not None:
-            if self.bands_density_of_states != bands_density_of_states:
-                self.set_bands_density_of_states(bands_density_of_states)
+        if effective_bands_density_of_states is not None:
+            if self.effective_bands_density_of_states != effective_bands_density_of_states:
+                self.set_effective_bands_density_of_states(effective_bands_density_of_states)
 
-    def set_bands_density_of_states(self, bands_density_of_states):
-        assert isinstance(bands_density_of_states, dict), 'Bands density of states must be dictionary'
-        assert 'Nc' in bands_density_of_states.keys(), 'Bands density of states must be dictionary with Nc and Nv value'
-        assert 'Nv' in bands_density_of_states.keys(), 'Bands density of states must be dictionary with Nc and Nv value'
-        assert isinstance(bands_density_of_states['Nc'], numbers.Number), 'Band density of states must be number'
-        assert isinstance(bands_density_of_states['Nv'], numbers.Number), 'Band density of states must be number'
+    def set_effective_bands_density_of_states(self, effective_bands_density_of_states):
+        assert isinstance(effective_bands_density_of_states, dict), 'Bands density of states must be dictionary'
+        assert 'Nc' in effective_bands_density_of_states.keys(), \
+            'Bands density of states must be dictionary with Nc and Nv value'
+        assert 'Nv' in effective_bands_density_of_states.keys(), \
+            'Bands density of states must be dictionary with Nc and Nv value'
+        assert isinstance(effective_bands_density_of_states['Nc'],
+                          numbers.Number), 'Band density of states must be number'
+        assert isinstance(effective_bands_density_of_states['Nv'],
+                          numbers.Number), 'Band density of states must be number'
         try:
             bands_parameters = self.parameters['Bands density of states'].children
             for band in bands_parameters:
                 if band.name == 'Nc':
-                    band.float_value = float(bands_density_of_states['Nc'])
+                    band.float_value = float(effective_bands_density_of_states['Nc'])
                 elif band.name == 'Nv':
-                    band.float_value = float(bands_density_of_states['Nv'])
+                    band.float_value = float(effective_bands_density_of_states['Nv'])
             self.save_sample_changes()
         except KeyError:
             parameter = self.client.parameter_manager.create_dict_parameter(name='Bands density of states',
@@ -163,11 +166,11 @@ class Semiconductor(Sample):
             self.client.sample_manager.add_parameter_to_sample(sample=self.sample,
                                                                parameter=parameter)
             self.client.parameter_manager.create_numeric_parameter(name='Nc',
-                                                                   value=float(bands_density_of_states['Nc']),
+                                                                   value=float(effective_bands_density_of_states['Nc']),
                                                                    description='Nc density of states',
                                                                    parent=parameter)
             self.client.parameter_manager.create_numeric_parameter(name='Nv',
-                                                                   value=float(bands_density_of_states['Nv']),
+                                                                   value=float(effective_bands_density_of_states['Nv']),
                                                                    description='Nv density of states',
                                                                    parent=parameter)
             self.load_create_sample()
