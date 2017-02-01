@@ -257,7 +257,8 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                     kT = to_numeric(k * schottky_diode.T / q)
                     theta = np.linspace(0, np.pi, num=100, endpoint=True)
                     barrier_lowering = np.array([dopant.trap_potential.barrier_lowering(theta_i) for theta_i in theta])
-                    poole_frenkel = 0.5 * np.trapz(np.sin(theta) * np.exp(abs(barrier_lowering[:, 0]) / kT), theta)
+                    #poole_frenkel = 0.5 * np.trapz(np.sin(theta) * np.exp(abs(barrier_lowering[:, 0]) / kT), theta)
+                    poole_frenkel = 0.5 * np.trapz(np.exp(abs(barrier_lowering[:, 0]) / kT), theta)
                     if np.sum(barrier_lowering[:, 0]) < 0:
                         poole_frenkel_e[z_num] = poole_frenkel
                         print 'emission boost e: %2.4g' % poole_frenkel
