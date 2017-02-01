@@ -1,5 +1,7 @@
 from __future__ import division, print_function
 import numpy as np
+import matplotlib
+matplotlib.use('Qt4Agg')
 from matplotlib import pyplot as plt
 
 from ScientificProjects.Client import Client
@@ -13,7 +15,7 @@ client = Client(config_file_name='config.ini')
 client.user_manager.sign_in('bond_anton', 'secret_password')
 client.user_manager.project_manager.open_project('Schottky diode')
 
-my_semiconductor = Semiconductor(client=client, name='p-type Silicon')
+my_semiconductor = Semiconductor(client=client, name='n-type Silicon')
 print(my_semiconductor)
 
 my_simulator = BulkSemiconductor(client=client, semiconductor=my_semiconductor,

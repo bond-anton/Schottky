@@ -1,5 +1,7 @@
 from __future__ import division, print_function
 import numpy as np
+import matplotlib
+matplotlib.use('Qt4Agg')
 from matplotlib import pyplot as plt
 #from mayavi import mlab
 
@@ -37,7 +39,7 @@ superposed_field = SuperpositionField(client=client, name='Superposed Field',
                                       ])
 
 my_trap = Trap(client=client, name='Shallow Trap', description='Test Shallow Trap',
-               charge_state={'empty': 0, 'full': 1}, activation_energy={'empty': 0.15, 'full': 0.15},
+               charge_state={'empty': 0, 'full': 1}, activation_energy=0.15,
                band='Ec', energy_distribution_function='Single level', energy_spread=0.3,
                electron_capture_cross_section=1e-21, electron_capture_cross_section_activation_energy=0.0,
                hole_capture_cross_section=1e-21, hole_capture_cross_section_activation_energy=0.0,

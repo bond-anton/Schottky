@@ -65,8 +65,8 @@ class ChargeCarrierTrap(Simulator):
                       poole_frenkel_n=1.0, poole_frenkel_p=1.0):
         energy_scale = constants['k'] * temperature
         energy_level = self.energy_level(band_gap=band_gap)
-        activation_energy_n = energy_level['full']
-        activation_energy_p = band_gap - energy_level['empty']
+        activation_energy_n = energy_level
+        activation_energy_p = band_gap - energy_level
         sigma_n, sigma_p = self.trap.capture_cross_section(temperature)
         g_ratio_n = 1.0
         g_ratio_p = 1.0
