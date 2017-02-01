@@ -6,10 +6,8 @@ Created on 10 апр. 2015 г.
 @author: anton
 '''
 
-from __future__ import division
+from __future__ import division, print_function
 from os.path import dirname, join
-
-from pathos.pools import ProcessPool as Pool
 
 import numpy as np
 import pandas as pd
@@ -61,12 +59,12 @@ tilt_dsl.add_trap(S_e1, 9.0e7)  # Linear density of traps [1/m]
 tilt_dsl.add_trap(D_e1, 5.0e7)
 # tilt_dsl.add_trap(S_h1, 9.0e7) # Linear density of traps [1/m]
 # tilt_dsl.add_trap(D_h1, 5.0e7)
-print twist_dsl
-print tilt_dsl
+print(twist_dsl)
+print(tilt_dsl)
 
 BW = BondingInterface(1.5e-7, 1.0e-7, 3.0, 0.5, twist_dsl, tilt_dsl)
 # BW2 = BondingInterface(9.0e-7, 0.6e-7, 3.0, 0.5, twist_dsl, tilt_dsl)
-print BW
+print(BW)
 Si.add_bonding_interface(BW)
 # Si.add_bonding_interface(BW2)
 
@@ -97,7 +95,7 @@ plt.show()
 sample_data_dir = join(dirname(__file__), '01-data')
 db_name = '01_Au_nSi_BW_transient' + '_%02.2fVp_%02.2fVrb_%03.2fK' % (V_p, abs(V_rb), T) + '.db'
 db_name = join(sample_data_dir, db_name)
-print db_name
+print(db_name)
 MyProject = Project(db_name=db_name, backend='sqlite', hostname='', overwrite=False)
 MyDiode = SchottkyDiode(MyProject, 'Au-Si_BW', Electrode, Si, DeadLayer=1.5e-7, L=5e-6)
 MyDiode.set_T(T)
