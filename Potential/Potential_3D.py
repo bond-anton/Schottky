@@ -393,10 +393,12 @@ class InfiniteCylinderPotential(GenericPotential):
 
 class ChargedCylinderPotential(InfiniteCylinderPotential):
 
-    def __init__(self, label='Unknown Potential', epsilon=1, charge_sign=1, linear_charge_density=1, radius=1):
+    def __init__(self, label='Unknown Potential', epsilon=1, charge_sign=1, linear_charge_density=1, radius=1,
+                 max_linear_charge_density=1):
         self.epsilon = epsilon
         self.charge_sign = charge_sign
         self.linear_charge_density = linear_charge_density
+        self.max_linear_charge_density = max_linear_charge_density
         a = charge_sign * elementary_charge * linear_charge_density / (2 * np.pi * epsilon_0 * epsilon)
         super(ChargedCylinderPotential, self).__init__(label, a, radius)
 

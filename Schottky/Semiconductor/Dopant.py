@@ -16,10 +16,12 @@ class Dopant(Trap):
     def __init__(self, name, concentration, charge_states=None,
                  energy_distribution_function='Single Level', energy_spread=0.3 * q,
                  electron_capture_cross_section=1e-17, electron_capture_cross_section_activation_energy=0,
-                 hole_capture_cross_section=1e-17, hole_capture_cross_section_activation_energy=0):
+                 hole_capture_cross_section=1e-17, hole_capture_cross_section_activation_energy=0,
+                 trap_potential=None):
         super(Dopant, self).__init__(name, charge_states, energy_distribution_function, energy_spread,
                                      electron_capture_cross_section, electron_capture_cross_section_activation_energy,
-                                     hole_capture_cross_section, hole_capture_cross_section_activation_energy)
+                                     hole_capture_cross_section, hole_capture_cross_section_activation_energy,
+                                     trap_potential)
         self.concentration = self.__prepare_1dfunc(concentration)
         self.F = self.__prepare_1dfunc(0.0)
         self.dF = self.__prepare_1dfunc(0.0)

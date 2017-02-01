@@ -379,7 +379,7 @@ class Trap(object):
             print 'capt_h =', capture_h
         return capture_e, capture_h, capture_time_constant_e, capture_time_constant_h
 
-    def emission_rate(self, temperature, semiconductor, f, poole_frenkel_e=1.0, poole_frenkel_h=1.0,
+    def emission_rate(self, temperature, semiconductor, f, poole_frenkel_e=None, poole_frenkel_h=None,
                       barrier_lowering_e=None, barrier_lowering_h=None, use_mpmath=False, debug=False):
         """
         Calculate carriers emission rate for bot electrons and holes
@@ -398,6 +398,10 @@ class Trap(object):
             barrier_lowering_e = np.zeros_like(f, dtype=np.float)
         if barrier_lowering_h is None:
             barrier_lowering_h = np.zeros_like(f, dtype=np.float)
+        if poole_frenkel_e is None:
+            poole_frenkel_e = np.ones_like(f, dtype=np.float)
+        if poole_frenkel_h is None:
+            poole_frenkel_h = np.ones_like(f, dtype=np.float)
         energy_scale = to_numeric(k * temperature)
         conduction_band = 0
         band_gap = semiconductor.band_gap(temperature, symbolic=False, electron_volts=False)
