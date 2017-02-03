@@ -243,28 +243,31 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
             barrier_lowering_h = np.zeros_like(p, dtype=np.float)
             field_z = field(z_nodes)
             if dopant.trap_potential is not None:
+                kT = to_numeric(k * schottky_diode.T / q)
+                theta_points = 100
+                theta = np.linspace(0, np.pi, num=theta_points, endpoint=True)
+                barrier_lowering = np.zeros((theta_points, len(z_nodes)), dtype=np.float)
+                max_N_l = dopant.trap_potential.get_potential_by_name('Charged Dislocation')\
+                        .max_linear_charge_density
+                dsl_charge_density = max_N_l * dopant.F(z_nodes)
                 for z_num, local_electric_field in enumerate(field_z):
-                    dsl_charge_density = dopant.trap_potential.get_potential_by_name('Charged Dislocation')\
-                        .max_linear_charge_density * dopant.F(z_nodes[z_num])
+                    #dsl_charge_density = max_N_l * dopant.F(z_nodes[z_num])
                     local_electric_field_r = abs(local_electric_field)
                     local_electric_field_theta = 0 if local_electric_field >= 0 else np.pi
                     local_electric_field_3d = (local_electric_field_r, local_electric_field_theta, 0.0)
                     dopant.trap_potential.get_potential_by_name('Charged Dislocation')\
-                        .set_linear_charge_density(dsl_charge_density)
+                        .set_linear_charge_density(dsl_charge_density[z_num])
                     dopant.trap_potential.get_potential_by_name('External Field')\
                         .external_field = local_electric_field_3d
-
-                    kT = to_numeric(k * schottky_diode.T / q)
-                    theta = np.linspace(0, np.pi, num=100, endpoint=True)
-                    barrier_lowering = np.array([dopant.trap_potential.barrier_lowering(theta_i) for theta_i in theta])
+                    barrier_lowering[:,z_num] = np.array([dopant.trap_potential.barrier_lowering(theta_i)[0] for theta_i in theta])
                     #poole_frenkel = 0.5 * np.trapz(np.sin(theta) * np.exp(abs(barrier_lowering[:, 0]) / kT), theta)
-                    poole_frenkel = 0.5 * np.trapz(np.exp(abs(barrier_lowering[:, 0]) / kT), theta)
-                    if np.sum(barrier_lowering[:, 0]) < 0:
-                        poole_frenkel_e[z_num] = poole_frenkel
-                        print 'emission boost e: %2.4g' % poole_frenkel
-                    elif np.sum(barrier_lowering[:, 0]) > 0:
-                        poole_frenkel_h[z_num] = poole_frenkel
-                        print 'emission boost h: %2.4g' % poole_frenkel
+                poole_frenkel = 0.5 * np.trapz(np.exp(abs(barrier_lowering) / kT), theta, axis=0)
+                if np.sum(barrier_lowering[:, 0]) < 0:
+                    poole_frenkel_e = poole_frenkel
+                    print 'emission boost e: %2.4g' % poole_frenkel
+                elif np.sum(barrier_lowering[:, 0]) > 0:
+                    poole_frenkel_h = poole_frenkel
+                    print 'emission boost h: %2.4g' % poole_frenkel
 
 
 
