@@ -280,10 +280,10 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                 poole_frenkel = 0.5 * np.trapz(np.exp(abs(barrier_lowering) / kT), theta, axis=0)
                 if np.sum(barrier_lowering[:, 0]) < 0:
                     poole_frenkel_e = poole_frenkel
-                    print 'emission boost e:', poole_frenkel
+                    #print 'emission boost e:', poole_frenkel
                 elif np.sum(barrier_lowering[:, 0]) > 0:
                     poole_frenkel_h = poole_frenkel
-                    print 'emission boost h:', poole_frenkel
+                    #print 'emission boost h:', poole_frenkel
 
 
 
