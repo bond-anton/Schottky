@@ -260,6 +260,13 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                         .set_linear_charge_density(dsl_charge_density[z_num])
                     dopant.trap_potential.get_potential_by_name('External Field')\
                         .external_field = local_electric_field_3d
+
+                    loc_f = local_electric_field_3d
+                    loc_a = dopant.trap_potential.get_potential_by_name('Charged Dislocation').a
+                    loc_b = dopant.trap_potential.get_potential_by_name('Deformation').a
+                    r0 = (np.sqrt(loc_a**2 + 4* loc_b * loc_f * np.cos(theta)) - loc_a) / (2 * loc_f * np.cos(theta))
+                    bl_grid = dopant.trap_potential.potential(r0, theta, 0)
+                    print bl_grid
                     barrier_lowering[:,z_num] = np.array([dopant.trap_potential.barrier_lowering(theta_i)[0] for theta_i in theta])
                     #poole_frenkel = 0.5 * np.trapz(np.sin(theta) * np.exp(abs(barrier_lowering[:, 0]) / kT), theta)
                 poole_frenkel = 0.5 * np.trapz(np.exp(abs(barrier_lowering) / kT), theta, axis=0)
