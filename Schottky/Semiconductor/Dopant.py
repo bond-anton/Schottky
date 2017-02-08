@@ -52,7 +52,7 @@ class Dopant(Trap):
         '''
         self.dF = interp_Fn(Z, dF, interp_type='last')
 
-'''
+    '''
     def generate_pf_lookup(self, Nl_range, F_range, T):
         if self.poole_frenkel_lookup is not None:
             if os.path.isfile(fname):
@@ -75,8 +75,7 @@ class Dopant(Trap):
                         [self.trap_potential.barrier_lowering(theta_i)[0] for theta_i in theta])
                 poole_frenkel[i, :] = 0.5 * np.trapz(np.exp(abs(barrier_lowering) / kT), theta, axis=0)
 
-'''
-
+    '''
 
     def __str__(self):
         z = sym.symbols('z')
