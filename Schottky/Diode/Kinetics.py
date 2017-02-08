@@ -261,7 +261,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                     dopant.trap_potential.get_potential_by_name('External Field')\
                         .external_field = local_electric_field_3d
 
-                    loc_f = local_electric_field_3d
+                    loc_f = local_electric_field_r
                     loc_a = dopant.trap_potential.get_potential_by_name('Charged Dislocation').a
                     loc_b = dopant.trap_potential.get_potential_by_name('Deformation').a
                     r0 = (np.sqrt(loc_a**2 + 4* loc_b * loc_f * np.cos(theta)) - loc_a) / (2 * loc_f * np.cos(theta))
