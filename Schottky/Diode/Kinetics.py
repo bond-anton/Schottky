@@ -234,6 +234,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
             dopant_key = dopant.name + '_F'
             if dopant.name in fast_traps:
                 if debug:
+                    print '\nDopant:', dopant.name
                     print 'This dopant is in a fast-traps list, skipping.'
                 dopants_skip_list.append(dopant_key)
                 continue
@@ -299,7 +300,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
             max_dt = df_threshold / np.max(np.abs(df_total))
             if debug:
                 print '\nDopant:', dopant.name
-                print 'time constant %2.2g s' % tau
+                print 'Min time constant %2.2g s' % tau
                 #print 'Max dF:', np.max(np.abs(df_dt)), 'th:', df_threshold
                 print 'Max dF:', np.max(np.abs(df_total)), 'th:', df_threshold
                 print 'Max dt:', max_dt, 'dt:', dt
