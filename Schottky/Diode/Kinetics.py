@@ -450,11 +450,11 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                 if debug:
                     print '\nDopant', dopant_key, 'does not need an update'
                 continue
-            dopants_f[dopant_key] += df_dopants[dopant_key] * dt
-            dopants_f[dopant_key][np.where(dopants_f[dopant_key] > 1.0)] = 1.0
-            dopants_f[dopant_key][np.where(dopants_f[dopant_key] < 0.0)] = 0.0
-            dopant.set_F_interp(z_nodes, dopants_f[dopant_key])
-            dopant.set_dF_interp(z_nodes, np.zeros_like(dopants_f[dopant_key]))
+            dopants_f_corr = dopants_f[dopant_key] + df_dopants[dopant_key] * dt
+            dopants_f_corr[np.where(dopants_f_corr > 1.0)] = 1.0
+            dopants_f_corr[np.where(dopants_f_corr < 0.0)] = 0.0
+            dopant.set_F_interp(z_nodes, dopants_f_corr)
+            dopant.set_dF_interp(z_nodes, np.zeros_like(dopants_f_corr))
 
         for bi in schottky_diode.Semiconductor.bonding_interfaces:
             bi_tilt_f = []
