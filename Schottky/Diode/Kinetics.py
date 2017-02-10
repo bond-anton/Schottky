@@ -273,7 +273,8 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                     #print bl_grid[0,:,0].shape, theta.shape
                     #print bl_grid[0,:,0]
                     bl_flat = np.zeros_like(theta)
-                    bl_flat[idx] = bl_grid[:,0,0]
+                    if loc_f > 10:
+                        bl_flat[idx] = bl_grid[:,0,0]
                     #barrier_lowering[:,z_num] = np.array([dopant.trap_potential.barrier_lowering(theta_i)[0] for theta_i in theta])
                     barrier_lowering[:, z_num] = bl_flat
                     #print barrier_lowering[:, z_num]
