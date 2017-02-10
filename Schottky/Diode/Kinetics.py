@@ -252,6 +252,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                 max_N_l = dopant.trap_potential.get_potential_by_name('Charged Dislocation')\
                         .max_linear_charge_density
                 dsl_charge_density = max_N_l * dopant.F(z_nodes)
+                idx_set = False
                 for z_num, local_electric_field in enumerate(field_z):
                     #print z_num, 'of', len(z_nodes)
                     #dsl_charge_density = max_N_l * dopant.F(z_nodes[z_num])
@@ -267,13 +268,15 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                     loc_a = dopant.trap_potential.get_potential_by_name('Charged Dislocation').a
                     loc_b = dopant.trap_potential.get_potential_by_name('Deformation').a
                     r0 = np.zeros_like(theta)
-                    idx = np.where(loc_a**2 + 4* loc_b * loc_f * np.cos(theta) >= 0)
+                    if not idx_set:
+                        idx = np.where(loc_a**2 + 4* loc_b * loc_f * np.cos(theta) >= 0)
+                        idx_set = True
                     r0[idx] = (np.sqrt(loc_a**2 + 4* loc_b * loc_f * np.cos(theta[idx])) - loc_a) / (2 * loc_f * np.cos(theta[idx]))
                     bl_grid = dopant.trap_potential.potential(r0[idx], theta[idx], 0)
                     #print bl_grid[0,:,0].shape, theta.shape
                     #print bl_grid[0,:,0]
                     bl_flat = np.zeros_like(theta)
-                    if loc_f > 1e3:
+                    if loc_f > -1e3:
                         bl_flat[idx] = bl_grid[:,0,0]
                     #barrier_lowering[:,z_num] = np.array([dopant.trap_potential.barrier_lowering(theta_i)[0] for theta_i in theta])
                     barrier_lowering[:, z_num] = bl_flat
