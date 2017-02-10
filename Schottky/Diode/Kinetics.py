@@ -187,14 +187,15 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                                                              fast_traps=fast_traps,
                                                              t=t, initial_condition_id=last_state_id,
                                                              rho_rel_err=rho_rel_err, max_iter=100, debug=False)
+
         t_points.append(t)
         potential_t.append(potential)
         field_d.append(field)
         z_t.append(z_nodes)
         diode_voltage_drop_t.append(diode_voltage_drop)
         current_density_t.append(current_density)
-        bonding_interfaces_f_t.append(bonding_interface_f)
-        dopants_f_t.append(dopants_f)
+        bonding_interfaces_f_t.append(bonding_interface_f.copy())
+        dopants_f_t.append(dopants_f.copy())
 
         fermi_level = schottky_diode.EfEc(potential, z_nodes, eV=False)
 
@@ -447,7 +448,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
             dopant_key = dopant.name + '_F'
             if dopant_key in dopants_skip_list:
                 if debug:
-                    print 'Dopant', dopant_key, 'does not need an update'
+                    print '\nDopant', dopant_key, 'does not need an update'
                 continue
             dopants_f[dopant_key] += df_dopants[dopant_key] * dt
             dopants_f[dopant_key][np.where(dopants_f[dopant_key] > 1.0)] = 1.0
