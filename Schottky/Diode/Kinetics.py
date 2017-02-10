@@ -448,7 +448,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
             dopant_key = dopant.name + '_F'
             if dopant_key in dopants_skip_list:
                 if debug:
-                    print '\nDopant', dopant_key, 'does not need an update'
+                    print '\nDopant', dopant.name, 'does not need an update'
                 continue
             dopants_f_corr = dopants_f[dopant_key] + df_dopants[dopant_key] * dt
             dopants_f_corr[np.where(dopants_f_corr > 1.0)] = 1.0
