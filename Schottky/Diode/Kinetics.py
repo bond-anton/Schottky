@@ -178,7 +178,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
     if fast_traps is None:
         fast_traps = []
     while t <= t_stop:
-        print 't =', t
+        print '\n\nt =', t
         potential, field, z_nodes, _, \
             diode_voltage_drop, _, current_density, _, \
             bonding_interface_f, dopants_f, \
