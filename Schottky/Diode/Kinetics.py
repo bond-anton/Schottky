@@ -256,7 +256,6 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                 max_N_l = dopant.trap_potential.get_potential_by_name('Charged Dislocation')\
                         .max_linear_charge_density
                 dsl_charge_density = max_N_l * dopant.F(z_nodes)
-                idx_set = False
                 for z_num, local_electric_field in enumerate(field_z):
                     #print z_num, 'of', len(z_nodes)
                     #dsl_charge_density = max_N_l * dopant.F(z_nodes[z_num])
@@ -272,13 +271,15 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                     loc_a = dopant.trap_potential.get_potential_by_name('Charged Dislocation').a
                     loc_b = dopant.trap_potential.get_potential_by_name('Deformation').a
                     r0 = np.zeros_like(theta)
-                    if not idx_set or 1:
+                    if np.allclose(loc_f, 0.0):
+                        r0 = loc_b / loc_a
+                    else:
                         idx = np.where(loc_a**2 + 4* loc_b * loc_f * np.cos(theta) >= 0)
-                        idx_set = True
-                    r0[idx] = (np.sqrt(loc_a**2 + 4* loc_b * loc_f * np.cos(theta[idx])) - loc_a) / (2 * loc_f * np.cos(theta[idx]))
-                    zero_field_idx = np.where(loc_f * np.cos(theta) < 10)
-                    r0[zero_field_idx] = loc_b / loc_a
-                    bl_grid = dopant.trap_potential.potential(r0[idx], theta[idx], 0)
+                        r0[idx] = (np.sqrt(loc_a**2 + 4* loc_b * loc_f * np.cos(theta[idx])) - loc_a) / (2 * loc_f * np.cos(theta[idx]))
+                        zero_theta_idx = np.where(np.allclose(np.cos(theta), 0))
+                        r0[zero_theta_idx] = loc_b / loc_a
+                    non_zero_r_idx = np.where(r0 != 0.0)
+                    bl_grid = dopant.trap_potential.potential(r0[non_zero_r_idx], theta[non_zero_r_idx], 0)
                     #print bl_grid[0,:,0].shape, theta.shape
                     #print bl_grid[0,:,0]
                     bl_flat = np.zeros_like(theta)
