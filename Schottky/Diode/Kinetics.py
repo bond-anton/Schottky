@@ -276,6 +276,8 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                         idx = np.where(loc_a**2 + 4* loc_b * loc_f * np.cos(theta) >= 0)
                         idx_set = True
                     r0[idx] = (np.sqrt(loc_a**2 + 4* loc_b * loc_f * np.cos(theta[idx])) - loc_a) / (2 * loc_f * np.cos(theta[idx]))
+                    zero_field_idx = np.where(loc_f * np.cos(theta) < 10)
+                    r0[zero_field_idx] = loc_b / loc_a
                     bl_grid = dopant.trap_potential.potential(r0[idx], theta[idx], 0)
                     #print bl_grid[0,:,0].shape, theta.shape
                     #print bl_grid[0,:,0]
