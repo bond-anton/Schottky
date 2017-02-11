@@ -148,6 +148,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                    rho_rel_err=1e-1, df_threshold=1e-3, debug=False, debug_plot=False, z_limit=None):
     if z_limit is None:
         z_limit = 1e8
+    z_limit_f = 1e8
     t_points = []
     potential_t = []
     field_d = []
@@ -232,7 +233,6 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
             n = np.zeros_like(n)
 
         #fast_traps = []
-        z_limit_f = 1e8
         dopants_skip_list = []
         df_dopants = {}
         for dopant in schottky_diode.Semiconductor.dopants:
