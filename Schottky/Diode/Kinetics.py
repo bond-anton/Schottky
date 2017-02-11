@@ -232,7 +232,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
             n = np.zeros_like(n)
 
         #fast_traps = []
-
+        z_limit_f = 1e8
         dopants_skip_list = []
         df_dopants = {}
         for dopant in schottky_diode.Semiconductor.dopants:
@@ -272,6 +272,8 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                     loc_b = dopant.trap_potential.get_potential_by_name('Deformation').a
                     r0 = np.zeros_like(theta)
                     if loc_f < 1.0e-1:
+                        if z_nodes[z_num] < z_limit_f:
+                            z_limit_f = z_nodes[z_num]
                         #print 'here', loc_f, z_nodes[z_num]
                         try:
                             r0[:] = -loc_b / loc_a
@@ -476,7 +478,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
             dopants_f_corr = dopants_f[dopant_key] + df_dopants[dopant_key] * dt
             dopants_f_corr[np.where(dopants_f_corr > 1.0)] = 1.0
             dopants_f_corr[np.where(dopants_f_corr < 0.0)] = 0.0
-            #dopants_f_corr[np.where(z_nodes > z_limit)] = 1.0 # dopants_f_corr[z_limit_idx][-1]
+            dopants_f_corr[np.where(z_nodes > z_limit_f)] = dopants_f_corr[np.where(z_nodes < z_limit_f)][-1]
             dopant.set_F_interp(z_nodes, dopants_f_corr)
             dopant.set_dF_interp(z_nodes, np.zeros_like(dopants_f_corr))
 
