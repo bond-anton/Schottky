@@ -270,7 +270,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                     loc_a = dopant.trap_potential.get_potential_by_name('Charged Dislocation').a
                     loc_b = dopant.trap_potential.get_potential_by_name('Deformation').a
                     r0 = np.zeros_like(theta)
-                    if not idx_set:
+                    if not idx_set or 1:
                         idx = np.where(loc_a**2 + 4* loc_b * loc_f * np.cos(theta) >= 0)
                         idx_set = True
                     r0[idx] = (np.sqrt(loc_a**2 + 4* loc_b * loc_f * np.cos(theta[idx])) - loc_a) / (2 * loc_f * np.cos(theta[idx]))
@@ -461,7 +461,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
             dopants_f_corr = dopants_f[dopant_key] + df_dopants[dopant_key] * dt
             dopants_f_corr[np.where(dopants_f_corr > 1.0)] = 1.0
             dopants_f_corr[np.where(dopants_f_corr < 0.0)] = 0.0
-            dopants_f_corr[np.where(z_nodes > z_limit)] = 1.0
+            dopants_f_corr[np.where(z_nodes > z_limit)] = dopants_f_corr[np.where(z_nodes < z_limit)][-1]
             dopant.set_F_interp(z_nodes, dopants_f_corr)
             dopant.set_dF_interp(z_nodes, np.zeros_like(dopants_f_corr))
 
