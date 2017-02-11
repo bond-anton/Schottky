@@ -202,8 +202,6 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
 
         fermi_level = schottky_diode.EfEc(potential, z_nodes, eV=False)
 
-        z_limit_idx = np.where(z_nodes < z_limit)
-
         if debug_plot:
             if t == 0:
                 potential_lines['Start potential'].set_data(z_nodes * 1e6, -potential(z_nodes))
@@ -319,13 +317,15 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                                       barrier_lowering_e=barrier_lowering_e,
                                       barrier_lowering_h=barrier_lowering_h,
                                       use_mpmath=False, debug=False)
+            z_limit_idx = np.where(z_nodes < z_limit)
+            z_limit_f_idx = np.where(z_nodes < z_limit_f)
             df_dopants[dopant_key] = df_dt
-            df_total = np.sum(df_dt[z_limit_idx]) / np.sum(dopants_f_t[0][dopant_key][z_limit_idx])
+            df_total = np.sum(df_dt[z_limit_f_idx]) / np.sum(dopants_f_t[0][dopant_key][z_limit_f_idx])
             #max_dt = df_threshold / np.max(np.abs(df_dt))
             max_dt = df_threshold / np.max(np.abs(df_total))
             if debug:
                 print '\nDopant:', dopant.name
-                print 'Z limit of %2.2g m: left %d points of %d' % (z_limit, len(z_nodes[z_limit_idx]), len(z_nodes))
+                print 'Z limit of %2.2g m: left %d points of %d' % (z_limit_f, len(z_nodes[z_limit_f_idx]), len(z_nodes))
                 print 'Min time constant %2.2g s' % tau
                 #print 'Max dF:', np.max(np.abs(df_dt)), 'th:', df_threshold
                 print 'Max dF:', np.max(np.abs(df_total)), 'th:', df_threshold
@@ -478,7 +478,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
             dopants_f_corr = dopants_f[dopant_key] + df_dopants[dopant_key] * dt
             dopants_f_corr[np.where(dopants_f_corr > 1.0)] = 1.0
             dopants_f_corr[np.where(dopants_f_corr < 0.0)] = 0.0
-            dopants_f_corr[np.where(z_nodes > z_limit_f)] = dopants_f_corr[np.where(z_nodes < z_limit_f)][-1]
+            dopants_f_corr[np.where(z_nodes > z_limit_f)] = dopants_f_corr[z_limit_f_idx][-1]
             dopant.set_F_interp(z_nodes, dopants_f_corr)
             dopant.set_dF_interp(z_nodes, np.zeros_like(dopants_f_corr))
 
