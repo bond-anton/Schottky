@@ -287,13 +287,15 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                         except FloatingPointError:
                             r0[zero_theta_idx] = 0.0
                     non_zero_r_idx = np.where(r0 > 0.0)
-                    #print len(non_zero_r_idx[0])
                     bl_grid = dopant.trap_potential.potential(r0[non_zero_r_idx], theta[non_zero_r_idx], 0)
                     #print np.rad2deg(theta[non_zero_r_idx])
                     #print bl_grid[0,:,0].shape, theta.shape
                     #print bl_grid[0,:,0]
                     bl_flat = np.zeros_like(theta)
-                    bl_flat[non_zero_r_idx] = bl_grid[:,0,0]
+                    try:
+                        bl_flat[non_zero_r_idx] = bl_grid[:,0,0]
+                    except IndexError:
+                        pass
                     #barrier_lowering[:,z_num] = np.array([dopant.trap_potential.barrier_lowering(theta_i)[0] for theta_i in theta])
                     barrier_lowering[:, z_num] = bl_flat
                     #print barrier_lowering[:, z_num]
