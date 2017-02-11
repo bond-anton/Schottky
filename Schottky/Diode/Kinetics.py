@@ -272,8 +272,8 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                     loc_b = dopant.trap_potential.get_potential_by_name('Deformation').a
                     r0 = np.zeros_like(theta)
                     if loc_f < 1.0e-1:
-                        print 'here', loc_f, z_nodes[z_num]
-                        r0 = loc_b / loc_a
+                        #print 'here', loc_f, z_nodes[z_num]
+                        r0[:] = loc_b / loc_a
                     else:
                         idx = np.where(loc_a**2 + 4* loc_b * loc_f * np.cos(theta) >= 0)
                         r0[idx] = (np.sqrt(loc_a**2 + 4* loc_b * loc_f * np.cos(theta[idx])) - loc_a) / (2 * loc_f * np.cos(theta[idx]))
