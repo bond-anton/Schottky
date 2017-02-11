@@ -308,7 +308,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
             max_dt = df_threshold / np.max(np.abs(df_total))
             if debug:
                 print '\nDopant:', dopant.name
-                print 'Z limit of %2.2g m: left %d points of %d' % (z_limit, len(z_limit_idx), len(z_nodes))
+                print 'Z limit of %2.2g m: left %d points of %d' % (z_limit, len(z_nodes[z_limit_idx]), len(z_nodes))
                 print 'Min time constant %2.2g s' % tau
                 #print 'Max dF:', np.max(np.abs(df_dt)), 'th:', df_threshold
                 print 'Max dF:', np.max(np.abs(df_total)), 'th:', df_threshold
