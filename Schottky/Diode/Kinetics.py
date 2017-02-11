@@ -275,7 +275,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                         #print 'here', loc_f, z_nodes[z_num]
                         try:
                             r0[:] = -loc_b / loc_a
-                        except ZeroDivisionError:
+                        except FloatingPointError:
                             pass
                         #print len(r0), r0
                     else:
@@ -284,7 +284,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                         zero_theta_idx = np.where(np.allclose(np.cos(theta), 0))
                         try:
                             r0[zero_theta_idx] = -loc_b / loc_a
-                        except ZeroDivisionError:
+                        except FloatingPointError:
                             r0[zero_theta_idx] = 0.0
                     non_zero_r_idx = np.where(r0 > 0.0)
                     #print len(non_zero_r_idx[0])
