@@ -320,7 +320,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                                                 electron_volts=False, debug=False)
                 dopant.set_F_interp(z_nodes, dopant_f)
                 dopant.set_dF_interp(z_nodes, np.zeros_like(dopant_f))
-                # fast_traps.append(dopant.name)
+                fast_traps.append(dopant.name)
                 dopants_skip_list.append(dopant_key)
 
         localized_traps_skip_list = []
