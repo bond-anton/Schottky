@@ -274,7 +274,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                             z_limit_f = z_nodes[z_num]
                         #print 'here', loc_f, z_nodes[z_num]
                         try:
-                            r0[:] = -loc_b / loc_a
+                            r0[:] = 0.0#-loc_b / loc_a
                         except FloatingPointError:
                             pass
                         #print len(r0), r0
