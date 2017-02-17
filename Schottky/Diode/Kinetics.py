@@ -297,6 +297,8 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                         bl_flat[non_zero_r_idx] = bl_grid[:,0,0]
                     except IndexError:
                         pass
+                    print kT
+                    print bl_flat
                     #barrier_lowering[:,z_num] = np.array([dopant.trap_potential.barrier_lowering(theta_i)[0] for theta_i in theta])
                     barrier_lowering[:, z_num] = bl_flat
                     #print barrier_lowering[:, z_num]
