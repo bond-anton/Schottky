@@ -249,8 +249,8 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
             if dopant.trap_potential is not None:
                 kT = to_numeric(k * schottky_diode.T / q)
                 theta_points = 100
-                #theta = np.linspace(0, np.pi, num=theta_points, endpoint=True)
-                theta = np.linspace(0, np.pi / 2, num=theta_points, endpoint=True)
+                theta = np.linspace(0, np.pi, num=theta_points, endpoint=True)
+                #theta = np.linspace(0, np.pi / 2, num=theta_points, endpoint=True)
                 barrier_lowering = np.zeros((theta_points, len(z_nodes)), dtype=np.float)
                 max_N_l = dopant.trap_potential.get_potential_by_name('Charged Dislocation')\
                         .max_linear_charge_density
@@ -270,7 +270,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                     loc_a = dopant.trap_potential.get_potential_by_name('Charged Dislocation').a
                     loc_b = dopant.trap_potential.get_potential_by_name('Deformation').a
                     r0 = np.zeros_like(theta)
-                    if loc_f < 1.0e-2:
+                    if loc_f < 1.0e-5:
                         if z_nodes[z_num] < z_limit_f:
                             z_limit_f = z_nodes[z_num]
                         #print 'here', loc_f, z_nodes[z_num]
@@ -282,7 +282,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                     else:
                         idx = np.where(loc_a**2 + 4* loc_b * loc_f * np.cos(theta) >= 0)
                         r0[idx] = (np.sqrt(loc_a**2 + 4* loc_b * loc_f * np.cos(theta[idx])) - loc_a) / (2 * loc_f * np.cos(theta[idx]))
-                        zero_theta_idx = np.where(np.cos(theta) < 1.0e-3)
+                        zero_theta_idx = np.where(abs(np.cos(theta)) < 1.0e-3)
                         try:
                             r0[zero_theta_idx] = -loc_b / loc_a
                         except FloatingPointError:
@@ -305,7 +305,8 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                     #print bl_flat - barrier_lowering[:, z_num]
                     #poole_frenkel = 0.5 * np.trapz(np.sin(theta) * np.exp(abs(barrier_lowering[:, 0]) / kT), theta)
                 #poole_frenkel = 0.5 * np.trapz(np.exp(abs(barrier_lowering) / kT), theta, axis=0)
-                poole_frenkel = 0.5 + np.trapz(np.exp(abs(barrier_lowering) / kT), theta, axis=0) / np.pi
+                #poole_frenkel = 0.5 + np.trapz(np.exp(abs(barrier_lowering) / kT), theta, axis=0) / np.pi
+                poole_frenkel = np.trapz(np.exp(abs(barrier_lowering) / kT), theta, axis=0) / np.pi
                 print poole_frenkel
                 if np.sum(barrier_lowering[:, 0]) < 0:
                     poole_frenkel_e = poole_frenkel
