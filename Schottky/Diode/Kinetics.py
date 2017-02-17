@@ -282,7 +282,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                     else:
                         idx = np.where(loc_a**2 + 4* loc_b * loc_f * np.cos(theta) >= 0)
                         r0[idx] = (np.sqrt(loc_a**2 + 4* loc_b * loc_f * np.cos(theta[idx])) - loc_a) / (2 * loc_f * np.cos(theta[idx]))
-                        zero_theta_idx = np.where(np.allclose(np.cos(theta), 0))
+                        zero_theta_idx = np.where(np.cos(theta) < 1.0e-3)
                         try:
                             r0[zero_theta_idx] = -loc_b / loc_a
                         except FloatingPointError:
