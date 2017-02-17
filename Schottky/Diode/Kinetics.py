@@ -302,8 +302,8 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                         bl_flat[non_zero_r_idx] = bl_grid[:, 0, 0]
                     except IndexError:
                         pass
-                    print kT
-                    print bl_flat
+                    #print kT
+                    #print bl_flat
                     #barrier_lowering[:,z_num] = np.array([dopant.trap_potential.barrier_lowering(theta_i)[0] for theta_i in theta])
                     barrier_lowering[:, z_num] = bl_flat
                     #print barrier_lowering[:, z_num]
@@ -312,7 +312,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                 #poole_frenkel = 0.5 * np.trapz(np.exp(abs(barrier_lowering) / kT), theta, axis=0)
                 #poole_frenkel = 0.5 + np.trapz(np.exp(abs(barrier_lowering) / kT), theta, axis=0) / np.pi
                 poole_frenkel = np.trapz(np.exp(abs(barrier_lowering) / kT), theta, axis=0) / np.pi
-                print poole_frenkel
+                #print poole_frenkel
                 if np.sum(barrier_lowering[:, 0]) < 0:
                     poole_frenkel_e = poole_frenkel
                     #print 'emission boost e:', poole_frenkel
