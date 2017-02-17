@@ -249,7 +249,8 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
             if dopant.trap_potential is not None:
                 kT = to_numeric(k * schottky_diode.T / q)
                 theta_points = 100
-                theta = np.linspace(0, np.pi, num=theta_points, endpoint=True)
+                #theta = np.linspace(0, np.pi, num=theta_points, endpoint=True)
+                theta = np.linspace(0, np.pi / 2, num=theta_points, endpoint=True)
                 barrier_lowering = np.zeros((theta_points, len(z_nodes)), dtype=np.float)
                 max_N_l = dopant.trap_potential.get_potential_by_name('Charged Dislocation')\
                         .max_linear_charge_density
@@ -301,7 +302,9 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                     #print barrier_lowering[:, z_num]
                     #print bl_flat - barrier_lowering[:, z_num]
                     #poole_frenkel = 0.5 * np.trapz(np.sin(theta) * np.exp(abs(barrier_lowering[:, 0]) / kT), theta)
-                poole_frenkel = 0.5 * np.trapz(np.exp(abs(barrier_lowering) / kT), theta, axis=0)
+                #poole_frenkel = 0.5 * np.trapz(np.exp(abs(barrier_lowering) / kT), theta, axis=0)
+                poole_frenkel = 0.5 + np.trapz(np.exp(abs(barrier_lowering) / kT), theta, axis=0) / np.pi
+
                 if np.sum(barrier_lowering[:, 0]) < 0:
                     poole_frenkel_e = poole_frenkel
                     #print 'emission boost e:', poole_frenkel
