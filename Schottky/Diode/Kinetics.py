@@ -201,6 +201,14 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
         current_density_t.append(current_density)
         bonding_interfaces_f_t.append(bonding_interface_f.copy())
         dopants_f_t.append(dopants_f.copy())
+        dopants_df = {}
+        dopants_pf = {}
+        for dopant in schottky_diode.Semiconductor.dopants:
+            dopant_key = dopant.name + '_F'
+            dopants_df[dopant_key + '_df'] = np.zeros_like(z_nodes)
+            dopants_pf[dopant_key + '_pf'] = np.ones_like(z_nodes)
+        dopants_df_t.append(dopants_df)
+        dopants_pf_t.append(dopants_pf)
 
         fermi_level = schottky_diode.EfEc(potential, z_nodes, eV=False)
 
