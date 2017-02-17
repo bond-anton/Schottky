@@ -287,7 +287,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                         sol = sol1.copy()
                         sol[np.where(sol2 > 0)] = sol2[np.where(sol2 > 0)]
                         r0[idx] = sol
-                        zero_theta_idx = np.where(abs(np.cos(theta)) < 1.0e-5)
+                        zero_theta_idx = np.where(abs(np.cos(theta)) < 1.0e-10)
                         try:
                             r0[zero_theta_idx] = -loc_b / loc_a
                         except FloatingPointError:
