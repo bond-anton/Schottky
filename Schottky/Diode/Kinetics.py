@@ -312,7 +312,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                 #poole_frenkel = 0.5 * np.trapz(np.exp(abs(barrier_lowering) / kT), theta, axis=0)
                 #poole_frenkel = 0.5 + np.trapz(np.exp(abs(barrier_lowering) / kT), theta, axis=0) / np.pi
                 poole_frenkel = np.trapz(np.exp(abs(barrier_lowering) / kT), theta, axis=0) / np.pi
-                #print poole_frenkel
+                print poole_frenkel
                 if np.sum(barrier_lowering[:, 0]) < 0:
                     poole_frenkel_e = poole_frenkel
                     #print 'emission boost e:', poole_frenkel
@@ -332,6 +332,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
             z_limit_f_idx = np.where(z_nodes < z_limit_f)
             z_limit_f_idx0 = np.where(z_t[0] < z_limit_f)
             df_dopants[dopant_key] = df_dt
+            print df_dt
             df_total = np.sum(df_dt[z_limit_f_idx]) / np.sum(dopants_f_t[0][dopant_key][z_limit_f_idx0])
             #max_dt = df_threshold / np.max(np.abs(df_dt))
             max_dt = df_threshold / np.max(np.abs(df_total))
