@@ -235,6 +235,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
         #fast_traps = []
         dopants_skip_list = []
         df_dopants = {}
+        df_dopants_tmp = {}
         pf_dopants = {}
         for dopant in schottky_diode.Semiconductor.dopants:
             dopant_key = dopant.name + '_F'
@@ -334,7 +335,8 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
             z_limit_idx = np.where(z_nodes < z_limit)
             z_limit_f_idx = np.where(z_nodes < z_limit_f)
             z_limit_f_idx0 = np.where(z_t[0] < z_limit_f)
-            df_dopants[dopant_key+'_df'] = df_dt
+            df_dopants_tmp[dopant_key+'_df'] = df_dt
+            df_dopants[dopant_key] = df_dt
             #print df_dt
             df_total = np.sum(df_dt[z_limit_f_idx]) / np.sum(dopants_f_t[0][dopant_key][z_limit_f_idx0])
             #max_dt = df_threshold / np.max(np.abs(df_dt))
@@ -360,7 +362,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                 fast_traps.append(dopant.name)
                 dopants_skip_list.append(dopant_key)
 
-        dopants_df_t.append(df_dopants.copy())
+        dopants_df_t.append(df_dopants_tmp.copy())
         dopants_pf_t.append(pf_dopants.copy())
 
         localized_traps_skip_list = []
