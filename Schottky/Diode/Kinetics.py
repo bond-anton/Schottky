@@ -202,6 +202,14 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
 
         fermi_level = schottky_diode.EfEc(potential, z_nodes, eV=False)
 
+        n, p = schottky_diode.n_carriers_theory(potential, z_nodes)
+        if schottky_diode.Semiconductor.dop_type == 'n':
+            p = np.zeros_like(p)
+        elif schottky_diode.Semiconductor.dop_type == 'p':
+            n = np.zeros_like(n)
+        n_t.append(n.copy())
+        p_t.append(p.copy())
+
         if debug_plot:
             if t == 0:
                 potential_lines['Start potential'].set_data(z_nodes * 1e6, -potential(z_nodes))
@@ -220,17 +228,14 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
 
         dt = delta_t_max if t_stop - t > delta_t_max else t_stop - t
         if dt == 0:
+            for dopant in schottky_diode.Semiconductor.dopants:
+                dopant_key = dopant.name + '_F'
+                dopants_f_t[-1].update({dopant_key + '_pf': np.ones_like(z_nodes)})
+                dopants_f_t[-1].update({dopant_key + '_df': np.zeros_like(z_nodes)})
             break
         if debug:
             print '\n\nT = %2.2f K, t = %2.2g s, dt = %2.2g s' % (schottky_diode.T, t, dt)
 
-        n, p = schottky_diode.n_carriers_theory(potential, z_nodes)
-        if schottky_diode.Semiconductor.dop_type == 'n':
-            p = np.zeros_like(p)
-        elif schottky_diode.Semiconductor.dop_type == 'p':
-            n = np.zeros_like(n)
-        n_t.append(n.copy())
-        p_t.append(p.copy())
         #fast_traps = []
         dopants_skip_list = []
         df_dopants = {}
@@ -286,7 +291,8 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                         sol1 = (sqrt - loc_a) / (2 * loc_f * np.cos(theta[idx]))
                         sol2 = (-sqrt - loc_a) / (2 * loc_f * np.cos(theta[idx]))
                         sol = sol1.copy()
-                        sol[np.where(sol2 > 0)] = sol2[np.where(sol2 > 0)]
+                        sol2_selection = np.where((sol2 > 0) & (sol2 < sol1))
+                        sol[sol2_selection] = sol2[sol2_selection]
                         r0[idx] = sol
                         zero_theta_idx = np.where(abs(np.cos(theta)) < 1.0e-10)
                         try:
