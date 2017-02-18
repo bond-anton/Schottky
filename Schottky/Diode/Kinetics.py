@@ -145,9 +145,7 @@ def dopants_df_dt(schottky_diode, initial_condition_id):
 
 
 def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_max, t_stop, fast_traps=None,
-                   rho_rel_err=1e-1, df_threshold=1e-3, debug=False, debug_plot=False, z_limit=None):
-    if z_limit is None:
-        z_limit = 1e8
+                   rho_rel_err=1e-1, df_threshold=1e-3, debug=False, debug_plot=False):
     z_limit_f = 1e8
     t_points = []
     potential_t = []
@@ -330,7 +328,6 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                                       barrier_lowering_e=barrier_lowering_e,
                                       barrier_lowering_h=barrier_lowering_h,
                                       use_mpmath=False, debug=False)
-            z_limit_idx = np.where(z_nodes < z_limit)
             z_limit_f_idx = np.where(z_nodes < z_limit_f)
             z_limit_f_idx0 = np.where(z_t[0] < z_limit_f)
             dopants_f_t[-1].update({dopant_key + '_df': df_dt})
