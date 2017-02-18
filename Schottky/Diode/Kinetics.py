@@ -155,8 +155,8 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
     current_density_t = []
     bonding_interfaces_f_t = []
     dopants_f_t = []
-    dopants_pf_t = []
-    dopants_df_t = []
+    n_t = []
+    p_t = []
 
     ic_found, potential, z_nodes, _, _, _, _, _, _, _, _, _ = Poisson.load_diode_state(schottky_diode,
                                                                                        initial_condition_id,
@@ -229,7 +229,8 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
             p = np.zeros_like(p)
         elif schottky_diode.Semiconductor.dop_type == 'p':
             n = np.zeros_like(n)
-
+        n_t.append(n.copy())
+        p_t.append(p.copy())
         #fast_traps = []
         dopants_skip_list = []
         df_dopants = {}
@@ -528,4 +529,4 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
         plt.ioff()
 
     return t_points, potential_t, field_d, z_t, diode_voltage_drop_t, current_density_t, \
-        bonding_interfaces_f_t, dopants_f_t, last_state_id
+        bonding_interfaces_f_t, dopants_f_t, n_t, p_t, last_state_id
