@@ -158,7 +158,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
     n_t = []
     p_t = []
 
-    ic_found, potential, z_nodes, _, _, _, _, _, _, _, _, _ = Poisson.load_diode_state(schottky_diode,
+    ic_found, potential, _, z_nodes, _, _, _, _, _, _, _, _ = Poisson.load_diode_state(schottky_diode,
                                                                                        initial_condition_id,
                                                                                        debug=True)
     if not ic_found:
