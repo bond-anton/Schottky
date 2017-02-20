@@ -366,15 +366,17 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                 deriv = np.average(deriv)
                 if debug:
                     print 'Dopants derivative: %2.2g%%' % (deriv * 100)
-                if abs(deriv) < dopants_deriv_threshold:
-                    if debug:
-                        print 'Traps are all set. Setting dopant occupation to equilibrium value'
-                    dopant_f = dopant.equilibrium_f(schottky_diode.T, schottky_diode.Semiconductor, fermi_level,
-                                                    electron_volts=False, debug=False)
-                    dopant.set_F_interp(z_nodes, dopant_f)
-                    dopant.set_dF_interp(z_nodes, np.zeros_like(dopant_f))
-                    fast_traps.append(dopant.name)
-                    dopants_skip_list.append(dopant_key)
+            else:
+                deriv = 1e8
+            if abs(deriv) < dopants_deriv_threshold:
+                if debug:
+                    print 'Traps are all set. Setting dopant occupation to equilibrium value'
+                dopant_f = dopant.equilibrium_f(schottky_diode.T, schottky_diode.Semiconductor, fermi_level,
+                                                electron_volts=False, debug=False)
+                dopant.set_F_interp(z_nodes, dopant_f)
+                dopant.set_dF_interp(z_nodes, np.zeros_like(dopant_f))
+                fast_traps.append(dopant.name)
+                dopants_skip_list.append(dopant_key)
             elif dt > max_dt > delta_t_min:
                 if debug:
                     print 'Setting dt to', max_dt
