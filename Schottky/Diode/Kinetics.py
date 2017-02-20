@@ -145,8 +145,10 @@ def dopants_df_dt(schottky_diode, initial_condition_id):
 
 
 def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_max, t_stop, fast_traps=None,
-                   rho_rel_err=1e-1, df_threshold=1e-3, debug=False, debug_plot=False):
+                   rho_rel_err=1e-1, df_threshold=1e-3, dopants_deriv_threshold=5.0e-5, dopants_deriv_window=9,
+                   debug=False, debug_plot=False):
     z_limit_f = 1e8
+    dopants_f_total = {}
     t_points = []
     potential_t = []
     field_d = []
@@ -241,6 +243,12 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
         df_dopants = {}
         for dopant in schottky_diode.Semiconductor.dopants:
             dopant_key = dopant.name + '_F'
+            try:
+                dopants_f_total[dopant_key].append(
+                    np.sum(dopants_f_t[-1][dopant_key][z_limit_f_idx0]) \
+                    / np.sum(dopants_f_t[0][dopant_key][z_limit_f_idx0])}))
+            except:
+                dopants_f_total[dopant_key] = [1.0]
             if dopant.name in fast_traps:
                 if debug:
                     print '\nDopant:', dopant.name
@@ -342,16 +350,33 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
             df_dopants[dopant_key] = df_dt
             #print df_dt
             df_total = np.sum(df_dt[z_limit_f_idx]) / np.sum(dopants_f_t[0][dopant_key][z_limit_f_idx0])
-            max_dt = df_threshold / np.max(np.abs(df_dt))
-            #max_dt = df_threshold / np.max(np.abs(df_total))
+            max_dt_local = df_threshold / np.max(np.abs(df_dt))
+            max_dt_total = df_threshold / np.max(np.abs(df_total))
+            max_dt = min(max_dt_local, max_dt_total)
             if debug:
                 print '\nDopant:', dopant.name
                 print 'Z limit of %2.2g m: left %d points of %d' % (z_limit_f, len(z_nodes[z_limit_f_idx]), len(z_nodes))
                 print 'Min time constant %2.2g s' % tau
-                #print 'Max dF:', np.max(np.abs(df_dt)), 'th:', df_threshold
-                print 'Max dF:', np.max(np.abs(df_total)), 'th:', df_threshold
+                print 'Max dF local:', np.max(np.abs(df_dt)), 'th:', df_threshold
+                print 'Max dF total:', np.max(np.abs(df_total)), 'th:', df_threshold
                 print 'Max dt:', max_dt, 'dt:', dt
-            if dt > max_dt > delta_t_min:
+            if len(t_points) >= dopants_deriv_window:
+                deriv = dopants_f_total[dopant_key][-dopants_deriv_window + 1:] \
+                        - dopants_f_total[dopant_key][-dopants_deriv_window:-1]
+                deriv /= t_points[-dopants_deriv_window + 1:] - t_points[-dopants_deriv_window:-1]
+                deriv = np.average(deriv)
+                if debug:
+                    print 'Dopants derivative: %2.2g%%' % (deriv * 100)
+                if deriv < dopants_deriv_threshold:
+                    if debug:
+                        print 'Traps are all set. Setting dopant occupation to equilibrium value'
+                    dopant_f = dopant.equilibrium_f(schottky_diode.T, schottky_diode.Semiconductor, fermi_level,
+                                                    electron_volts=False, debug=False)
+                    dopant.set_F_interp(z_nodes, dopant_f)
+                    dopant.set_dF_interp(z_nodes, np.zeros_like(dopant_f))
+                    fast_traps.append(dopant.name)
+                    dopants_skip_list.append(dopant_key)
+            elif dt > max_dt > delta_t_min:
                 if debug:
                     print 'Setting dt to', max_dt
                 dt = max_dt
