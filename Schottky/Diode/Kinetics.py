@@ -360,9 +360,9 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                 print 'Max dF total:', np.max(np.abs(df_total)), 'th:', df_threshold
                 print 'Max dt:', max_dt, 'dt:', dt
             if len(t_points) >= dopants_deriv_window:
-                deriv = dopants_f_total[dopant_key][-dopants_deriv_window + 1:] \
-                        - dopants_f_total[dopant_key][-dopants_deriv_window:-1]
-                deriv /= t_points[-dopants_deriv_window + 1:] - t_points[-dopants_deriv_window:-1]
+                deriv = np.array(dopants_f_total[dopant_key][-dopants_deriv_window + 1:]) \
+                        - np.array(dopants_f_total[dopant_key][-dopants_deriv_window:-1])
+                deriv /= np.array(t_points[-dopants_deriv_window + 1:]) - np.array(t_points[-dopants_deriv_window:-1])
                 deriv = np.average(deriv)
                 if debug:
                     print 'Dopants derivative: %2.2g%%' % (deriv * 100)
