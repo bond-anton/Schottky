@@ -245,7 +245,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
             dopant_key = dopant.name + '_F'
             try:
                 dopants_f_total[dopant_key].append(
-                    np.sum(dopants_f_t[-1][dopant_key][z_limit_f_idx0]) / np.sum(dopants_f_t[0][dopant_key][z_limit_f_idx0])}))
+                    np.sum(dopants_f_t[-1][dopant_key][z_limit_f_idx0]) / np.sum(dopants_f_t[0][dopant_key][z_limit_f_idx0]))
             except:
                 dopants_f_total[dopant_key] = [1.0]
             if dopant.name in fast_traps:
