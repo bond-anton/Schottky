@@ -366,7 +366,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                 deriv = np.average(deriv)
                 if debug:
                     print 'Dopants derivative: %2.2g%%' % (deriv * 100)
-                if deriv < dopants_deriv_threshold:
+                if abs(deriv) < dopants_deriv_threshold:
                     if debug:
                         print 'Traps are all set. Setting dopant occupation to equilibrium value'
                     dopant_f = dopant.equilibrium_f(schottky_diode.T, schottky_diode.Semiconductor, fermi_level,
