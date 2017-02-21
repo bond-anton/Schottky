@@ -253,7 +253,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
             else:
                 dopants_f_total[dopant_key].append(
                     np.trapz(dopants_f_t[-1][dopant_key][dopants_deriv_z_limit_idx],
-                             x=z_nodes[dopants_deriv_z_limit_idx))
+                             x=z_nodes[dopants_deriv_z_limit_idx]))
             print 'Total Donor charge %2.2g' % dopants_f_total[dopant_key][-1]
             if t > 0:
                 loc_der = (dopants_f_total[dopant_key][-1] - dopants_f_total[dopant_key][-2]) \
