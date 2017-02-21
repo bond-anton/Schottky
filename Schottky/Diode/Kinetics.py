@@ -243,11 +243,15 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
         df_dopants = {}
         for dopant in schottky_diode.Semiconductor.dopants:
             dopant_key = dopant.name + '_F'
-            try:
+            if t == 0:
+                z_limit_f_idx = np.where(z_nodes < z_limit_f)
+                dopants_f_total[dopant_key] = [np.trapz(dopants_f_t[0][dopant_key][z_limit_f_idx],
+                                                        z_nodes[z_limit_f_idx])]
+            else:
+                z_limit_f_idx = np.where(z_nodes < z_limit_f)
                 dopants_f_total[dopant_key].append(
-                    np.sum(dopants_f_t[-1][dopant_key][z_limit_f_idx0]) / np.sum(dopants_f_t[0][dopant_key][z_limit_f_idx0]))
-            except:
-                dopants_f_total[dopant_key] = [1.0]
+                    np.trapz(dopants_f_t[-1][dopant_key][z_limit_f_idx],
+                             z_nodes[z_limit_f_idx]))
             if dopant.name in fast_traps:
                 if debug:
                     print '\nDopant:', dopant.name
@@ -362,6 +366,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
             if len(t_points) >= dopants_deriv_window:
                 deriv = np.array(dopants_f_total[dopant_key][-dopants_deriv_window + 1:]) \
                         - np.array(dopants_f_total[dopant_key][-dopants_deriv_window:-1])
+                deriv /= dopants_f_total[dopant_key][0]
                 deriv /= np.array(t_points[-dopants_deriv_window + 1:]) - np.array(t_points[-dopants_deriv_window:-1])
                 deriv = np.average(deriv)
                 if debug:
