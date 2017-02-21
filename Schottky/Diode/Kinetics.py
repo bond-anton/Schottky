@@ -145,8 +145,11 @@ def dopants_df_dt(schottky_diode, initial_condition_id):
 
 
 def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_max, t_stop, fast_traps=None,
-                   rho_rel_err=1e-1, df_threshold=1e-3, dopants_deriv_threshold=5.0e-5, dopants_deriv_window=9,
+                   rho_rel_err=1e-1, df_threshold=1e-3,
+                   dopants_deriv_threshold=5.0e-5, dopants_deriv_window=9, dopants_deriv_z_limit=None,
                    debug=False, debug_plot=False):
+    if dopants_deriv_z_limit is None:
+        dopants_deriv_z_limit = 1e8
     z_limit_f = 1e8
     dopants_f_total = {}
     t_points = []
@@ -243,15 +246,14 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
         df_dopants = {}
         for dopant in schottky_diode.Semiconductor.dopants:
             dopant_key = dopant.name + '_F'
+            dopants_deriv_z_limit_idx = np.where(z_nodes < dopants_deriv_z_limit)
             if t == 0:
-                z_limit_f_idx = np.where(z_nodes < z_limit_f)
-                dopants_f_total[dopant_key] = [np.trapz(dopants_f_t[0][dopant_key][z_limit_f_idx],
-                                                        x=z_nodes[z_limit_f_idx])]
+                dopants_f_total[dopant_key] = [np.trapz(dopants_f_t[0][dopant_key][dopants_deriv_z_limit_idx],
+                                                        x=z_nodes[dopants_deriv_z_limit_idx])]
             else:
-                z_limit_f_idx = np.where(z_nodes < z_limit_f)
                 dopants_f_total[dopant_key].append(
-                    np.trapz(dopants_f_t[-1][dopant_key][z_limit_f_idx],
-                             x=z_nodes[z_limit_f_idx]))
+                    np.trapz(dopants_f_t[-1][dopant_key][dopants_deriv_z_limit_idx],
+                             x=z_nodes[dopants_deriv_z_limit_idx))
             print 'Total Donor charge %2.2g' % dopants_f_total[dopant_key][-1]
             if t > 0:
                 loc_der = (dopants_f_total[dopant_key][-1] - dopants_f_total[dopant_key][-2]) \
