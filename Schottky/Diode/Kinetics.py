@@ -246,12 +246,17 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
             if t == 0:
                 z_limit_f_idx = np.where(z_nodes < z_limit_f)
                 dopants_f_total[dopant_key] = [np.trapz(dopants_f_t[0][dopant_key][z_limit_f_idx],
-                                                        z_nodes[z_limit_f_idx])]
+                                                        x=z_nodes[z_limit_f_idx])]
             else:
                 z_limit_f_idx = np.where(z_nodes < z_limit_f)
                 dopants_f_total[dopant_key].append(
                     np.trapz(dopants_f_t[-1][dopant_key][z_limit_f_idx],
-                             z_nodes[z_limit_f_idx]))
+                             x=z_nodes[z_limit_f_idx]))
+            print 'Total Donor charge %2.2g' % dopants_f_total[dopant_key][-1]
+            if t > 0:
+                loc_der = (dopants_f_total[dopant_key][-1] - dopants_f_total[dopant_key][-2]) \
+                          / (t_points[-1] - t_points[-2]) / dopants_f_total[dopant_key][0]
+                print 'local derivative %2.2g%%' % (loc_der * 100)
             if dopant.name in fast_traps:
                 if debug:
                     print '\nDopant:', dopant.name
@@ -363,7 +368,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                 print 'Max dF local:', np.max(np.abs(df_dt)), 'th:', df_threshold
                 print 'Max dF total:', np.max(np.abs(df_total)), 'th:', df_threshold
                 print 'Max dt:', max_dt, 'dt:', dt
-            if len(t_points) >= dopants_deriv_window:
+            if len(t_points) > dopants_deriv_window:
                 deriv = np.array(dopants_f_total[dopant_key][-dopants_deriv_window + 1:]) \
                         - np.array(dopants_f_total[dopant_key][-dopants_deriv_window:-1])
                 deriv /= dopants_f_total[dopant_key][0]
