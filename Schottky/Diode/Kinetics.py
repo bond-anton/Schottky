@@ -378,6 +378,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                 deriv = np.average(deriv)
                 if debug:
                     print 'Dopants derivative: %2.2g%%' % (deriv * 100)
+                    print 'Derivative threshold: %2.2g%%' % (dopants_deriv_threshold * 100)
             else:
                 deriv = 1e8
             if abs(deriv) < dopants_deriv_threshold:
