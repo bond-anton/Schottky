@@ -145,7 +145,7 @@ def dopants_df_dt(schottky_diode, initial_condition_id):
 
 
 def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_max, t_stop, fast_traps=None,
-                   rho_rel_err=1e-1, df_threshold=1e-3,
+                   rho_rel_err=1e-1, df_threshold=1e-3, min_t_points=50,
                    dopants_deriv_threshold=5.0e-5, dopants_deriv_window=9, dopants_deriv_z_limit=None,
                    debug=False, debug_plot=False):
     if dopants_deriv_z_limit is None:
@@ -388,7 +388,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                     print 'Derivative threshold: %2.2g%%' % (dopants_deriv_threshold * 100)
             else:
                 deriv = 1e8
-            if abs(deriv) < dopants_deriv_threshold:
+            if abs(deriv) < dopants_deriv_threshold and len(t_points) >= min_t_points:
                 if debug:
                     print 'Traps are all set. Adding dopant to slow traps.'
                 #dopant_f = dopant.equilibrium_f(schottky_diode.T, schottky_diode.Semiconductor, fermi_level,
