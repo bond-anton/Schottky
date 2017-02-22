@@ -185,6 +185,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
     last_state_id = initial_condition_id
     if fast_traps is None:
         fast_traps = []
+    slow_traps = []
     while t <= t_stop:
         print '\n\nt =', t
         potential, field, z_nodes, _, \
@@ -263,6 +264,12 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                 if debug:
                     print '\nDopant:', dopant.name
                     print 'This dopant is in a fast-traps list, skipping.'
+                dopants_skip_list.append(dopant_key)
+                continue
+            if dopant.name in slow_traps:
+                if debug:
+                    print '\nDopant:', dopant.name
+                    print 'This dopant is in a slow-traps list, skipping.'
                 dopants_skip_list.append(dopant_key)
                 continue
             poole_frenkel_e = np.ones_like(z_nodes, dtype=np.float)
@@ -383,12 +390,12 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                 deriv = 1e8
             if abs(deriv) < dopants_deriv_threshold:
                 if debug:
-                    print 'Traps are all set. Setting dopant occupation to equilibrium value'
-                dopant_f = dopant.equilibrium_f(schottky_diode.T, schottky_diode.Semiconductor, fermi_level,
-                                                electron_volts=False, debug=False)
-                dopant.set_F_interp(z_nodes, dopant_f)
-                dopant.set_dF_interp(z_nodes, np.zeros_like(dopant_f))
-                fast_traps.append(dopant.name)
+                    print 'Traps are all set. Adding dopant to slow traps.'
+                #dopant_f = dopant.equilibrium_f(schottky_diode.T, schottky_diode.Semiconductor, fermi_level,
+                #                                electron_volts=False, debug=False)
+                #dopant.set_F_interp(z_nodes, dopant_f)
+                #dopant.set_dF_interp(z_nodes, np.zeros_like(dopant_f))
+                slow_traps.append(dopant.name)
                 dopants_skip_list.append(dopant_key)
             elif dt > max_dt > delta_t_min:
                 if debug:
