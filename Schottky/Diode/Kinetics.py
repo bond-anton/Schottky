@@ -360,7 +360,10 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                     poole_frenkel_h = poole_frenkel
                     #print 'emission boost h:', poole_frenkel
 
-            dopants_f_t[-1].update({dopant_key + '_pf': poole_frenkel})
+            try:
+                dopants_f_t[-1].update({dopant_key + '_pf': poole_frenkel})
+            except:
+                dopants_f_t[-1].update({dopant_key + '_pf': np.ones_like(z_nodes)})
 
             df_dt, tau = dopant.df_dt(schottky_diode.T, schottky_diode.Semiconductor, dopants_f[dopant_key], n, p,
                                       poole_frenkel_e=poole_frenkel_e,
