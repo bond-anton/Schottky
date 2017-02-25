@@ -306,20 +306,20 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
 
                     loc_f = local_electric_field_r
                     loc_a = dopant.trap_potential.get_potential_by_name('Charged Dislocation').a
-                    loc_b = dopant.trap_potential.get_potential_by_name('Deformation').a
+                    loc_b = -dopant.trap_potential.get_potential_by_name('Deformation').a
                     r0 = np.zeros_like(theta)
                     if loc_f < 1.0e-10:
                         if z_nodes[z_num] < z_limit_f:
                             z_limit_f = z_nodes[z_num]
                         #print 'here', loc_f, z_nodes[z_num]
                         try:
-                            r0[:] = -loc_b / loc_a
+                            r0[:] = loc_b / loc_a
                         except FloatingPointError:
                             pass
                         #print len(r0), r0
                     else:
-                        idx = np.where(loc_a**2 - 4 * loc_b * loc_f * np.cos(theta) >= 0)
-                        sqrt = np.sqrt(loc_a**2 - 4 * loc_b * loc_f * np.cos(theta[idx]))
+                        idx = np.where(loc_a**2 + 4 * loc_b * loc_f * np.cos(theta) >= 0)
+                        sqrt = np.sqrt(loc_a**2 + 4 * loc_b * loc_f * np.cos(theta[idx]))
                         sol1 = (sqrt - loc_a) / (2 * loc_f * np.cos(theta[idx]))
                         sol2 = (-sqrt - loc_a) / (2 * loc_f * np.cos(theta[idx]))
                         sol = sol1.copy()
@@ -329,7 +329,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                         r0[idx] = sol
                         zero_theta_idx = np.where(abs(loc_f * np.cos(theta)) < 1.0e-5)
                         try:
-                            r0[zero_theta_idx] = -loc_b / loc_a
+                            r0[zero_theta_idx] = loc_b / loc_a
                         except FloatingPointError:
                             r0[zero_theta_idx] = 0.0
                     non_zero_r_idx = np.where(r0 > 0.0)
