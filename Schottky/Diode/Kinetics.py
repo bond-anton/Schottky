@@ -320,8 +320,8 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                     else:
                         idx = np.where(loc_a**2 + 4 * loc_b * loc_f * np.cos(theta) >= 0)
                         sqrt = np.sqrt(loc_a**2 + 4 * loc_b * loc_f * np.cos(theta[idx]))
-                        sol1 = (sqrt - loc_a) / (2 * loc_f * np.cos(theta[idx]))
-                        sol2 = (-sqrt - loc_a) / (2 * loc_f * np.cos(theta[idx]))
+                        sol1 = -(sqrt + loc_a) / (2 * loc_f * np.cos(theta[idx]))
+                        sol2 = (sqrt - loc_a) / (2 * loc_f * np.cos(theta[idx]))
                         sol = sol1.copy()
                         sol2_selection = np.where(sol2 > 0)
                         #sol2_selection = np.where((sol2 > 0) & (sol2 < sol1))
