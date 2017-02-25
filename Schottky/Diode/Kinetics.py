@@ -297,7 +297,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                     #print z_num, 'of', len(z_nodes)
                     #dsl_charge_density = max_N_l * dopant.F(z_nodes[z_num])
                     local_electric_field_r = abs(local_electric_field)
-                    local_electric_field_theta = 0 if local_electric_field >= 0 else np.pi
+                    local_electric_field_theta = 0 if local_electric_field <= 0 else np.pi
                     local_electric_field_3d = (local_electric_field_r, local_electric_field_theta, 0.0)
                     dopant.trap_potential.get_potential_by_name('Charged Dislocation')\
                         .set_linear_charge_density(dsl_charge_density[z_num])
@@ -320,8 +320,8 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                     else:
                         idx = np.where(loc_a**2 + 4 * loc_b * loc_f * np.cos(theta) >= 0)
                         sqrt = np.sqrt(loc_a**2 + 4 * loc_b * loc_f * np.cos(theta[idx]))
-                        sol1 = -(sqrt + loc_a) / (2 * loc_f * np.cos(theta[idx]))
-                        sol2 = (sqrt - loc_a) / (2 * loc_f * np.cos(theta[idx]))
+                        sol1 = (-loc_a - sqrt) / (2 * loc_f * np.cos(theta[idx]))
+                        sol2 = (-loc_a + sqrt) / (2 * loc_f * np.cos(theta[idx]))
                         sol = sol1.copy()
                         sol2_selection = np.where(sol2 > 0)
                         #sol2_selection = np.where((sol2 > 0) & (sol2 < sol1))
