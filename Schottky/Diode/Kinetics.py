@@ -311,7 +311,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                     if loc_f < 1.0e-5:
                         if z_nodes[z_num] < z_limit_f:
                             z_limit_f = z_nodes[z_num]
-                        #print 'here', loc_f, z_nodes[z_num]
+                        print 'here', loc_f, z_nodes[z_num]*1e6
                         try:
                             r0[:] = loc_b / loc_a
                         except FloatingPointError:
