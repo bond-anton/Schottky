@@ -340,7 +340,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                     #print bl_grid[0,:,0]
                     bl_flat = np.zeros_like(theta)
                     try:
-                        bl_flat[non_zero_r_idx] = bl_grid[0, :, 0]
+                        bl_flat[non_zero_r_idx] = bl_grid[0, non_zero_r_idx, 0]
                     except IndexError:
                         pass
                     #print kT
@@ -352,7 +352,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                     #poole_frenkel = 0.5 * np.trapz(np.sin(theta) * np.exp(abs(barrier_lowering[:, 0]) / kT), theta)
                 #poole_frenkel = 0.5 * np.trapz(np.exp(abs(barrier_lowering) / kT), theta, axis=0)
                 #poole_frenkel = 0.5 + np.trapz(np.exp(abs(barrier_lowering) / kT), theta, axis=0) / np.pi
-                poole_frenkel = np.trapz(np.exp(abs(barrier_lowering) / kT), theta, axis=0) / np.pi
+                poole_frenkel = np.trapz(np.exp(abs(barrier_lowering) / kT), theta, axis=1) / np.pi
                 #print poole_frenkel
                 if np.sum(barrier_lowering[:, 0]) < 0:
                     poole_frenkel_e = poole_frenkel
