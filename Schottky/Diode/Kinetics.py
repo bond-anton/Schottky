@@ -308,7 +308,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                     loc_a = dopant.trap_potential.get_potential_by_name('Charged Dislocation').a
                     loc_b = -dopant.trap_potential.get_potential_by_name('Deformation').a
                     r0 = np.zeros_like(theta)
-                    if loc_f < 1.0e-10:
+                    if loc_f < 1.0e-5:
                         if z_nodes[z_num] < z_limit_f:
                             z_limit_f = z_nodes[z_num]
                         #print 'here', loc_f, z_nodes[z_num]
