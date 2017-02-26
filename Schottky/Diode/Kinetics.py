@@ -340,7 +340,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                     #print bl_grid[0,:,0]
                     bl_flat = np.zeros_like(theta)
                     try:
-                        bl_flat[non_zero_r_idx] = bl_grid[0, non_zero_r_idx, 0]
+                        bl_flat[non_zero_r_idx] = bl_grid[0, :, 0]
                     except IndexError:
                         pass
                     #print kT
