@@ -286,7 +286,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
 
             if dopant.trap_potential.get_potential_by_name('Charged Dislocation') is not None:
                 kT = to_numeric(k * schottky_diode.T / q)
-                theta_points = 360
+                theta_points = 180
                 theta = np.linspace(0, np.pi, num=theta_points, endpoint=True)
                 #theta = np.linspace(0, np.pi / 2, num=theta_points, endpoint=True)
                 barrier_lowering = np.zeros((theta_points, len(z_nodes)), dtype=np.float)
