@@ -147,6 +147,7 @@ def dopants_df_dt(schottky_diode, initial_condition_id):
 def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_max, t_stop, fast_traps=None,
                    rho_rel_err=1e-1, df_threshold=1e-3, min_t_points=50,
                    dopants_deriv_threshold=5.0e-5, dopants_deriv_window=9, dopants_deriv_z_limit=None,
+                   save_to_db=True,
                    debug=False, debug_plot=False):
     if dopants_deriv_z_limit is None:
         dopants_deriv_z_limit = 1e8
@@ -195,7 +196,8 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                                                              equilibrium_filling=False,
                                                              fast_traps=fast_traps,
                                                              t=t, initial_condition_id=last_state_id,
-                                                             rho_rel_err=rho_rel_err, max_iter=100, debug=False)
+                                                             rho_rel_err=rho_rel_err, max_iter=100,
+                                                             save_to_db=save_to_db, debug=False)
 
         t_points.append(t)
         potential_t.append(potential)

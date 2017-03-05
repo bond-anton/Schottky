@@ -203,7 +203,8 @@ def save_diode_state(SchDiode, measurement_id, initial_condition_id,
 def Reccurent_Poisson_solver(SchDiode, Psi=Psi_zero, Vd_guess=None, Vd_error=1e-6,
                              equilibrium_filling=True, fast_traps=None,
                              t=mp.inf, initial_condition_id=-1,
-                             rho_rel_err=1e-3, max_iter=100, debug=False):
+                             rho_rel_err=1e-3, max_iter=100,
+                             save_to_db=True, debug=False):
     recurrent_solver_start_time = time.time()
     Va = SchDiode.Va
     kT_eV = to_numeric(k * SchDiode.T / q)
@@ -287,10 +288,10 @@ def Reccurent_Poisson_solver(SchDiode, Psi=Psi_zero, Vd_guess=None, Vd_error=1e-
     if debug: print 'Calculation converged'
     recurrent_solver_elapsed_time = time.time() - recurrent_solver_start_time
     if debug: print 'Total recurrent solver execution time =', recurrent_solver_elapsed_time, 's\n'
-
-    save_diode_state(SchDiode, measurement_id, initial_condition_id,
-                     z_nodes, Psi_points, E_points, rho_rel_err_points,
-                     Vd, Vd_err, J, J_err, debug)
+    if save_to_db:
+        save_diode_state(SchDiode, measurement_id, initial_condition_id,
+                         z_nodes, Psi_points, E_points, rho_rel_err_points,
+                         Vd, Vd_err, J, J_err, debug)
     BI_F = {}
     for BI in SchDiode.Semiconductor.bonding_interfaces:
         for i, trap in enumerate(BI.dsl_tilt.traps):
