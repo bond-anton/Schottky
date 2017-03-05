@@ -208,9 +208,13 @@ def Reccurent_Poisson_solver(SchDiode, Psi=Psi_zero, Vd_guess=None, Vd_error=1e-
     recurrent_solver_start_time = time.time()
     Va = SchDiode.Va
     kT_eV = to_numeric(k * SchDiode.T / q)
-    measurement_id = add_Electric_Field_Measurement(SchDiode, Va, equilibrium_filling, t, initial_condition_id)
-    Solution_found, Psi_found, E, z_nodes, rho_rel_err_points, Vd, Vd_err, J, J_err, BI_F, dopants_F, measurement_id = load_diode_state(
-        SchDiode, measurement_id, initial_condition_id, debug)
+    if save_to_db:
+        measurement_id = add_Electric_Field_Measurement(SchDiode, Va, equilibrium_filling, t, initial_condition_id)
+        Solution_found, Psi_found, E, z_nodes, rho_rel_err_points, Vd, Vd_err, J, J_err, BI_F, dopants_F, measurement_id = load_diode_state(
+            SchDiode, measurement_id, initial_condition_id, debug)
+    else:
+        Solution_found = False
+        measurement_id = -1
     if Solution_found:
         Psi = Psi_found
         Vd_guess = Vd[-1]

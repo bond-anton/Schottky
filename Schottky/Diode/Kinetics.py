@@ -147,7 +147,7 @@ def dopants_df_dt(schottky_diode, initial_condition_id):
 def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_max, t_stop, fast_traps=None,
                    rho_rel_err=1e-1, df_threshold=1e-3, min_t_points=50,
                    dopants_deriv_threshold=5.0e-5, dopants_deriv_window=9, dopants_deriv_z_limit=None,
-                   save_to_db=True,
+                   save_to_db=True, potential=None, z_nodes=None,
                    debug=False, debug_plot=False):
     if dopants_deriv_z_limit is None:
         dopants_deriv_z_limit = 1e8
@@ -164,11 +164,12 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
     n_t = []
     p_t = []
 
-    ic_found, potential, _, z_nodes, _, _, _, _, _, _, _, _ = Poisson.load_diode_state(schottky_diode,
-                                                                                       initial_condition_id,
-                                                                                       debug=True)
-    if not ic_found:
-        raise(Exception('Initial condition not found. Please check everything'))
+    if save_to_db:
+        ic_found, potential, _, z_nodes, _, _, _, _, _, _, _, _ = Poisson.load_diode_state(schottky_diode,
+                                                                                           initial_condition_id,
+                                                                                           debug=True)
+        if not ic_found:
+            raise(Exception('Initial condition not found. Please check everything'))
 
     if debug_plot:
         plt.ion()
