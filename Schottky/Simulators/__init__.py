@@ -51,9 +51,9 @@ class Simulator(object):
         self._register_measurement_types(measurement_types)
 
     def _create_manufacturer(self):
-        name = 'Anton Bondarenko'
-        name_short = 'ABS'
-        description = 'Scientific software tools'
+        name = 'BondDevices'
+        name_short = 'BD'
+        description = 'BondDevices Scientific Services'
         return self.client.equipment_manager.create_manufacturer(name=name, name_short=name_short,
                                                                  description=description)
 
