@@ -21,7 +21,13 @@ class Sample(object):
         self.sample = None
 
     def load_create_sample(self):
-        self.sample = self.client.sample_manager.create_sample(name=self.name, description=self.description)
+        samples = self.client.sample_manager.get_samples(name=self.name)
+        if len(samples) == 1:
+            self.sample = samples[0]
+        elif len(samples) == 0:
+            self.sample = self.client.sample_manager.create_sample(name=self.name, description=self.description)
+        else:
+            raise ValueError('More than one sample found for given name, check the database')
         if self.sample.parameters:
             for parameter in self.sample.parameters:
                 try:
