@@ -1,6 +1,5 @@
 from __future__ import division, print_function
 import numpy as np
-from matplotlib import pyplot as plt
 from mayavi import mlab
 
 from ScientificProjects.Client import Client
@@ -15,8 +14,8 @@ client.user_manager.project_manager.open_project('Schottky diode')
 
 
 radius = 0.5
-pos_charged_cylinder_field = ChargedCylinder(client=client, name='Pos charged cylinder field',
-                                             charge_density=3e7, radius=radius, epsilon=1)
+pos_charged_cylinder_field = ChargedCylinder(client=client, name='Pos charged cylinder field 3',
+                                             charge_density=3e6, radius=radius, epsilon=1)
 pos_charged_cylinder_field.set_origin([0, 0, 0])
 
 one_by_r_field = HyperbolicCylinder(client=client, name='the Trap',
@@ -62,6 +61,3 @@ mlab.plot3d(
 client.user_manager.sign_out()
 
 mlab.show()
-
-plt.plot((p_grid[:, 0] - np.pi) / np.pi * 180, np.roll(field_max, int(len(field_max) / 2)))
-plt.show()

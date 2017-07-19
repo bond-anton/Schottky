@@ -40,13 +40,13 @@ class Simulator(object):
                                 'subcategory': None}}
         self.equipment = self._register_equipment(category)
         if measurement_types is None:
-            measurement_types = [{'name': 'Synthetic data',
-                                  'description': 'Pure synthetic data',
+            measurement_types = [{'name': 'Simulated data',
+                                  'description': 'Software simulated data',
                                   'children': []}]
         if measurements is None:
             measurements = [{'name': 'random data generation',
                              'description': 'generates random data',
-                             'type': 'Synthetic data'}]
+                             'type': 'Simulated data'}]
         self.measurements = measurements
         self._register_measurement_types(measurement_types)
 
@@ -54,42 +54,94 @@ class Simulator(object):
         name = 'BondDevices'
         name_short = 'BD'
         description = 'BondDevices Scientific Services'
-        return self.client.equipment_manager.create_manufacturer(name=name, name_short=name_short,
-                                                                 description=description)
+        manufacturers = self.client.equipment_manager.get_manufacturers(name=name)
+        if len(manufacturers) == 1:
+            return manufacturers[0]
+        elif len(manufacturers) == 0:
+            return self.client.equipment_manager.create_manufacturer(name=name, name_short=name_short,
+                                                                     description=description)
+        else:
+            raise ValueError('More than one manufacturer found for given name. Check the database.')
 
     def _create_categories(self, category, parent=None):
         if category is None:
             return parent
-        parent = self.client.equipment_manager.create_equipment_category(name=category['name'],
-                                                                         description=category['description'],
-                                                                         parent=parent)
+        categories = self.client.equipment_manager.get_equipment_categories(name=category['name'])
+        if len(categories) == 1 and categories[0].parent == parent:
+            parent = categories[0]
+        elif len(categories) == 0:
+            parent = self.client.equipment_manager.create_equipment_category(name=category['name'],
+                                                                             description=category['description'],
+                                                                             parent=parent)
+        else:
+            found = False
+            for item in categories:
+                if item.parent == parent:
+                    parent = item
+                    found = True
+                    break
+            if not found:
+                parent = self.client.equipment_manager.create_equipment_category(name=category['name'],
+                                                                                 description=category['description'],
+                                                                                 parent=parent)
         return self._create_categories(category=category['subcategory'], parent=parent)
 
     def _register_equipment(self, category):
         category = self._create_categories(category=category)
-        equipment = self.client.equipment_manager.create_equipment(name=self.name,
-                                                                   category=category,
-                                                                   manufacturer=self.manufacturer,
-                                                                   description=self.description)
+        equipment_found = self.client.equipment_manager.get_equipment(name=self.name)
+        if len(equipment_found) == 1 and equipment_found[0].category.name == category.name:
+            equipment = equipment_found[0]
+        elif len(equipment_found) == 0:
+            equipment = self.client.equipment_manager.create_equipment(name=self.name,
+                                                                       category=category,
+                                                                       manufacturer=self.manufacturer,
+                                                                       description=self.description)
+        else:
+            raise ValueError('More than one equipment items found for given name')
         if self.parts:
-            assembly = self.client.equipment_manager.create_equipment_assembly(name=self.name + '-parts',
-                                                                               description='Parts for ' + self.name)
+            assemblies = self.client.equipment_manager.get_equipment_assembly(name=self.name + '-parts')
+            if len(assemblies) == 1:
+                assembly = assemblies[0]
+            elif len(assemblies) == 0:
+                assembly = self.client.equipment_manager.create_equipment_assembly(name=self.name + '-parts',
+                                                                                   description='Parts for ' + self.name)
+            else:
+                raise ValueError('More than one assembly found. Check database.')
             for part in self.parts.values():
-                self.client.equipment_manager.add_equipment_to_assembly(assembly=assembly,
-                                                                        equipment=part.equipment)
+                if part.equipment not in assembly.parts:
+                    self.client.equipment_manager.add_equipment_to_assembly(assembly=assembly,
+                                                                            equipment=part.equipment)
             equipment.assembly = assembly
         return equipment
 
     def _register_measurement_types(self, measurement_types, parent=None):
         for measurement_type in measurement_types:
-            new_parent = self.client.measurement_type_manager.create_measurement_type(
-                name=measurement_type['name'],
-                description=measurement_type['description'],
-                parent=parent)
+            found = False
+            types_found = self.client.measurement_type_manager.get_measurement_types(name=measurement_type['name'])
+            if len(types_found) == 1:
+                new_parent = types_found[0]
+                found = True
+            elif len(types_found) == 0:
+                new_parent = self.client.measurement_type_manager.create_measurement_type(
+                    name=measurement_type['name'],
+                    description=measurement_type['description'],
+                    parent=parent)
+            else:
+                for item in types_found:
+                    if item.name == measurement_type['name']:
+                        found = True
+                        new_parent = item
+                        break
+                if not found:
+                    new_parent = self.client.measurement_type_manager.create_measurement_type(
+                        name=measurement_type['name'],
+                        description=measurement_type['description'],
+                        parent=parent)
             if measurement_type['children']:
                 self._register_measurement_types(measurement_type['children'], parent=new_parent)
             else:
-                self.client.equipment_manager.add_measurement_type_to_equipment(self.equipment, new_parent)
+                if not found:
+                    self.client.equipment_manager.add_measurement_type_to_equipment(self.equipment, new_parent)
 
     def register_measurement(self, measurement_details, parameters=None, input_data=None,
                              force_new=False):

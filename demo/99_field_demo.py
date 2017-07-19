@@ -31,15 +31,15 @@ client.user_manager.project_manager.open_project('Schottky diode')
 
 
 radius = 0.5
-charged_cylinder_field = ChargedCylinder(client=client, name='Charged cylinder field',
+charged_cylinder_field = ChargedCylinder(client=client, name='Charged cylinder field 2',
                                          charge_density=3e7, radius=radius, epsilon=1)
-deformation_cylinder_field = HyperbolicCylinder(client=client, name='Deformation potential',
+deformation_cylinder_field = HyperbolicCylinder(client=client, name='Deformation potential 2',
                                                 coefficient=-0.1, radius=radius)
-external_field = UniformElectrostaticField(client=client, name='Uniform electrostatic field',
+external_field = UniformElectrostaticField(client=client, name='Uniform electrostatic field 2',
                                            strength=0.01, direction=[1, 0, 0])
 
 
-superposed_field = SuperpositionField(client=client, name='Superposed Field',
+superposed_field = SuperpositionField(client=client, name='Superposed Field 2',
                                       fields=[charged_cylinder_field,
                                               deformation_cylinder_field,
                                               external_field])
