@@ -1,8 +1,8 @@
 from __future__ import division, print_function
 import numpy as np
 
-from ScientificProjects.Client import Client
-from ScientificProjects.Entities.Parameter import Parameter
+from BDProjects.Client import Client
+from BDProjects.Entities.Parameter import Parameter
 
 
 class Sample(object):

@@ -2,7 +2,7 @@ from __future__ import division, print_function
 import numpy as np
 from matplotlib import pyplot as plt
 
-from ScientificProjects.Client import Client
+from BDProjects.Client import Client
 
 from Schottky.Samples.Semiconductor import Semiconductor
 from Schottky.Simulators.BulkSemiconductor import BulkSemiconductor

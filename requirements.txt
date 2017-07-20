@@ -4,3 +4,4 @@ mayavi
 scipy
 git+https://github.com/bond-anton/BDProjects.git#egg=BDProjects
 git+https://github.com/bond-anton/BDSpace.git#egg=BDSpace
+git+https://github.com/bond-anton/BDQuaternions.git#egg=BDQuaternions

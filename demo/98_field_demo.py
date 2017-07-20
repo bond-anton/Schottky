@@ -1,7 +1,7 @@
 from __future__ import division, print_function
 
-import Space_visualization as Visual
-from ScientificProjects.Client import Client
+import BDSpaceVis as Visual
+from BDProjects.Client import Client
 
 import numpy as np
 

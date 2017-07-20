@@ -1,3 +1,4 @@
+from __future__ import division, print_function
 from scipy.constants import c, N_A, k, e, m_e, epsilon_0
 
 # Units for the experiments are cm for length, kg for mass, s fot time, and eV for energy

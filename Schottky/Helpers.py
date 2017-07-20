@@ -5,7 +5,7 @@ Created on 04 нояб. 2014 г.
 
 @author: anton
 '''
-from __future__ import division
+from __future__ import division, print_function
 
 import sympy as sym
 import numpy as np

@@ -5,7 +5,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 #from mayavi import mlab
 
-from ScientificProjects.Client import Client
+from BDProjects.Client import Client
 
 from Schottky.Samples.Fields import UniformElectrostaticField, ChargedCylinder, HyperbolicCylinder, SuperpositionField
 from Schottky.Samples.Trap import Trap

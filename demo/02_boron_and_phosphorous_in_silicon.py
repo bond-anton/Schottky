@@ -1,6 +1,6 @@
 from __future__ import division, print_function
 
-from ScientificProjects.Client import Client
+from BDProjects.Client import Client
 
 from Schottky.Samples.Trap import Trap
 

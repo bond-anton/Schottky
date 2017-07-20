@@ -2,7 +2,7 @@ from __future__ import division, print_function
 import numpy as np
 import numbers
 
-from Space.Coordinates import transforms as gt
+from BDSpace.Coordinates import transforms as gt
 
 from Schottky.Samples.Fields.General import SampleField
 

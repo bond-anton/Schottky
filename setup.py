@@ -52,8 +52,9 @@ setup(
 
     packages=find_packages(exclude=['demo', 'tests', 'docs', 'contrib']),
     install_requires=['numpy', 'sympy', 'mpmath', 'matplotlib', 'mayavi',
-                      'BDProjects>=0.1.8', 'BDSpace>=0.2.2'],
+                      'BDProjects>=0.1.8', 'BDSpace>=0.2.2', 'BDQuaternions>=0.1.2'],
     dependency_links=['https://github.com/bond-anton/BDProjects/tarball/master#egg=BDProjects-0.1.8',
-                      'https://github.com/bond-anton/BDSpace/tarball/master#egg=BDSpace-0.2.2'],
+                      'https://github.com/bond-anton/BDSpace/tarball/master#egg=BDSpace-0.2.2',
+                      'https://github.com/bond-anton/BDSpace/tarball/master#egg=BDQuaternions-0.2.2'],
     test_suite='nose.collector',
 )

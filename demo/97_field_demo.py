@@ -2,7 +2,7 @@ from __future__ import division, print_function
 import numpy as np
 from mayavi import mlab
 
-from ScientificProjects.Client import Client
+from BDProjects.Client import Client
 
 from Schottky.Samples.Fields import UniformElectrostaticField, ChargedCylinder, HyperbolicCylinder, SuperpositionField
 from Schottky.Simulators.Field import FieldSimulator

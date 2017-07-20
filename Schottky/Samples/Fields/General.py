@@ -1,8 +1,8 @@
 from __future__ import division, print_function
 import numpy as np
 
-from Quaternions import Rotation
-from Space.Field import Field, SuperposedField
+from BDQuaternions import Rotation
+from BDSpace.Field import Field, SuperposedField
 
 from Schottky.Samples import Sample
 

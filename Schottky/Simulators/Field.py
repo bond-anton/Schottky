@@ -2,9 +2,9 @@ from __future__ import division, print_function
 import timeit
 import numpy as np
 
-from Quaternions import Rotation
-from Space.Coordinates import Cartesian, transforms as gt
-from Space.Field import Field
+from BDQuaternions import Rotation
+from BDSpace.Coordinates import Cartesian, transforms as gt
+from BDSpace.Field import Field
 from Schottky.Samples import Sample
 from Schottky.Samples.Fields import SuperpositionField
 from Schottky.Simulators import Simulator

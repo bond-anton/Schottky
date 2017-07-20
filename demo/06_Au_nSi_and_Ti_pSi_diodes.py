@@ -1,7 +1,7 @@
 from __future__ import division, print_function
 import numpy as np
 
-from ScientificProjects.Client import Client
+from BDProjects.Client import Client
 
 from Schottky.Samples.Metal import Metal
 from Schottky.Samples.Semiconductor import Semiconductor

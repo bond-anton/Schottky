@@ -4,7 +4,7 @@ import matplotlib
 matplotlib.use('Qt4Agg')
 from matplotlib import pyplot as plt
 
-from ScientificProjects.Client import Client
+from BDProjects.Client import Client
 
 from Schottky.Samples.Diode import SchottkyDiode
 from Schottky.Simulators.SchottkyDiodeSimulator import SchottkyDiodeSimulator
