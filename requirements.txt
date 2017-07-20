@@ -2,5 +2,5 @@ numpy
 matplotlib
 mayavi
 scipy
-git+https://github.com/bond-anton/ScientificProjects.git#egg=ScientificProjects
-git+https://github.com/bond-anton/Space.git#egg=Space
+git+https://github.com/bond-anton/BDProjects.git#egg=BDProjects
+git+https://github.com/bond-anton/BDSpace.git#egg=BDSpace
