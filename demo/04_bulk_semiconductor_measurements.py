@@ -21,10 +21,12 @@ my_simulator = BulkSemiconductor(client=client, semiconductor=my_semiconductor,
 
 print(my_simulator)
 
-temperature_range = np.linspace(0, 700, num=1001, endpoint=True)
+temperature_range = np.linspace(0, 750, num=1001, endpoint=True)
 
+band_gap = my_simulator.band_gap(temperature=5.0, use_storage=True)
+print(band_gap)
 
-band_gap = my_simulator.band_gap(temperature=temperature_range)
+band_gap = my_simulator.band_gap(temperature=temperature_range, use_storage=True)
 
 plt.plot(temperature_range, band_gap, color='k', linewidth=2, linestyle='-')
 for part in my_simulator.parts.values():
@@ -33,14 +35,14 @@ for part in my_simulator.parts.values():
                  color='k', linewidth=1, linestyle='--')
 plt.show()
 
-bands_density_of_states = my_simulator.effective_bands_density_of_states(temperature_range)
+bands_density_of_states = my_simulator.effective_bands_density_of_states(temperature_range, use_storage=True)
 plt.plot(temperature_range, bands_density_of_states['Nc'],
          color='b', linewidth=2, linestyle='-')
 plt.plot(temperature_range, bands_density_of_states['Nv'],
          color='r', linewidth=2, linestyle='-')
 plt.show()
 
-thermal_velocity = my_simulator.carriers_thermal_velocity(temperature_range)
+thermal_velocity = my_simulator.carriers_thermal_velocity(temperature_range, use_storage=True)
 plt.plot(temperature_range, thermal_velocity['electron'],
          color='b', linewidth=2, linestyle='-')
 plt.plot(temperature_range, thermal_velocity['hole'],
@@ -48,7 +50,7 @@ plt.plot(temperature_range, thermal_velocity['hole'],
 plt.show()
 
 
-mobility = my_simulator.mobility(temperature=temperature_range, field=None)
+mobility = my_simulator.mobility(temperature=temperature_range, field=None, use_storage=True)
 
 plt.plot(temperature_range, mobility['electron']['total'],
          color='b', linewidth=2, linestyle='-')
@@ -56,7 +58,7 @@ plt.plot(temperature_range, mobility['hole']['total'],
          color='r', linewidth=2, linestyle='-')
 plt.show()
 
-e_f = my_simulator.electrochemical_potential(temperature_range)
+e_f = my_simulator.electrochemical_potential(temperature_range, use_storage=True)
 plt.plot(temperature_range, band_gap, color='k', linewidth=2, linestyle='-')
 plt.plot(temperature_range, band_gap / 2, color='k', linewidth=1, linestyle=':')
 for part in my_simulator.parts.values():
@@ -67,7 +69,7 @@ plt.plot(temperature_range, band_gap - e_f, 'k-o')
 plt.show()
 
 
-e_f = my_simulator.electrochemical_potential(temperature=0)
+e_f = my_simulator.electrochemical_potential(temperature=0, use_storage=True)
 print(e_f)
 
 client.user_manager.sign_out()

@@ -16,14 +16,14 @@ area = np.pi * (0.15 ** 2) / 4  # cm2
 thickness = 10 * 1e-4  # cm
 resistance = 50  # Ohm
 
-gold = Metal(client=client, name='Au')
+gold = Metal(client=client, name='Gold')
 n_silicon = Semiconductor(client=client, name='n-type Silicon')
 gold_silicon = SchottkyDiode(client=client, name='Au-n_Si',
                              area=area, thickness=thickness, serial_resistance=resistance,
                              metal=gold, semiconductor=n_silicon, description='Au - n-Si Schottky diode')
 print(gold_silicon)
 
-titanium = Metal(client=client, name='Ti')
+titanium = Metal(client=client, name='Titanium')
 p_silicon = Semiconductor(client=client, name='p-type Silicon')
 titanium_silicon = SchottkyDiode(client=client, name='Ti-p_Si',
                                  area=area, thickness=thickness, serial_resistance=resistance,

@@ -1,7 +1,7 @@
 from __future__ import division, print_function
 import numpy as np
-import matplotlib
-matplotlib.use('Qt4Agg')
+#import matplotlib
+#matplotlib.use('Qt4Agg')
 from matplotlib import pyplot as plt
 
 from BDProjects.Client import Client
