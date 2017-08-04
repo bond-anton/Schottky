@@ -21,7 +21,7 @@ diode_simulator = SchottkyDiodeSimulator(client=client, diode=my_diode, descript
 print(diode_simulator)
 
 temperature_range = np.linspace(0, 700, num=1001, endpoint=True)
-v_bi = diode_simulator.v_bi(temperature=temperature_range)
+v_bi = diode_simulator.v_bi(temperature=temperature_range, use_storage=True)
 plt.plot(temperature_range, v_bi, color='k', linewidth=2, linestyle='-')
 plt.show()
 
