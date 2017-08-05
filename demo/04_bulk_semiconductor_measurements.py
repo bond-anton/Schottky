@@ -49,8 +49,6 @@ plt.plot(temperature_range, thermal_velocity['hole'],
          color='r', linewidth=2, linestyle='-')
 plt.show()
 
-
-
 mobility = my_simulator.mobility(temperature=temperature_range, field=None)
 
 plt.plot(temperature_range, mobility['electron'],
@@ -59,9 +57,7 @@ plt.plot(temperature_range, mobility['hole'],
          color='r', linewidth=2, linestyle='-')
 plt.show()
 
-exit(0)
-
-e_f = my_simulator.electrochemical_potential(temperature_range, use_storage=True)
+e_f = my_simulator.electrochemical_potential(temperature=temperature_range)
 plt.plot(temperature_range, band_gap, color='k', linewidth=2, linestyle='-')
 plt.plot(temperature_range, band_gap / 2, color='k', linewidth=1, linestyle=':')
 for part in my_simulator.parts.values():
@@ -72,7 +68,7 @@ plt.plot(temperature_range, band_gap - e_f, 'k-o')
 plt.show()
 
 
-e_f = my_simulator.electrochemical_potential(temperature=0, use_storage=True)
+e_f = my_simulator.electrochemical_potential(temperature=0)
 print(e_f)
 
 client.user_manager.sign_out()

@@ -67,9 +67,18 @@ class BulkSemiconductor(Simulator):
                              'description': 'Semiconductor Band Gap',
                              'units': 'eV'
                          }]},
-            'xi': {'name': 'Electrochemical potential temperature dependence',
-                   'description': 'Electrochemical potential temperature dependence',
-                   'type': 'Bulk Semiconductor energetics'},
+            'xi': {'parameters': None,
+                   'input data': None,
+                   'variables': [{
+                       'name': 'Temperature',
+                       'description': 'Sample temperature',
+                       'units': 'K'
+                   }],
+                   'result': [{
+                       'name': 'Electrochemical potential',
+                       'description': 'Semiconductor Electrochemical potential, measured from Ec',
+                       'units': 'eV'
+                   }]},
             'dos': {'parameters': None,
                     'input data': None,
                     'variables': [{
@@ -246,58 +255,17 @@ class BulkSemiconductor(Simulator):
         np.seterr(divide='warn', invalid='warn')
         return result
 
-    def electrochemical_potential(self, temperature, use_storage=False):
-        start_time = timeit.default_timer()
-        if isinstance(temperature, (list, tuple, np.ndarray)):
-            temperature = np.array(temperature)
-        elif isinstance(temperature, numbers.Number):
-            temperature = np.array([np.float(temperature)])
-        else:
-            raise TypeError('Unsupported temperature type')
-        measurement_time = timeit.default_timer() - start_time
-        start_time = timeit.default_timer()
-        if use_storage:
-            measurement_details = {
-                'name': 'Electrochemical potential temperature dependence',
-                'description': 'Measurement of Semiconductor Electrochemical potential temperature dependence',
-                'type': 'Bulk Semiconductor energetics'}
-            record = 'Starting Measurement "%s"' % (measurement_details['name'])
-            self.client.log_manager.log_record(record=record, category='Information')
-            parameters = None
-            measurement = self.register_measurement(measurement_details=measurement_details, parameters=parameters,
-                                                    input_data=None, force_new=False)
-            if measurement.progress == 100:
-                temperature_channels = self.client.measurement_manager.get_data_channels(measurement=measurement,
-                                                                                         name='Temperature')
-                for temperature_channel in temperature_channels:
-                    stored = self.client.measurement_manager.get_data_points_array(temperature_channel)[:, 0]
-                    if stored.size == temperature.size and (stored == temperature).all():
-                        mu_channel = self.load_create_data_channel(channel_name='Electrochemical potential',
-                                                                   measurement=measurement,
-                                                                   description='Electrochemical potential',
-                                                                   unit_name='eV')
-                        mu = self.client.measurement_manager.get_data_points_array(mu_channel)[:, 0]
-                        db_time = timeit.default_timer() - start_time
-                        record = 'Measurement "%s" complete in %.3f s (measurement: %.3f s, db: %.3f s)' % \
-                                 (measurement_details['name'], db_time, 0.0, db_time)
-                        self.client.log_manager.log_record(record=record, category='Information')
-                        return mu
-            temperature_channel = self.load_create_data_channel(channel_name='Temperature', measurement=measurement,
-                                                                description='Temperature', unit_name='K')
-            mu_channel = self.load_create_data_channel(channel_name='Electrochemical potential',
-                                                       measurement=measurement,
-                                                       description='Electrochemical potential',
-                                                       unit_name='eV')
-        db_time = timeit.default_timer() - start_time
-        start_time = timeit.default_timer()
+    @storage_manager('xi', use_storage=True)
+    def electrochemical_potential(self, temperature=0.0):
+        temperature = prepare_array(temperature)
         energy_scale = constants['k'] * temperature
-        band_gap = self.band_gap(temperature, use_storage=True)
-        bands_density_of_states = self.effective_bands_density_of_states(temperature, use_storage=True)
+        band_gap = self.band_gap(temperature=temperature)
+        bands_density_of_states = self.effective_bands_density_of_states(temperature=temperature)
         mu = np.zeros_like(temperature)
         for i in range(len(temperature)):
             if temperature[i] < 8:
-                e1 = self.electrochemical_potential(temperature=8, use_storage=True)
-                e2 = self.electrochemical_potential(temperature=10, use_storage=True)
+                e1 = self.electrochemical_potential(temperature=8)
+                e2 = self.electrochemical_potential(temperature=10)
                 a = (e1 - e2) / (8 - 10)
                 b = e1 - a * 8
                 mu[i] = a * temperature[i] + b
@@ -309,8 +277,8 @@ class BulkSemiconductor(Simulator):
                 if abs(temperature[i]) > 2 * np.finfo(np.float).eps:
                     exp_term_cb = np.exp(-mu / energy_scale[i])
                     exp_term_vb = np.exp((mu - band_gap[i]) / energy_scale[i])
-                    cb_charge = -bands_density_of_states['Nc'][i] * exp_term_cb
-                    vb_charge = bands_density_of_states['Nv'][i] * exp_term_vb
+                    cb_charge = -bands_density_of_states['DOS C.band'][i] * exp_term_cb
+                    vb_charge = bands_density_of_states['DOS V.band'][i] * exp_term_vb
                     total_charge = cb_charge + vb_charge
                 else:
                     total_charge = 0
@@ -334,22 +302,9 @@ class BulkSemiconductor(Simulator):
                                 q0 = dopant.trap.charge_state['empty']
                                 n = dopant.concentration
                                 total_charge += n * (q1 - q0) * f + n * q0
-                # print(mu, part.energy_level(band_gap), energy_scale, n, f, total_charge)
                 np.seterr(divide='warn', invalid='warn', over='warn')
                 return total_charge
+
             mu[i] = bisect(equation, a=0, b=band_gap[i])
-        measurement_time += timeit.default_timer() - start_time
-        if use_storage:
-            start_time = timeit.default_timer()
-            self.client.measurement_manager.create_data_points(channel=temperature_channel,
-                                                               float_value=temperature)
-            self.client.measurement_manager.create_data_points(channel=mu_channel,
-                                                               float_value=mu)
-            self.client.measurement_manager.update_measurement_progress(measurement=measurement,
-                                                                        progress=100)
-            db_time += timeit.default_timer() - start_time
-            record = 'Measurement "%s" complete in %.3f s (measurement: %.3f s, db: %.3f s)' % \
-                     (measurement_details['name'], db_time + measurement_time,
-                      measurement_time, db_time)
-            self.client.log_manager.log_record(record=record, category='Information')
+
         return mu
