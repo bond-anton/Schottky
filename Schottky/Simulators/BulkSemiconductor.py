@@ -70,9 +70,25 @@ class BulkSemiconductor(Simulator):
             'xi': {'name': 'Electrochemical potential temperature dependence',
                    'description': 'Electrochemical potential temperature dependence',
                    'type': 'Bulk Semiconductor energetics'},
-            'dos': {'name': 'Bands effective density of states temperature dependence',
-                    'description': 'Semiconductor Bands effective density of states temperature dependence',
-                    'type': 'Bulk Semiconductor energetics'},
+            'dos': {'parameters': None,
+                    'input data': None,
+                    'variables': [{
+                        'name': 'Temperature',
+                        'description': 'Sample temperature',
+                        'units': 'K'
+                    }],
+                    'result': [
+                        {
+                            'name': 'DOS C.band',
+                            'description': 'Effective Density of States in Conduction band',
+                            'units': 'm^-3'
+                        },
+                        {
+                            'name': 'DOS V.band',
+                            'description': 'Effective Density of States in Conduction band',
+                            'units': 'm^-3'
+                        }
+                    ]},
             'carrier velocity': {'name': 'Charge carrier thermal velocity temperature dependence',
                                  'description': 'Charge carrier thermal velocity temperature dependence',
                                  'type': 'Bulk Semiconductor energetics'},
@@ -108,12 +124,12 @@ class BulkSemiconductor(Simulator):
         return band_gap
 
     @storage_manager('dos', use_storage=True)
-    def effective_bands_density_of_states(self, temperature=0.0, use_storage=True):
+    def effective_bands_density_of_states(self, temperature=0.0):
         temperature = prepare_array(temperature)
         t_3_2 = temperature ** (3 / 2)
         conduction_band = self.semiconductor.effective_bands_density_of_states['Nc'] * t_3_2
         valence_band = self.semiconductor.effective_bands_density_of_states['Nv'] * t_3_2
-        return {'Nc': conduction_band, 'Nv': valence_band}
+        return {'DOS C.band': conduction_band, 'DOS V.band': valence_band}
 
     def carriers_thermal_velocity(self, temperature, use_storage=False):
         start_time = timeit.default_timer()

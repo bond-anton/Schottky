@@ -45,10 +45,10 @@ def storage_manager(spec_key, **outer_kwargs):
                                                                 description=channel_spec['description'],
                                                                 unit_name=channel_spec['units'])
                         result[channel_spec['name']] = self.client.measurement_manager.get_data_points_array(channel)[:, 0]
-                        db_time = timeit.default_timer() - start_time
-                        record = 'Measurement "%s" complete in %.3f s (measurement: %.3f s, db: %.3f s)' %\
-                                 (self.measurement_details[spec_key]['name'], db_time, 0.0, db_time)
-                        self.client.log_manager.log_record(record=record, category='Information')
+                    db_time = timeit.default_timer() - start_time
+                    record = 'Measurement "%s" complete in %.3f s (measurement: %.3f s, db: %.3f s)' %\
+                             (self.measurement_details[spec_key]['name'], db_time, 0.0, db_time)
+                    self.client.log_manager.log_record(record=record, category='Information')
                     if len(result) == 1:
                         return result[channel_spec['name']]
                     return result

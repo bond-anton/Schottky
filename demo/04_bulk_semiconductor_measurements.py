@@ -35,14 +35,14 @@ for part in my_simulator.parts.values():
                  color='k', linewidth=1, linestyle='--')
 plt.show()
 
-exit(0)
-
-bands_density_of_states = my_simulator.effective_bands_density_of_states(temperature_range, use_storage=True)
-plt.plot(temperature_range, bands_density_of_states['Nc'],
+bands_density_of_states = my_simulator.effective_bands_density_of_states(temperature=temperature_range)
+plt.plot(temperature_range, bands_density_of_states['DOS C.band'],
          color='b', linewidth=2, linestyle='-')
-plt.plot(temperature_range, bands_density_of_states['Nv'],
+plt.plot(temperature_range, bands_density_of_states['DOS V.band'],
          color='r', linewidth=2, linestyle='-')
 plt.show()
+
+exit(0)
 
 thermal_velocity = my_simulator.carriers_thermal_velocity(temperature_range, use_storage=True)
 plt.plot(temperature_range, thermal_velocity['electron'],
