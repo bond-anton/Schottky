@@ -26,10 +26,10 @@ def storage_manager(spec_key, **outer_kwargs):
                                                                                      name=channel_spec['name'])
                         match_found = False
                         for channel in channels:
-                            # TODO: Add channel size retrieval function
+                            stored_size = self.client.measurement_manager.get_data_points_num(channel)
+                            if stored_size != arg.size:
+                                continue
                             stored = self.client.measurement_manager.get_data_points_array(channel)[:, 0]
-                            #print(channel_spec['name'], arg, stored)
-                            #print(stored.size == arg.size, stored == arg, (stored == arg).all())
                             if stored.size == arg.size and (stored == arg).all():
                                 match_found = True
                                 break
