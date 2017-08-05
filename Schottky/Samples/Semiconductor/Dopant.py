@@ -31,7 +31,7 @@ class Dopant(Sample):
         except KeyError:
             parameter = self.client.parameter_manager.create_numeric_parameter(name='Concentration',
                                                                                value=concentration,
-                                                                               unit_name='eV',
+                                                                               unit_name='m^-3',
                                                                                description='Dopant net concentration')
             self.client.sample_manager.add_parameter_to_sample(sample=self.sample,
                                                                parameter=parameter)

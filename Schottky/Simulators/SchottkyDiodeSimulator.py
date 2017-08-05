@@ -66,10 +66,10 @@ class SchottkyDiodeSimulator(Simulator):
                 'type': 'Diode energetics'}
             record = 'Starting Measurement "%s"' % (measurement_details['name'])
             self.client.log_manager.log_record(record=record, category='Information')
-            measurements = self.client.measurement_manager.get_measurements(name=measurement_details['name'])
-            for measurement in measurements:
-                if measurement.progress != 100:
-                    continue
+            parameters = None
+            measurement = self.register_measurement(measurement_details=measurement_details, parameters=parameters,
+                                                    input_data=None, force_new=False)
+            if measurement.progress == 100:
                 temperature_channels = self.client.measurement_manager.get_data_channels(measurement=measurement,
                                                                                          name='Temperature')
                 for temperature_channel in temperature_channels:
@@ -85,10 +85,6 @@ class SchottkyDiodeSimulator(Simulator):
                                  (measurement_details['name'], db_time, 0.0, db_time)
                         self.client.log_manager.log_record(record=record, category='Information')
                         return bi_voltage
-            parameters = None
-            measurement = self.register_measurement(measurement_details=measurement_details,
-                                                    parameters=parameters, input_data=None,
-                                                    force_new=True)
             temperature_channel = self.load_create_data_channel(channel_name='Temperature', measurement=measurement,
                                                                 description='Temperature', unit_name='K')
             v_bi_channel = self.load_create_data_channel(channel_name='Built-in potential',

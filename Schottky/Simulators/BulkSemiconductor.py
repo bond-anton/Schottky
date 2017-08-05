@@ -8,199 +8,111 @@ from Schottky.Samples.Semiconductor import Semiconductor
 from Schottky.Simulators import Simulator
 from Schottky.Simulators.ChargeCarrierTrap import ChargeCarrierTrap
 from Schottky import constants
+from ._helpers import storage_manager, prepare_array
 
 
 class BulkSemiconductor(Simulator):
 
     def __init__(self, client, semiconductor, description=None):
         assert isinstance(semiconductor, Semiconductor), 'Valid Semiconductor Sample object expected'
-        self.semiconductor = semiconductor
-        samples = [self.semiconductor]
-        name = 'Bulk Semiconductor Simulator'
         category = {
             'name': 'Software',
             'description': 'Measurement, automation, control, simulation, and other software tools',
-            'subcategory': {'name': 'Simulation',
-                            'description': 'Simulation software',
-                            'subcategory': None}}
-        measurement_types = [{'name': 'Bulk Semiconductor energetics',
-                              'description': 'Measurement of Semiconductor energetics',
-                              'children': []}]
-        measurements = [
-            {'name': 'Band Gap temperature dependence',
-             'description': 'Measurement of Semiconductor band gap temperature dependence',
-             'type': 'Bulk Semiconductor energetics'},
-            {'name': 'Electrochemical potential temperature dependence',
-             'description': 'Measurement of Semiconductor Electrochemical potential temperature dependence',
-             'type': 'Bulk Semiconductor energetics'},
-            {'name': 'Bands effective density of states temperature dependence',
-             'description': 'Measurement of Semiconductor Bands effective density of states temperature dependence',
-             'type': 'Bulk Semiconductor energetics'},
-            {'name': 'Charge carrier thermal velocity temperature dependence',
-             'description': 'Measurement of Semiconductor Charge carrier thermal velocity temperature dependence',
-             'type': 'Bulk Semiconductor energetics'},
-            {'name': 'Charge carrier mobility temperature dependence',
-             'description': 'Measurement of Semiconductor Charge carrier mobility temperature dependence',
-             'type': 'Bulk Semiconductor energetics'},
-            {'name': 'Emission rate',
-             'description': 'measure charge carriers emission rate',
-             'type': 'Capture and Emission Kinetics'},
+            'subcategory': {
+                'name': 'Simulation',
+                'description': 'Simulation software',
+                'subcategory': None
+            }
+        }
+
+        measurement_types = [
+            {
+                'name': 'Bulk Semiconductor energetics',
+                'description': 'Measurement of Semiconductor energetics',
+                'children': []
+            }
         ]
+
+        self.measurement_details = {
+            'band gap': {'name': 'Band Gap temperature dependence',
+                         'description': 'Band Gap temperature dependence',
+                         'type': 'Bulk Semiconductor energetics'},
+            'xi': {'name': 'Electrochemical potential temperature dependence',
+                   'description': 'Electrochemical potential temperature dependence',
+                   'type': 'Bulk Semiconductor energetics'},
+            'dos': {'name': 'Bands effective density of states temperature dependence',
+                    'description': 'Semiconductor Bands effective density of states temperature dependence',
+                    'type': 'Bulk Semiconductor energetics'},
+            'carrier velocity': {'name': 'Charge carrier thermal velocity temperature dependence',
+                                 'description': 'Charge carrier thermal velocity temperature dependence',
+                                 'type': 'Bulk Semiconductor energetics'},
+            'mobility': {'name': 'Charge carrier mobility temperature dependence',
+                         'description': 'Charge carrier mobility temperature dependence',
+                         'type': 'Bulk Semiconductor energetics'},
+            'emission_rate': {'name': 'Emission rate',
+                              'description': 'measure charge carriers emission rate',
+                              'type': 'Capture and Emission Kinetics'},
+        }
+
+        self.measurement_specs = {
+            'band gap': {'parameters': None,
+                         'input data': None,
+                         'variables': [{
+                             'name': 'Temperature',
+                             'description': 'Sample temperature',
+                             'units': 'K'
+                         }],
+                         'result': [{
+                             'name': 'Band Gap',
+                             'description': 'Semiconductor Band Gap',
+                             'units': 'eV'
+                         }]},
+            'xi': {'name': 'Electrochemical potential temperature dependence',
+                   'description': 'Electrochemical potential temperature dependence',
+                   'type': 'Bulk Semiconductor energetics'},
+            'dos': {'name': 'Bands effective density of states temperature dependence',
+                    'description': 'Semiconductor Bands effective density of states temperature dependence',
+                    'type': 'Bulk Semiconductor energetics'},
+            'carrier velocity': {'name': 'Charge carrier thermal velocity temperature dependence',
+                                 'description': 'Charge carrier thermal velocity temperature dependence',
+                                 'type': 'Bulk Semiconductor energetics'},
+            'mobility': {'name': 'Charge carrier mobility temperature dependence',
+                         'description': 'Charge carrier mobility temperature dependence',
+                         'type': 'Bulk Semiconductor energetics'},
+            'emission_rate': {'name': 'Emission rate',
+                              'description': 'measure charge carriers emission rate',
+                              'type': 'Capture and Emission Kinetics'},
+        }
+
+        self.semiconductor = semiconductor
+        samples = [self.semiconductor]
         parts = []
         if semiconductor.dopants:
             parts += [ChargeCarrierTrap(client=client, trap=dopant.trap) for dopant in semiconductor.dopants]
-        if not parts:
-            parts = None
         Simulator.__init__(
             self,
-            client=client, name=name, description=description,
+            client=client, name='Bulk Semiconductor Simulator', description=description,
             samples=samples, parts=parts,
             category=category,
             measurement_types=measurement_types,
-            measurements=measurements)
+            measurements=list(self.measurement_details.values()))
 
-    def band_gap(self, temperature, use_storage=False):
-        start_time = timeit.default_timer()
-        if isinstance(temperature, (list, tuple, np.ndarray)):
-            temperature = np.array(temperature)
-        elif isinstance(temperature, numbers.Number):
-            temperature = np.array([np.float(temperature)])
-        else:
-            raise TypeError('Unsupported temperature type')
-        measurement_time = timeit.default_timer() - start_time
-        start_time = timeit.default_timer()
-        if use_storage:
-            measurement_details = {
-                'name': 'Band Gap temperature dependence',
-                'description': 'Measurement of Semiconductor band gap temperature dependence',
-                'type': 'Bulk Semiconductor energetics'}
-            record = 'Starting Measurement "%s"' % (measurement_details['name'])
-            self.client.log_manager.log_record(record=record, category='Information')
-            measurements = self.client.measurement_manager.get_measurements(name=measurement_details['name'])
-            for measurement in measurements:
-                if measurement.progress != 100:
-                    continue
-                temperature_channels = self.client.measurement_manager.get_data_channels(measurement=measurement,
-                                                                                         name='Temperature')
-                for temperature_channel in temperature_channels:
-                    stored = self.client.measurement_manager.get_data_points_array(temperature_channel)[:, 0]
-                    if stored.size == temperature.size and (stored == temperature).all():
-                        band_gap_channel = self.load_create_data_channel(channel_name='Band Gap',
-                                                                         measurement=measurement,
-                                                                         description='Band Gap', unit_name='eV')
-                        band_gap = self.client.measurement_manager.get_data_points_array(band_gap_channel)[:, 0]
-                        db_time = timeit.default_timer() - start_time
-                        record = 'Measurement "%s" complete in %.3f s (measurement: %.3f s, db: %.3f s)' % \
-                                 (measurement_details['name'], db_time, 0.0, db_time)
-                        self.client.log_manager.log_record(record=record, category='Information')
-                        return band_gap
-            parameters = None
-            measurement = self.register_measurement(measurement_details=measurement_details,
-                                                    parameters=parameters, input_data=None,
-                                                    force_new=True)
-            temperature_channel = self.load_create_data_channel(channel_name='Temperature', measurement=measurement,
-                                                                description='Temperature', unit_name='K')
-            band_gap_channel = self.load_create_data_channel(channel_name='Band Gap', measurement=measurement,
-                                                             description='Band Gap', unit_name='eV')
-        db_time = timeit.default_timer() - start_time
-        start_time = timeit.default_timer()
+    @storage_manager('band gap', use_storage=True)
+    def band_gap(self, temperature=0.0):
+        temperature = prepare_array(temperature)
         band_gap = self.semiconductor.band_gap_parameters['Eg_0']
         alpha = self.semiconductor.band_gap_parameters['alpha']
         beta = self.semiconductor.band_gap_parameters['beta']
         shift = alpha * temperature ** 2 / (temperature + beta)
         band_gap = band_gap - shift
-        measurement_time += timeit.default_timer() - start_time
-        if use_storage:
-            start_time = timeit.default_timer()
-            self.client.measurement_manager.create_data_points(channel=temperature_channel,
-                                                               float_value=temperature)
-            self.client.measurement_manager.create_data_points(channel=band_gap_channel,
-                                                               float_value=band_gap)
-            self.client.measurement_manager.update_measurement_progress(measurement=measurement,
-                                                                        progress=100)
-            db_time += timeit.default_timer() - start_time
-            record = 'Measurement "%s" complete in %.3f s (measurement: %.3f s, db: %.3f s)' % \
-                     (measurement_details['name'], db_time + measurement_time,
-                      measurement_time, db_time)
-            self.client.log_manager.log_record(record=record, category='Information')
         return band_gap
 
-    def effective_bands_density_of_states(self, temperature, use_storage=True):
-        start_time = timeit.default_timer()
-        if isinstance(temperature, (list, tuple, np.ndarray)):
-            temperature = np.array(temperature)
-        elif isinstance(temperature, numbers.Number):
-            temperature = np.array([np.float(temperature)])
-        else:
-            raise TypeError('Unsupported temperature type')
-        measurement_time = timeit.default_timer() - start_time
-        start_time = timeit.default_timer()
-        if use_storage:
-            measurement_details = {
-                'name': 'Bands effective density of states temperature dependence',
-                'description': 'Measurement of Semiconductor Bands effective density of states temperature dependence',
-                'type': 'Bulk Semiconductor energetics'}
-            record = 'Starting Measurement "%s"' % (measurement_details['name'])
-            self.client.log_manager.log_record(record=record, category='Information')
-            measurements = self.client.measurement_manager.get_measurements(name=measurement_details['name'])
-            for measurement in measurements:
-                if measurement.progress != 100:
-                    continue
-                temperature_channels = self.client.measurement_manager.get_data_channels(measurement=measurement,
-                                                                                         name='Temperature')
-                for temperature_channel in temperature_channels:
-                    stored = self.client.measurement_manager.get_data_points_array(temperature_channel)[:, 0]
-                    if stored.size == temperature.size and (stored == temperature).all():
-                        cband_channel = self.load_create_data_channel(
-                            channel_name='Conduction band',
-                            measurement=measurement,
-                            description='Conduction band effective density of states', unit_name='m^-3')
-                        conduction_band = self.client.measurement_manager.get_data_points_array(cband_channel)[:, 0]
-                        vband_channel = self.load_create_data_channel(
-                            channel_name='Valence band',
-                            measurement=measurement,
-                            description='Valence band effective density of states', unit_name='m^-3')
-                        valence_band = self.client.measurement_manager.get_data_points_array(vband_channel)[:, 0]
-                        db_time = timeit.default_timer() - start_time
-                        record = 'Measurement "%s" complete in %.3f s (measurement: %.3f s, db: %.3f s)' % \
-                                 (measurement_details['name'], db_time, 0.0, db_time)
-                        self.client.log_manager.log_record(record=record, category='Information')
-                        return {'Nc': conduction_band, 'Nv': valence_band}
-            parameters = None
-            measurement = self.register_measurement(measurement_details=measurement_details,
-                                                    parameters=parameters, input_data=None,
-                                                    force_new=True)
-            temperature_channel = self.load_create_data_channel(channel_name='Temperature', measurement=measurement,
-                                                                description='Temperature', unit_name='K')
-            cband_channel = self.load_create_data_channel(
-                channel_name='Conduction band',
-                measurement=measurement,
-                description='Conduction band effective density of states', unit_name='m^-3')
-            vband_channel = self.load_create_data_channel(
-                channel_name='Valence band',
-                measurement=measurement,
-                description='Valence band effective density of states', unit_name='m^-3')
-        db_time = timeit.default_timer() - start_time
-        start_time = timeit.default_timer()
+    @storage_manager('dos', use_storage=True)
+    def effective_bands_density_of_states(self, temperature=0.0, use_storage=True):
+        temperature = prepare_array(temperature)
         t_3_2 = temperature ** (3 / 2)
         conduction_band = self.semiconductor.effective_bands_density_of_states['Nc'] * t_3_2
         valence_band = self.semiconductor.effective_bands_density_of_states['Nv'] * t_3_2
-        measurement_time += timeit.default_timer() - start_time
-        if use_storage:
-            start_time = timeit.default_timer()
-            self.client.measurement_manager.create_data_points(channel=temperature_channel,
-                                                               float_value=temperature)
-            self.client.measurement_manager.create_data_points(channel=cband_channel,
-                                                               float_value=conduction_band)
-            self.client.measurement_manager.create_data_points(channel=vband_channel,
-                                                               float_value=valence_band)
-            self.client.measurement_manager.update_measurement_progress(measurement=measurement,
-                                                                        progress=100)
-            db_time += timeit.default_timer() - start_time
-            record = 'Measurement "%s" complete in %.3f s (measurement: %.3f s, db: %.3f s)' % \
-                     (measurement_details['name'], db_time + measurement_time,
-                      measurement_time, db_time)
-            self.client.log_manager.log_record(record=record, category='Information')
         return {'Nc': conduction_band, 'Nv': valence_band}
 
     def carriers_thermal_velocity(self, temperature, use_storage=False):
@@ -220,10 +132,10 @@ class BulkSemiconductor(Simulator):
                 'type': 'Bulk Semiconductor energetics'}
             record = 'Starting Measurement "%s"' % (measurement_details['name'])
             self.client.log_manager.log_record(record=record, category='Information')
-            measurements = self.client.measurement_manager.get_measurements(name=measurement_details['name'])
-            for measurement in measurements:
-                if measurement.progress != 100:
-                    continue
+            parameters = None
+            measurement = self.register_measurement(measurement_details=measurement_details, parameters=parameters,
+                                                    input_data=None, force_new=False)
+            if measurement.progress == 100:
                 temperature_channels = self.client.measurement_manager.get_data_channels(measurement=measurement,
                                                                                          name='Temperature')
                 for temperature_channel in temperature_channels:
@@ -244,10 +156,6 @@ class BulkSemiconductor(Simulator):
                                  (measurement_details['name'], db_time, 0.0, db_time)
                         self.client.log_manager.log_record(record=record, category='Information')
                         return {'electron': v_e, 'hole': v_h}
-            parameters = None
-            measurement = self.register_measurement(measurement_details=measurement_details,
-                                                    parameters=parameters, input_data=None,
-                                                    force_new=True)
             temperature_channel = self.load_create_data_channel(channel_name='Temperature', measurement=measurement,
                                                                 description='Temperature', unit_name='K')
             e_channel = self.load_create_data_channel(
@@ -309,10 +217,10 @@ class BulkSemiconductor(Simulator):
                 'type': 'Bulk Semiconductor energetics'}
             record = 'Starting Measurement "%s"' % (measurement_details['name'])
             self.client.log_manager.log_record(record=record, category='Information')
-            measurements = self.client.measurement_manager.get_measurements(name=measurement_details['name'])
-            for measurement in measurements:
-                if measurement.progress != 100:
-                    continue
+            parameters = None
+            measurement = self.register_measurement(measurement_details=measurement_details, parameters=parameters,
+                                                    input_data=None, force_new=False)
+            if measurement.progress == 100:
                 temperature_channels = self.client.measurement_manager.get_data_channels(measurement=measurement,
                                                                                          name='Temperature')
                 for temperature_channel in temperature_channels:
@@ -359,10 +267,6 @@ class BulkSemiconductor(Simulator):
                                  (measurement_details['name'], db_time, 0.0, db_time)
                         self.client.log_manager.log_record(record=record, category='Information')
                         return result
-            parameters = None
-            measurement = self.register_measurement(measurement_details=measurement_details,
-                                                    parameters=parameters, input_data=None,
-                                                    force_new=True)
             temperature_channel = self.load_create_data_channel(channel_name='Temperature', measurement=measurement,
                                                                 description='Temperature', unit_name='K')
             e_lattice = self.load_create_data_channel(
@@ -500,10 +404,10 @@ class BulkSemiconductor(Simulator):
                 'type': 'Bulk Semiconductor energetics'}
             record = 'Starting Measurement "%s"' % (measurement_details['name'])
             self.client.log_manager.log_record(record=record, category='Information')
-            measurements = self.client.measurement_manager.get_measurements(name=measurement_details['name'])
-            for measurement in measurements:
-                if measurement.progress != 100:
-                    continue
+            parameters = None
+            measurement = self.register_measurement(measurement_details=measurement_details, parameters=parameters,
+                                                    input_data=None, force_new=False)
+            if measurement.progress == 100:
                 temperature_channels = self.client.measurement_manager.get_data_channels(measurement=measurement,
                                                                                          name='Temperature')
                 for temperature_channel in temperature_channels:
@@ -519,10 +423,6 @@ class BulkSemiconductor(Simulator):
                                  (measurement_details['name'], db_time, 0.0, db_time)
                         self.client.log_manager.log_record(record=record, category='Information')
                         return mu
-            parameters = None
-            measurement = self.register_measurement(measurement_details=measurement_details,
-                                                    parameters=parameters, input_data=None,
-                                                    force_new=True)
             temperature_channel = self.load_create_data_channel(channel_name='Temperature', measurement=measurement,
                                                                 description='Temperature', unit_name='K')
             mu_channel = self.load_create_data_channel(channel_name='Electrochemical potential',

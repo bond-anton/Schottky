@@ -13,7 +13,7 @@ client = Client(config_file_name='config.ini')
 client.user_manager.sign_in('bond_anton', 'secret_password')
 client.user_manager.project_manager.open_project('Schottky diode')
 
-my_semiconductor = Semiconductor(client=client, name='n-type Silicon')
+my_semiconductor = Semiconductor(client=client, name='p-type Silicon')
 print(my_semiconductor)
 
 my_simulator = BulkSemiconductor(client=client, semiconductor=my_semiconductor,
@@ -23,10 +23,10 @@ print(my_simulator)
 
 temperature_range = np.linspace(0, 750, num=1001, endpoint=True)
 
-band_gap = my_simulator.band_gap(temperature=5.0, use_storage=True)
+band_gap = my_simulator.band_gap(temperature=5.0)
 print(band_gap)
 
-band_gap = my_simulator.band_gap(temperature=temperature_range, use_storage=True)
+band_gap = my_simulator.band_gap(temperature=temperature_range)
 
 plt.plot(temperature_range, band_gap, color='k', linewidth=2, linestyle='-')
 for part in my_simulator.parts.values():
@@ -34,6 +34,8 @@ for part in my_simulator.parts.values():
         plt.plot(temperature_range, band_gap - part.energy_level(band_gap),
                  color='k', linewidth=1, linestyle='--')
 plt.show()
+
+exit(0)
 
 bands_density_of_states = my_simulator.effective_bands_density_of_states(temperature_range, use_storage=True)
 plt.plot(temperature_range, bands_density_of_states['Nc'],

@@ -143,82 +143,75 @@ class Simulator(object):
                 if not found:
                     self.client.equipment_manager.add_measurement_type_to_equipment(self.equipment, new_parent)
 
-    def register_measurement(self, measurement_details, parameters=None, input_data=None,
-                             force_new=False):
+    def measurement_lookup(self, measurement_details, parameters=None, input_data=None, progress_threshold=0):
         if parameters is None:
             parameters = []
         samples_parameters = []
         for sample in self.samples.values():
             samples_parameters += sample.parameters.values()
         measurement_parameters = parameters + samples_parameters
-        measurement = None
-        no_matches_found = True
-        if not force_new:
-            measurements = self.client.measurement_manager.get_measurements(
-                name=measurement_details['name'])
-            no_matches_found = True
-            matched_measurements = []
-            for measurement in measurements:
-                parameters_match = False
-                samples_match = False
-                input_data_match = False
-                if len(measurement.parameters) == len(measurement_parameters):
-                    test_parameters = [] + measurement_parameters
-                    for parameter in measurement.parameters:
-                        parameters_match = False
-                        for i in range(len(test_parameters)):
-                            if parameter.equals(test_parameters[i]):
-                                # print(parameter.name, 'equals', test_parameters[i].name)
-                                parameters_match = True
-                                del test_parameters[i]
-                                break
-                        if not parameters_match:
+        measurements = self.client.measurement_manager.get_measurements(name=measurement_details['name'])
+        matched_measurements = []
+        for measurement in measurements:
+            # check progress threshold
+            if measurement.progress < progress_threshold:
+                continue
+            # check input_data match
+            if measurement.input_data != input_data:
+                continue
+            # check measurement parameters match
+            if len(measurement.parameters) == len(measurement_parameters):
+                test_parameters = [] + measurement_parameters
+                for parameter in measurement.parameters:
+                    parameters_match = False
+                    for i in range(len(test_parameters)):
+                        if parameter.equals(test_parameters[i]):
+                            parameters_match = True
+                            del test_parameters[i]
                             break
-                samples = [i.sample for i in self.samples.values()]
-                if len(measurement.samples) == len(samples):
-                    # print('***samples')
-                    samples_match = True
-                    for sample in measurement.samples:
-                        if sample not in samples:
-                            samples_match = False
-                            # print('$$$samples')
-                            # print(measurement.samples)
-                            # print(samples)
-                            break
-                if measurement.input_data == input_data:
-                    # print('***input')
-                    input_data_match = True
-                if parameters_match and samples_match and input_data_match:
-                    matched_measurements.append(measurement)
-            if matched_measurements:
-                measurement = matched_measurements[0]
-                for matched_measurement in matched_measurements:
-                    if matched_measurement.progress > measurement.progress:
-                        measurement = matched_measurement
-                no_matches_found = False
-        if force_new or no_matches_found:
-            measurement = self.client.measurement_manager.create_measurement(
-                name=measurement_details['name'],
-                measurement_type=measurement_details['type'],
-                equipment=self.equipment,
-                description=measurement_details['description'])
-            if measurement_parameters:
-                copied_parameters = [self.client.parameter_manager.copy_parameter(p) for p in measurement_parameters]
-                # print(len(copied_parameters))
-                for parameter in copied_parameters:
-                    self.client.measurement_manager.add_parameter_to_measurement(
-                        measurement=measurement,
-                        parameter=parameter)
-            # for parameter in measurement.parameters:
-                # print(parameter.name)
-            for sample in self.samples.values():
-                self.client.measurement_manager.add_sample_to_measurement(
+                    if not parameters_match:
+                        break
+                if not parameters_match:
+                    continue
+            # check samples match
+            samples = [i.sample for i in self.samples.values()]
+            if len(measurement.samples) == len(samples):
+                samples_match = True
+                for sample in measurement.samples:
+                    if sample not in samples:
+                        samples_match = False
+                        break
+                if not samples_match:
+                    continue
+            matched_measurements.append(measurement)
+        return matched_measurements
+
+    def measurement_new(self, measurement_details, parameters=None, input_data=None):
+        if parameters is None:
+            parameters = []
+        samples_parameters = []
+        for sample in self.samples.values():
+            samples_parameters += sample.parameters.values()
+        measurement_parameters = parameters + samples_parameters
+        measurement = self.client.measurement_manager.create_measurement(
+            name=measurement_details['name'],
+            measurement_type=measurement_details['type'],
+            equipment=self.equipment,
+            description=measurement_details['description'])
+        if measurement_parameters:
+            copied_parameters = [self.client.parameter_manager.copy_parameter(p) for p in measurement_parameters]
+            for parameter in copied_parameters:
+                self.client.measurement_manager.add_parameter_to_measurement(
                     measurement=measurement,
-                    sample=sample.sample)
-            if input_data is not None:
-                self.client.measurement_manager.add_input_data_to_measurement(
-                    measurement=measurement,
-                    measurements_collection=input_data)
+                    parameter=parameter)
+        for sample in self.samples.values():
+            self.client.measurement_manager.add_sample_to_measurement(
+                measurement=measurement,
+                sample=sample.sample)
+        if input_data is not None:
+            self.client.measurement_manager.add_input_data_to_measurement(
+                measurement=measurement,
+                measurements_collection=input_data)
         return measurement
 
     def load_create_data_channel(self, channel_name, measurement, description, unit_name=None):

@@ -55,7 +55,7 @@ thermo_emission_coefficient = {
 
 phosphorous = Trap(client=client, name='Phosphorous in Si')
 phosphorous_dopant = Dopant(client=client, name='Phosphorous', trap=phosphorous,
-                            concentration=1e15, description='Phosphorous dopant')
+                            concentration=1e21, description='Phosphorous dopant')
 n_type_silicon = Semiconductor(client=client, name='n-type Silicon', epsilon=epsilon,
                                affinity=affinity, effective_mass=effective_mass,
                                effective_bands_density_of_states=bands_density_of_states,
@@ -71,7 +71,7 @@ print(n_type_silicon)
 
 boron = Trap(client=client, name='Boron in Si')
 boron_dopant = Dopant(client=client, name='Boron', trap=boron,
-                      concentration=1e15, description='Boron dopant')
+                      concentration=1e21, description='Boron dopant')
 p_type_silicon = Semiconductor(client=client, name='p-type Silicon', epsilon=epsilon,
                                affinity=affinity, effective_mass=effective_mass,
                                effective_bands_density_of_states=bands_density_of_states,
