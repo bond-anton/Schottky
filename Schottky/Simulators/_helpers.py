@@ -13,9 +13,24 @@ def storage_manager(spec_key, **outer_kwargs):
                 use_storage = False
             if use_storage:
                 record = 'Starting Measurement "%s"' % (self.measurement_details[spec_key]['name'])
+                parameters = []
+                if self.measurement_specs[spec_key]['parameters'] is not None:
+                    for parameter_spec in self.measurement_specs[spec_key]['parameters']:
+                        if parameter_spec['name'] in kwargs:
+                            if kwargs[parameter_spec['name']] is None:
+                                parameter_value = parameter_spec['default value']
+                            else:
+                                parameter_value = kwargs[parameter_spec['name']]
+                            if parameter_spec['type'] == 'numeric':
+                                parameter = self.client.parameter_manager.create_numeric_parameter(
+                                    parameter_spec['name'], parameter_value,
+                                    unit_name=parameter_spec['units'],
+                                    description=parameter_spec['description'],
+                                    parent=None, commit=False)
+                                parameters.append(parameter)
                 self.client.log_manager.log_record(record=record, category='Information')
                 measurements = self.measurement_lookup(self.measurement_details[spec_key],
-                                                       parameters=self.measurement_specs[spec_key]['parameters'],
+                                                       parameters=parameters,
                                                        input_data=self.measurement_specs[spec_key]['input data'],
                                                        progress_threshold=100)
                 match_found = False
@@ -44,7 +59,8 @@ def storage_manager(spec_key, **outer_kwargs):
                                                                 measurement=measurement,
                                                                 description=channel_spec['description'],
                                                                 unit_name=channel_spec['units'])
-                        result[channel_spec['name']] = self.client.measurement_manager.get_data_points_array(channel)[:, 0]
+                        result[channel_spec['name']] = self.client.measurement_manager.get_data_points_array(
+                            channel)[:, 0]
                     db_time = timeit.default_timer() - start_time
                     record = 'Measurement "%s" complete in %.3f s (measurement: %.3f s, db: %.3f s)' %\
                              (self.measurement_details[spec_key]['name'], db_time, 0.0, db_time)
@@ -58,8 +74,12 @@ def storage_manager(spec_key, **outer_kwargs):
             measurement_time = timeit.default_timer() - start_time
             start_time = timeit.default_timer()
             if use_storage:
+                for parameter in parameters:
+                    # TODO: add commit_parameter method in parameter manager for better logging
+                    self.client.session.add(parameter)
+                    self.client.session.commit()
                 measurement = self.measurement_new(self.measurement_details[spec_key],
-                                                   parameters=self.measurement_specs[spec_key]['parameters'],
+                                                   parameters=parameters,
                                                    input_data=self.measurement_specs[spec_key]['input data'])
                 for channel_spec in self.measurement_specs[spec_key]['variables']:
                     arg = prepare_array(kwargs[channel_spec['name'].lower()])

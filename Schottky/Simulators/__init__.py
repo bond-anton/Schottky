@@ -198,9 +198,14 @@ class Simulator(object):
             measurement_type=measurement_details['type'],
             equipment=self.equipment,
             description=measurement_details['description'])
-        if measurement_parameters:
-            copied_parameters = [self.client.parameter_manager.copy_parameter(p) for p in measurement_parameters]
+        if samples_parameters:
+            copied_parameters = [self.client.parameter_manager.copy_parameter(p) for p in samples_parameters]
             for parameter in copied_parameters:
+                self.client.measurement_manager.add_parameter_to_measurement(
+                    measurement=measurement,
+                    parameter=parameter)
+        if parameters:
+            for parameter in parameters:
                 self.client.measurement_manager.add_parameter_to_measurement(
                     measurement=measurement,
                     parameter=parameter)

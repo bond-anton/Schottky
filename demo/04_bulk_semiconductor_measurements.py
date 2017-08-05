@@ -42,9 +42,7 @@ plt.plot(temperature_range, bands_density_of_states['DOS V.band'],
          color='r', linewidth=2, linestyle='-')
 plt.show()
 
-exit(0)
-
-thermal_velocity = my_simulator.carriers_thermal_velocity(temperature_range, use_storage=True)
+thermal_velocity = my_simulator.carriers_thermal_velocity(temperature=temperature_range)
 plt.plot(temperature_range, thermal_velocity['electron'],
          color='b', linewidth=2, linestyle='-')
 plt.plot(temperature_range, thermal_velocity['hole'],
@@ -52,13 +50,16 @@ plt.plot(temperature_range, thermal_velocity['hole'],
 plt.show()
 
 
-mobility = my_simulator.mobility(temperature=temperature_range, field=None, use_storage=True)
 
-plt.plot(temperature_range, mobility['electron']['total'],
+mobility = my_simulator.mobility(temperature=temperature_range, field=None)
+
+plt.plot(temperature_range, mobility['electron'],
          color='b', linewidth=2, linestyle='-')
-plt.plot(temperature_range, mobility['hole']['total'],
+plt.plot(temperature_range, mobility['hole'],
          color='r', linewidth=2, linestyle='-')
 plt.show()
+
+exit(0)
 
 e_f = my_simulator.electrochemical_potential(temperature_range, use_storage=True)
 plt.plot(temperature_range, band_gap, color='k', linewidth=2, linestyle='-')
