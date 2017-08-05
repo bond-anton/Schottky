@@ -1,8 +1,6 @@
 from __future__ import division, print_function
-import timeit
-import numbers
 import numpy as np
-from scipy.optimize import fsolve, root, bisect
+from scipy.optimize import bisect
 
 from Schottky.Samples.Semiconductor import Semiconductor
 from Schottky.Simulators import Simulator
