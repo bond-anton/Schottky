@@ -13,7 +13,7 @@ client = Client(config_file_name='config.ini')
 client.user_manager.sign_in('bond_anton', 'secret_password')
 client.user_manager.project_manager.open_project('Schottky diode')
 
-my_semiconductor = Semiconductor(client=client, name='p-type Silicon')
+my_semiconductor = Semiconductor(client=client, name='n-type Silicon')
 print(my_semiconductor)
 
 my_simulator = BulkSemiconductor(client=client, semiconductor=my_semiconductor,
@@ -67,6 +67,16 @@ for part in my_simulator.parts.values():
 plt.plot(temperature_range, band_gap - e_f, 'k-o')
 plt.show()
 
+p, n = my_simulator.get_type(temperature=temperature_range)
+plt.plot(temperature_range, band_gap, color='k', linewidth=2, linestyle='-')
+plt.plot(temperature_range, band_gap / 2, color='k', linewidth=1, linestyle=':')
+for part in my_simulator.parts.values():
+    if isinstance(part, ChargeCarrierTrap):
+        plt.plot(temperature_range, band_gap - part.energy_level(band_gap),
+                 color='k', linewidth=1, linestyle='--')
+plt.plot(temperature_range[p], (band_gap - e_f)[p], 'r-o')
+plt.plot(temperature_range[n], (band_gap - e_f)[n], 'b-o')
+plt.show()
 
 e_f = my_simulator.electrochemical_potential(temperature=0)
 print(e_f)

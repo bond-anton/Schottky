@@ -8,7 +8,7 @@ from Schottky.Samples import Sample
 
 class Simulator(object):
 
-    def __init__(self, client, name=None, description=None,
+    def __init__(self, client, name=None, description=None, label=None,
                  samples=None, parts=None,
                  category=None, measurement_types=None, measurements=None):
         assert isinstance(client, Client), 'Valid ScientificProjects Client instance is required.'
@@ -17,6 +17,9 @@ class Simulator(object):
         if name is None:
             name = 'Software Simulator'
         self.name = str(name)
+        if label is None:
+            label = self.name
+        self.label = str(label)
         if description is None:
             description = 'Simulates properties of corresponding entity'
         self.description = description
@@ -29,7 +32,7 @@ class Simulator(object):
         if isinstance(parts, (list, tuple, np.ndarray)):
             for part in parts:
                 if isinstance(part, Simulator):
-                    self.parts[part.name] = part
+                    self.parts[part.label] = part
         self.manufacturer = self._create_manufacturer()
         if category is None:
             category = {

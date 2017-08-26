@@ -1,5 +1,6 @@
 from __future__ import division, print_function
 import numbers
+import numpy as np
 
 from Schottky.Samples import Sample
 from Schottky.Samples.Metal import Metal
@@ -39,16 +40,16 @@ class SchottkyDiode(Sample):
     def set_area(self, area):
         assert isinstance(area, numbers.Number), 'area must be a number'
         try:
-            self.parameters['area'].float_value = float(area)
+            self.parameters['area'].float_value = np.float64(area)
             self.save_sample_changes()
         except KeyError:
             parameter = self.client.parameter_manager.create_numeric_parameter(name='area',
-                                                                               value=float(area),
+                                                                               value=np.float64(area),
                                                                                description='Diode area')
             self.client.sample_manager.add_parameter_to_sample(sample=self.sample,
                                                                parameter=parameter)
             self.load_create_sample()
-        self.area = float(area)
+        self.area = np.float64(area)
 
     def _read_in_thickness(self, thickness):
         try:
@@ -61,20 +62,20 @@ class SchottkyDiode(Sample):
     def set_thickness(self, thickness):
         assert isinstance(thickness, numbers.Number), 'thickness must be a number'
         try:
-            self.parameters['thickness'].float_value = float(thickness)
+            self.parameters['thickness'].float_value = np.float64(thickness)
             self.save_sample_changes()
         except KeyError:
             parameter = self.client.parameter_manager.create_numeric_parameter(name='thickness',
-                                                                               value=float(thickness),
+                                                                               value=np.float64(thickness),
                                                                                description='Diode thickness')
             self.client.sample_manager.add_parameter_to_sample(sample=self.sample,
                                                                parameter=parameter)
             self.load_create_sample()
-        self.thickness = float(thickness)
+        self.thickness = np.float64(thickness)
 
     def _read_in_serial_resistance(self, serial_resistance):
         try:
-            self.thickness = self.parameters['serial resistance'].float_value
+            self.serial_resistance = self.parameters['serial resistance'].float_value
         except KeyError:
             pass
         if self.serial_resistance != serial_resistance and serial_resistance is not None:
@@ -83,16 +84,16 @@ class SchottkyDiode(Sample):
     def set_serial_resistance(self, serial_resistance):
         assert isinstance(serial_resistance, numbers.Number), 'serial resistance must be a number'
         try:
-            self.parameters['serial resistance'].float_value = float(serial_resistance)
+            self.parameters['serial resistance'].float_value = np.float64(serial_resistance)
             self.save_sample_changes()
         except KeyError:
             parameter = self.client.parameter_manager.create_numeric_parameter(name='serial resistance',
-                                                                               value=float(serial_resistance),
+                                                                               value=np.float64(serial_resistance),
                                                                                description='Diode serial resistance')
             self.client.sample_manager.add_parameter_to_sample(sample=self.sample,
                                                                parameter=parameter)
             self.load_create_sample()
-        self.serial_resistance = float(serial_resistance)
+        self.serial_resistance = np.float64(serial_resistance)
 
     def _read_in_metal(self, metal):
         try:
@@ -127,7 +128,7 @@ class SchottkyDiode(Sample):
         except KeyError:
             parameter = self.client.parameter_manager.create_generic_parameter(
                 name='Metal',
-                float_value=float(metal.sample.id),
+                float_value=np.float64(metal.sample.id),
                 string_value=string_value,
                 description=metal.description)
             self.client.sample_manager.add_parameter_to_sample(sample=self.sample,
@@ -169,7 +170,7 @@ class SchottkyDiode(Sample):
         except KeyError:
             parameter = self.client.parameter_manager.create_generic_parameter(
                 name='Semiconductor',
-                float_value=float(semiconductor.sample.id),
+                float_value=np.float64(semiconductor.sample.id),
                 string_value=string_value,
                 description=semiconductor.description)
             self.client.sample_manager.add_parameter_to_sample(sample=self.sample,

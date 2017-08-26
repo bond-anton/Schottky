@@ -88,12 +88,12 @@ class BulkSemiconductor(Simulator):
                         {
                             'name': 'DOS C.band',
                             'description': 'Effective Density of States in Conduction band',
-                            'units': 'm^-3'
+                            'units': 'cm^-3'
                         },
                         {
                             'name': 'DOS V.band',
                             'description': 'Effective Density of States in Conduction band',
-                            'units': 'm^-3'
+                            'units': 'cm^-3'
                         }
                     ]},
             'carrier velocity': {'parameters': None,
@@ -107,19 +107,19 @@ class BulkSemiconductor(Simulator):
                                      {
                                          'name': 'electron',
                                          'description': 'electrons average thermal velocity',
-                                         'units': 'm/s'
+                                         'units': 'cm/s'
                                      },
                                      {
                                          'name': 'hole',
                                          'description': 'holes average thermal velocity',
-                                         'units': 'm/s'
+                                         'units': 'cm/s'
                                      }
                                  ]},
             'mobility': {'parameters': [{'name': 'field',
                                          'type': 'numeric',
                                          'default value': 0.0,
                                          'description': 'Electric field',
-                                         'units': 'V/m'}],
+                                         'units': 'V/cm'}],
                          'input data': None,
                          'variables': [{
                              'name': 'Temperature',
@@ -130,12 +130,12 @@ class BulkSemiconductor(Simulator):
                              {
                                  'name': 'electron',
                                  'description': 'electrons mobility',
-                                 'units': 'm^2/(V*s)'
+                                 'units': 'cm^2/(V*s)'
                              },
                              {
                                  'name': 'hole',
                                  'description': 'holes mobility',
-                                 'units': 'm^2/(V*s)'
+                                 'units': 'cm^2/(V*s)'
                              }
                          ]},
             'emission_rate': {'name': 'Emission rate',
@@ -257,8 +257,8 @@ class BulkSemiconductor(Simulator):
     def electrochemical_potential(self, temperature=0.0):
         temperature = prepare_array(temperature)
         energy_scale = constants['k'] * temperature
-        band_gap = self.band_gap(temperature=temperature)
-        bands_density_of_states = self.effective_bands_density_of_states(temperature=temperature)
+        band_gap = self.band_gap(temperature=temperature, use_storage=use_storage)
+        bands_density_of_states = self.effective_bands_density_of_states(temperature=temperature, use_storage=use_storage)
         mu = np.zeros_like(temperature)
         for i in range(len(temperature)):
             if temperature[i] < 8:
@@ -306,3 +306,11 @@ class BulkSemiconductor(Simulator):
             mu[i] = bisect(equation, a=0, b=band_gap[i])
 
         return mu
+
+    def get_type(self, temperature=0.0):
+        temperature = prepare_array(temperature)
+        xi = self.electrochemical_potential(temperature=temperature)
+        bg2 = self.band_gap(temperature=temperature) / 2
+        p = np.where(xi - bg2 > 0)
+        n = np.where(xi - bg2 < 0)
+        return p, n

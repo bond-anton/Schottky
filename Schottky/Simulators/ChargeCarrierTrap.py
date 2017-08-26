@@ -16,6 +16,7 @@ class ChargeCarrierTrap(Simulator):
         self.trap = trap
         samples = [self.trap]
         name = 'Charge Carrier Trap Simulator'
+        label = name + ' [%s]' % trap.name
         category = {
             'name': 'Software',
             'description': 'Measurement, automation, control, simulation, and other software tools',
@@ -40,7 +41,7 @@ class ChargeCarrierTrap(Simulator):
             self,
             client=client, name=name, description=description,
             samples=samples, parts=parts,
-            category=category,
+            category=category, label=label,
             measurement_types=measurement_types,
             measurements=measurements)
 

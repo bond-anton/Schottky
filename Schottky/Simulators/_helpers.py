@@ -2,6 +2,8 @@ from __future__ import division, print_function
 import timeit
 import numpy as np
 
+from Schottky import constants
+
 
 def storage_manager(spec_key, **outer_kwargs):
     def measurement_timer(measurement_function):
@@ -60,7 +62,7 @@ def storage_manager(spec_key, **outer_kwargs):
                                                                 description=channel_spec['description'],
                                                                 unit_name=channel_spec['units'])
                         result[channel_spec['name']] = self.client.measurement_manager.get_data_points_array(
-                            channel)[:, 0]
+                            channel)[:, 0].astype(np.float64)
                     db_time = timeit.default_timer() - start_time
                     record = 'Measurement "%s" complete in %.3f s (measurement: %.3f s, db: %.3f s)' %\
                              (self.measurement_details[spec_key]['name'], db_time, 0.0, db_time)
@@ -115,3 +117,31 @@ def prepare_array(x):
         return np.array(x, dtype=np.float64)
     else:
         return np.array([x], dtype=np.float64)
+
+
+def fermi(energy, fermi_energy, temperature, g_ratio=1):
+    """
+    fermi distribution function
+    :param energy: Energy level measured from Ec towards Ev
+    :param fermi_energy: Fermi level energy measured from Ec towards Ev
+    :param temperature: Temperature in K
+    :param g_ratio: Degeneracy ratio
+    :return: Fermi distrubution function
+    """
+    energy_scale = constants['k'] * temperature
+    return 1 / (1 + g_ratio * np.exp((fermi_energy - energy) / energy_scale))
+
+
+def d_fermi_d_delta_fermi_energy(energy, fermi_energy, temperature, g_ratio=1):
+    """
+    Derivative of fermi distribution function by delta_fermi_energy at delta_fermi_energy = 0
+    :param energy: Energy level
+    :param fermi_energy: Fermi level enrgy
+    :param temperature: Temperature in K
+    :param g_ratio: Degeneracy ratio
+    :return: sympy symbolic expression
+    """
+    energy_scale = constants['k'] * temperature
+    numerator = g_ratio * np.exp((energy - fermi_energy) / energy_scale) / energy_scale
+    denominator = (1 + g_ratio * np.exp((energy - fermi_energy) / energy_scale)) ** 2
+    return numerator / denominator
