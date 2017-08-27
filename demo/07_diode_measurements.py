@@ -43,10 +43,8 @@ temperature = 300
 #ax4.plot(z, carriers_concentration['holes'], '-r')
 #plt.show()
 
-meshes = diode_simulator.potential(bias=-1.0, temperature=temperature)
-flat_grid = meshes.flatten()
+flat_grid = diode_simulator.potential(bias=-10.0, temperature=temperature)
 psi = interp1d(flat_grid.physical_nodes, flat_grid.solution, bounds_error=False, fill_value=0.0)
-print(len(meshes.levels), np.trapz(flat_grid.residual, flat_grid.physical_nodes))
 rho = diode_simulator._semiconductor_charge(z=flat_grid.physical_nodes, psi=psi, temperature=temperature)
 _, (ax1, ax2, ax3, ax4) = plt.subplots(4, sharex=True)
 ax1.plot(flat_grid.physical_nodes, flat_grid.solution, 'r-o')

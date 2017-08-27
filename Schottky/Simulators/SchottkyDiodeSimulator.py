@@ -163,35 +163,41 @@ class SchottkyDiodeSimulator(Simulator):
         xi = self.parts['Bulk Semiconductor Simulator'].electrochemical_potential(temperature=temperature)
         dos = self.parts['Bulk Semiconductor Simulator'].effective_bands_density_of_states(temperature=temperature)
         diode_type = self._diode_type(temperature=temperature)
-        v_bi = self.v_bi(temperature=temperature, use_storage=False)
+        v_bi = self.v_bi(temperature=temperature, use_storage=False)[0]
         if diode_type == 'p':
-            diode_v = v_bi + bias
+            bias_coeff = 1
         elif diode_type == 'n':
-            diode_v = v_bi - bias
+            bias_coeff = -1
         else:
             raise ValueError('Can not determine diode type')
+        v_diode = bias_coeff * bias
+        if v_bi + v_diode <= 0.0:
+            v_diode = -v_bi * 0.9
         rho = partial(self._semiconductor_charge, temperature=temperature,
                       band_gap=band_gap, xi=xi, dos=dos, diode_type=diode_type)
         d_rho_d_psi = partial(self._d_semiconductor_charge_d_psi, temperature=temperature,
                               band_gap=band_gap, xi=xi, dos=dos, diode_type=diode_type)
-        psi = lambda x: diode_v - x * diode_v / self.diode.thickness
-        #psi = lambda x: np.zeros_like(x) + diode_v
-        i=0
+        psi = lambda x: v_diode - x * v_diode / self.diode.thickness
         converged = False
         while not converged:
             meshes = dirichlet_non_linear_poisson_solver_amr(0.0, self.diode.thickness, 1.0e-6,
-                                                             psi, rho, d_rho_d_psi, diode_v[0], 0.0,
+                                                             psi, rho, d_rho_d_psi, v_bi + v_diode, 0.0,
                                                              max_iter=1000, residual_threshold=1.5e-3,
                                                              int_residual_threshold=1.5e-4,
                                                              max_level=5, mesh_refinement_threshold=1e-7)
 
             flat_grid = meshes.flatten()
             psi = interp1d(flat_grid.physical_nodes, flat_grid.solution, bounds_error=False,
-                           fill_value=(diode_v[0], 0))
-            i += 1
-            if i > 0:
+                           fill_value=(v_bi + v_diode, 0))
+            j = self.thermionic_emission_current(bias=bias, temperature=temperature)[0]
+            v_serial = j * self.diode.area * self.diode.serial_resistance
+            v_diode_new = bias_coeff * (bias - v_serial)
+            print(v_diode, v_diode_new, v_serial, abs(v_diode - v_diode_new))
+            if abs(v_diode - v_diode_new) < 1e-6:
                 converged = True
-        return meshes
+            else:
+                v_diode = v_diode_new
+        return flat_grid
 
     def _diode_type(self, temperature=0.0):
         p, n = self.parts['Bulk Semiconductor Simulator'].get_type(temperature=temperature)
