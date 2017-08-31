@@ -268,8 +268,7 @@ def Reccurent_Poisson_solver(SchDiode, Psi=Psi_zero, Vd_guess=None, Vd_error=1e-
                                            int_residual_threshold=5e-14,
                                            max_level=5, mesh_refinement_threshold=1e-19, debug=debug)
         z_nodes, Psi_points, rho_rel_err_points = Meshes.flatten(debug=False)
-        dz = np.gradient(z_nodes)
-        E_points = -np.gradient(Psi_points, dz, edge_order=2)
+        E_points = -np.gradient(Psi_points, z_nodes, edge_order=2)
         Psi = interp_Fn(z_nodes, Psi_points, interp_type='last')
         E = interp_Fn(z_nodes, E_points, interp_type='last')
         SchDiode.FieldInversionPoint, PHI_bn, _, PHI_b = SchDiode.get_phi_bn(Psi, Vd_guess, SchottkyEffect=False)
@@ -324,7 +323,6 @@ def Poisson_eq_num_solver(SchDiode, nodes, Psi=Psi_zero, Vd=0,
     # print nodes[0], nodes[-1], (nodes[1] - nodes[0])*1e6
     mesh.int_residual = threshold + 1
     int_residual_array = []
-    dx = np.gradient(mesh.phys_nodes())
     DPsi = np.ones_like(mesh.local_nodes)
     if debug:
         plt.ion()
@@ -430,8 +428,8 @@ def Poisson_eq_num_solver(SchDiode, nodes, Psi=Psi_zero, Vd=0,
         if debug:
             Psi_line.set_ydata(mesh.solution)
             f_line.set_ydata(rho_z_Psi_eps(mesh.phys_nodes(), Psi))
-            dPsi = np.gradient(mesh.solution, dx, edge_order=2)
-            d2Psi = np.gradient(dPsi, dx, edge_order=2)
+            dPsi = np.gradient(mesh.solution, mesh.phys_nodes(), edge_order=2)
+            d2Psi = np.gradient(dPsi, mesh.phys_nodes(), edge_order=2)
             DPsi_line.set_ydata(DPsi)
             d2Psi_line.set_ydata(d2Psi)
             E_line.set_ydata(-dPsi)

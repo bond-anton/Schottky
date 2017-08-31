@@ -47,8 +47,7 @@ flat_grid, flat_sol, flat_res = Meshes.flatten()
 for level in Meshes.levels:
     for mesh in Meshes.Tree[level]:
         ax1.plot(mesh.phys_nodes(), mesh.solution, colors[level] + '-')
-        dx = np.gradient(mesh.phys_nodes())
-        dPsi = np.gradient(mesh.solution, dx, edge_order=2)
+        dPsi = np.gradient(mesh.solution, mesh.phys_nodes(), edge_order=2)
         ax4.plot(mesh.phys_nodes(), dPsi, colors[level] + '-')
 
 ax2.plot(flat_grid, flat_res, 'b-')

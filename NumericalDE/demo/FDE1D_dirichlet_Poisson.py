@@ -22,9 +22,8 @@ def Y(x):
 
 def f(x):
     y = Y(x)
-    dx = np.gradient(x)
-    dy = np.gradient(y, dx, edge_order=2)
-    d2y = np.gradient(dy, dx, edge_order=2)
+    dy = np.gradient(y, x, edge_order=2)
+    d2y = np.gradient(dy, x, edge_order=2)
     return d2y
 
 

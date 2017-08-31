@@ -28,9 +28,8 @@ print integral, bc2 - bc1
 print np.allclose(integral, bc2 - bc1)
 
 Y_sol, R = neuman_poisson_solver(nodes, f, bc1, bc2, Psi0=0, debug=True)
-dx = np.gradient(nodes)
-dY_sol = np.gradient(Y_sol, dx, edge_order=2)
-d2Y_sol = np.gradient(dY_sol, dx, edge_order=2)
+dY_sol = np.gradient(Y_sol, nodes, edge_order=2)
+d2Y_sol = np.gradient(dY_sol, nodes, edge_order=2)
 fig, (ax1, ax2, ax3) = plt.subplots(3, sharex=True)
 ax1.plot(nodes[2:-2], f(nodes[2:-2]), 'r-')
 # ax1.plot(nodes, d2Y_sol, 'b-')

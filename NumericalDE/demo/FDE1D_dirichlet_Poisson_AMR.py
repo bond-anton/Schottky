@@ -22,9 +22,8 @@ def Y(x):
 
 def f(x):
     y = Y(x)
-    dx = np.gradient(x)
-    dy = np.gradient(y, dx, edge_order=2)
-    d2y = np.gradient(dy, dx, edge_order=2)
+    dy = np.gradient(y, x, edge_order=2)
+    d2y = np.gradient(dy, x, edge_order=2)
     return d2y
     # return np.exp(-abs(x))
 
@@ -44,13 +43,11 @@ for level in meshes.levels:
     for mesh in meshes.Tree[level]:
         ax1.plot(mesh.phys_nodes(), mesh.solution, colors[level] + '-')
         # ax2.plot(mesh.phys_nodes(), mesh.residual, colors[level] + '-o')
-        dx = np.gradient(mesh.phys_nodes())
-        dPsi = np.gradient(mesh.solution, dx, edge_order=2)
+        dPsi = np.gradient(mesh.solution, mesh.phys_nodes(), edge_order=2)
         ax4.plot(mesh.phys_nodes(), dPsi, colors[level] + '-')
 
 ax2.plot(flat_grid, flat_res, 'b-')
 meshes.plot_tree(ax3)
-# dx = np.gradient(flat_grid)
-# dPsi = np.gradient(flat_sol, dx, edge_order=2)
+# dPsi = np.gradient(flat_sol, flat_grid, edge_order=2)
 # ax4.plot(flat_grid, dPsi, 'b-')
 plt.show()

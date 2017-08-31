@@ -40,9 +40,8 @@ mesh_refinement_threshold = 1e-7
 
 idxs = np.where(abs(root_mesh.residual) > mesh_refinement_threshold)
 
-dx = np.gradient(root_mesh.phys_nodes())
-dPsi = np.gradient(root_mesh.solution, dx, edge_order=2)
-d2Psi = np.gradient(dPsi, dx, edge_order=2)
+dPsi = np.gradient(root_mesh.solution, root_mesh.phys_nodes(), edge_order=2)
+d2Psi = np.gradient(dPsi, root_mesh.phys_nodes(), edge_order=2)
 
 _, (ax1, ax2, ax3) = plt.subplots(3, sharex=True)
 ax1.plot(root_mesh.phys_nodes(), root_mesh.solution)

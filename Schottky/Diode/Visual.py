@@ -103,9 +103,8 @@ def BandsBending_draw_metal(ax, SchDiode, metal_size, bands_style, lbl_style, dr
 
 
 def BandsBending_prepare_data(SchDiode, Psi, Vd, z, eV, SchottkyEffect, draw_metal):
-    dz = np.gradient(z)
     Psi_points = Psi(z)
-    E_points = -np.gradient(Psi_points, dz, edge_order=2)
+    E_points = -np.gradient(Psi_points, z, edge_order=2)
     '''
     if SchDiode.Semiconductor.dop_type == 'n':
         idx = np.where(E_points > 0)[0]

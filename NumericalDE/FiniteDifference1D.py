@@ -47,9 +47,8 @@ def dirichlet_poisson_solver_arrays(nodes, f_nodes, bc1, bc2, J=1, debug=False):
     if debug: print M.todense()
     Psi[1:-1] = linalg.spsolve(M, F, use_umfpack=True)
     if debug: print 'Time spent on solution %2.2f s' % (time.time() - t0)
-    dx = np.gradient(nodes)
-    dPsi = np.gradient(Psi, dx, edge_order=2) / J
-    d2Psi = np.gradient(dPsi, dx, edge_order=2) / J
+    dPsi = np.gradient(Psi, nodes, edge_order=2) / J
+    d2Psi = np.gradient(dPsi, nodes, edge_order=2) / J
     R = f_nodes - d2Psi
     return Psi, R
 
@@ -123,9 +122,8 @@ def neuman_poisson_solver_arrays(nodes, f_nodes, nbc1, nbc2, J=1, Psi0=0, debug=
     if debug: print M.todense()
     Psi[1:] = linalg.spsolve(M, F, use_umfpack=True)
     if debug: print 'Time spent on solution %2.2f s' % (time.time() - t0)
-    dx = np.gradient(nodes)
-    dPsi = np.gradient(Psi, dx, edge_order=2) / J
-    d2Psi = np.gradient(dPsi, dx, edge_order=2) / J
+    dPsi = np.gradient(Psi, nodes, edge_order=2) / J
+    d2Psi = np.gradient(dPsi, nodes, edge_order=2) / J
     R = f_nodes - d2Psi
     return Psi, R
 
@@ -164,13 +162,10 @@ def dirichlet_non_linear_poisson_solver_arrays(nodes, Psi0_nodes, f_nodes, dfdDP
     DPsi[1:-1] = linalg.spsolve(M, F, use_umfpack=True)
     Psi = Psi0_nodes + W*DPsi
     if debug: print 'Time spent on solution %2.2f s' % (time.time() - t0)
-    dx = np.gradient(nodes)
-    dPsi0 = np.gradient(Psi0_nodes, dx, edge_order=2) / J
-    d2Psi0 = np.gradient(dPsi0, dx, edge_order=2) / J
-    #dPsi = np.gradient(Psi(nodes), dx, edge_order=2) / J
-    #d2Psi = np.gradient(dPsi, dx, edge_order=2) / J
-    dDPsi = np.gradient(DPsi, dx, edge_order=2) / J
-    d2DPsi = np.gradient(dDPsi, dx, edge_order=2) / J
+    dPsi0 = np.gradient(Psi0_nodes, nodes, edge_order=2) / J
+    d2Psi0 = np.gradient(dPsi0, nodes, edge_order=2) / J
+    dDPsi = np.gradient(DPsi, nodes, edge_order=2) / J
+    d2DPsi = np.gradient(dDPsi, nodes, edge_order=2) / J
     # print f_nodes
     R = f_nodes - d2DPsi - d2Psi0
     # print R
@@ -236,12 +231,11 @@ def dirichlet_non_linear_poisson_solver_reccurent_mesh(mesh, Psi0, f, dfdDPsi,
     '''
     mesh.int_residual = threshold + 1
     int_residual_array = []
-    dx = np.gradient(mesh.phys_nodes())
     if debug:
         DPsi = np.ones_like(mesh.local_nodes)
         E = np.zeros_like(mesh.local_nodes)
-        dPsi = np.gradient(Psi0(mesh.phys_nodes()), dx, edge_order=2)
-        d2Psi = np.gradient(dPsi, dx, edge_order=2)
+        dPsi = np.gradient(Psi0(mesh.phys_nodes()), mesh.phys_nodes(), edge_order=2)
+        d2Psi = np.gradient(dPsi, mesh.phys_nodes(), edge_order=2)
         
         plt.ion()
         _, (ax1, ax2, ax3, ax4, ax5) = plt.subplots(5)
@@ -271,8 +265,8 @@ def dirichlet_non_linear_poisson_solver_reccurent_mesh(mesh, Psi0, f, dfdDPsi,
         if debug:
             Psi_line.set_ydata(mesh.solution)
             f_line.set_ydata(f(mesh.phys_nodes(), Psi0))
-            dPsi = np.gradient(mesh.solution, dx, edge_order=2)
-            d2Psi = np.gradient(dPsi, dx, edge_order=2)
+            dPsi = np.gradient(mesh.solution, mesh.phys_nodes(), edge_order=2)
+            d2Psi = np.gradient(dPsi, mesh.phys_nodes(), edge_order=2)
             DPsi_line.set_ydata(DPsi)
             d2Psi_line.set_ydata(d2Psi)
             E_line.set_ydata(mesh.residual)
