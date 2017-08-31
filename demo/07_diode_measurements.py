@@ -14,6 +14,7 @@ client.user_manager.sign_in('bond_anton', 'secret_password')
 client.user_manager.project_manager.open_project('Schottky diode')
 
 my_diode = SchottkyDiode(client=client, name='Au-n_Si')
+#my_diode = SchottkyDiode(client=client, name='Ti-p_Si')
 print(my_diode)
 
 diode_simulator = SchottkyDiodeSimulator(client=client, diode=my_diode, description='Schottky diode simulator')
@@ -43,14 +44,14 @@ temperature = 300
 #ax4.plot(z, carriers_concentration['holes'], '-r')
 #plt.show()
 
-flat_grid = diode_simulator.potential(bias=-10.0, temperature=temperature)
+flat_grid = diode_simulator.potential(bias=1.5, temperature=temperature)
 psi = interp1d(flat_grid.physical_nodes, flat_grid.solution, bounds_error=False, fill_value=0.0)
 rho = diode_simulator._semiconductor_charge(z=flat_grid.physical_nodes, psi=psi, temperature=temperature)
 _, (ax1, ax2, ax3, ax4) = plt.subplots(4, sharex=True)
 ax1.plot(flat_grid.physical_nodes, flat_grid.solution, 'r-o')
 ax2.plot(flat_grid.physical_nodes, flat_grid.residual, 'r-o')
 ax3.plot(flat_grid.physical_nodes, rho, 'r-o')
-ax4.plot(flat_grid.physical_nodes, flat_grid.residual / rho)
+ax4.plot(flat_grid.physical_nodes, flat_grid.residual / max(rho))
 plt.show()
 
 #bias = np.linspace(-1, 0.5, num=101)

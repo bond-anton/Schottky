@@ -158,12 +158,12 @@ class SchottkyDiodeSimulator(Simulator):
                      np.exp((bias + area * j_s * self.diode.serial_resistance) / energy_scale))
         return np.real(j)
 
-    def potential(self, bias=0.0, temperature=0.0):
+    def potential(self, bias=0.0, temperature=0.0, psi=None):
         band_gap = self.parts['Bulk Semiconductor Simulator'].band_gap(temperature=temperature)
         xi = self.parts['Bulk Semiconductor Simulator'].electrochemical_potential(temperature=temperature)
         dos = self.parts['Bulk Semiconductor Simulator'].effective_bands_density_of_states(temperature=temperature)
         diode_type = self._diode_type(temperature=temperature)
-        v_bi = self.v_bi(temperature=temperature, use_storage=False)[0]
+        v_bi = self.v_bi(temperature=temperature)[0]
         if diode_type == 'p':
             bias_coeff = 1
         elif diode_type == 'n':
@@ -177,7 +177,8 @@ class SchottkyDiodeSimulator(Simulator):
                       band_gap=band_gap, xi=xi, dos=dos, diode_type=diode_type)
         d_rho_d_psi = partial(self._d_semiconductor_charge_d_psi, temperature=temperature,
                               band_gap=band_gap, xi=xi, dos=dos, diode_type=diode_type)
-        psi = lambda x: v_diode - x * v_diode / self.diode.thickness
+        if psi is None:
+            psi = lambda x: (bias + v_diode) - x * (bias + v_diode) / self.diode.thickness
         converged = False
         while not converged:
             meshes = dirichlet_non_linear_poisson_solver_amr(0.0, self.diode.thickness, 1.0e-6,
@@ -187,8 +188,6 @@ class SchottkyDiodeSimulator(Simulator):
                                                              max_level=5, mesh_refinement_threshold=1e-7)
 
             flat_grid = meshes.flatten()
-            psi = interp1d(flat_grid.physical_nodes, flat_grid.solution, bounds_error=False,
-                           fill_value=(v_bi + v_diode, 0))
             j = self.thermionic_emission_current(bias=bias, temperature=temperature)[0]
             v_serial = j * self.diode.area * self.diode.serial_resistance
             v_diode_new = bias_coeff * (bias - v_serial)
@@ -197,6 +196,8 @@ class SchottkyDiodeSimulator(Simulator):
                 converged = True
             else:
                 v_diode = v_diode_new
+                psi = interp1d(flat_grid.physical_nodes, flat_grid.solution, bounds_error=False,
+                               fill_value=(v_bi + v_diode, 0))
         return flat_grid
 
     def _diode_type(self, temperature=0.0):

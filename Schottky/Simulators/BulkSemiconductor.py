@@ -257,8 +257,8 @@ class BulkSemiconductor(Simulator):
     def electrochemical_potential(self, temperature=0.0):
         temperature = prepare_array(temperature)
         energy_scale = constants['k'] * temperature
-        band_gap = self.band_gap(temperature=temperature, use_storage=use_storage)
-        bands_density_of_states = self.effective_bands_density_of_states(temperature=temperature, use_storage=use_storage)
+        band_gap = self.band_gap(temperature=temperature)
+        bands_density_of_states = self.effective_bands_density_of_states(temperature=temperature)
         mu = np.zeros_like(temperature)
         for i in range(len(temperature)):
             if temperature[i] < 8:
