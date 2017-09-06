@@ -306,10 +306,10 @@ class BulkSemiconductor(Simulator):
 
         return mu
 
-    def get_type(self, temperature=0.0):
+    def get_type(self, temperature=0.0, use_storage=True):
         temperature = prepare_array(temperature)
-        xi = self.electrochemical_potential(temperature=temperature)
-        half_bg = self.band_gap(temperature=temperature) / 2
+        xi = self.electrochemical_potential(temperature=temperature, use_storage=use_storage)
+        half_bg = self.band_gap(temperature=temperature, use_storage=use_storage) / 2
         p = np.where(xi - half_bg > 0)
         n = np.where(xi - half_bg < 0)
         return p, n

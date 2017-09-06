@@ -117,7 +117,12 @@ class SchottkyDiodeSimulator(Simulator):
     def v_bi(self, temperature=0.0):
         temperature = prepare_array(temperature)
         metal_wf = self.diode.metal.work_function
-        xi = self.parts['Bulk Semiconductor Simulator'].electrochemical_potential(temperature=temperature)
+        if temperature.size > 1:
+            xi = self.parts['Bulk Semiconductor Simulator'].electrochemical_potential(temperature=temperature,
+                                                                                      use_storage=True)
+        else:
+            xi = self.parts['Bulk Semiconductor Simulator'].electrochemical_potential(temperature=temperature,
+                                                                                      use_storage=False)
         semiconductor_wf = xi + self.diode.semiconductor.affinity
         bi_voltage = metal_wf - semiconductor_wf
         return bi_voltage
@@ -125,7 +130,15 @@ class SchottkyDiodeSimulator(Simulator):
     @storage_manager('free carriers concentration', use_storage=True)
     def free_carriers_concentration(self, z=0.0, temperature=0.0):
         psi = lambda x: np.zeros_like(x)
-        return self._free_carriers_concentration(z=z, psi=psi, temperature=temperature)
+        xi = self.parts['Bulk Semiconductor Simulator'].electrochemical_potential(temperature=temperature,
+                                                                                  use_storage=False)
+        band_gap = self.parts['Bulk Semiconductor Simulator'].band_gap(temperature=temperature,
+                                                                       use_storage=False)
+        dos = self.parts['Bulk Semiconductor Simulator'].effective_bands_density_of_states(temperature=temperature,
+                                                                                           use_storage=False)
+        diode_type = self._diode_type(temperature=temperature, use_storage=False)
+        return self._free_carriers_concentration(z=z, psi=psi, temperature=temperature,
+                                                 band_gap=band_gap, xi=xi, dos=dos, diode_type=diode_type)
 
     def thermionic_emission_current(self, bias=0.0, area=None, temperature=0.0):
         """
@@ -140,7 +153,7 @@ class SchottkyDiodeSimulator(Simulator):
         bias = prepare_array(bias)
         temperature = prepare_array(temperature)
         energy_scale = constants['k'] * temperature
-        diode_type = self._diode_type(temperature=temperature)
+        diode_type = self._diode_type(temperature=temperature, use_storage=False)
         band_gap = self.parts['Bulk Semiconductor Simulator'].band_gap(temperature=temperature, use_storage=False)
         metal_wf = self.diode.metal.work_function
         if diode_type == 'n':
@@ -159,11 +172,14 @@ class SchottkyDiodeSimulator(Simulator):
         return np.real(j)
 
     def potential(self, bias=0.0, temperature=0.0, psi=None):
-        band_gap = self.parts['Bulk Semiconductor Simulator'].band_gap(temperature=temperature, use_storage=False)
-        xi = self.parts['Bulk Semiconductor Simulator'].electrochemical_potential(temperature=temperature, use_storage=False)
-        dos = self.parts['Bulk Semiconductor Simulator'].effective_bands_density_of_states(temperature=temperature, use_storage=False)
-        diode_type = self._diode_type(temperature=temperature)
-        v_bi = self.v_bi(temperature=temperature)[0]
+        band_gap = self.parts['Bulk Semiconductor Simulator'].band_gap(temperature=temperature,
+                                                                       use_storage=False)
+        xi = self.parts['Bulk Semiconductor Simulator'].electrochemical_potential(temperature=temperature,
+                                                                                  use_storage=False)
+        dos = self.parts['Bulk Semiconductor Simulator'].effective_bands_density_of_states(temperature=temperature,
+                                                                                           use_storage=False)
+        diode_type = self._diode_type(temperature=temperature, use_storage=False)
+        v_bi = self.v_bi(temperature=temperature, use_storage=False)[0]
         if diode_type == 'p':
             bias_coeff = 1
         elif diode_type == 'n':
@@ -200,8 +216,8 @@ class SchottkyDiodeSimulator(Simulator):
                                fill_value=(v_bi + v_diode, 0))
         return flat_grid
 
-    def _diode_type(self, temperature=0.0):
-        p, n = self.parts['Bulk Semiconductor Simulator'].get_type(temperature=temperature)
+    def _diode_type(self, temperature=0.0, use_storage=True):
+        p, n = self.parts['Bulk Semiconductor Simulator'].get_type(temperature=temperature, use_storage=use_storage)
         p_type = n_type = False
         for region in p:
             if region.size > 0:
@@ -224,13 +240,17 @@ class SchottkyDiodeSimulator(Simulator):
         z = prepare_array(z)
         temperature = prepare_array(temperature)
         if xi is None:
-            xi = self.parts['Bulk Semiconductor Simulator'].electrochemical_potential(temperature=temperature)
+            xi = self.parts['Bulk Semiconductor Simulator'].electrochemical_potential(temperature=temperature,
+                                                                                      use_storage=False)
         if band_gap is None:
-            band_gap = self.parts['Bulk Semiconductor Simulator'].band_gap(temperature=temperature)
+            band_gap = self.parts['Bulk Semiconductor Simulator'].band_gap(temperature=temperature,
+                                                                           use_storage=False)
         if dos is None:
-            dos = self.parts['Bulk Semiconductor Simulator'].effective_bands_density_of_states(temperature=temperature)
+            dos = self.parts['Bulk Semiconductor Simulator'].effective_bands_density_of_states(temperature=temperature,
+                                                                                               use_storage=False)
         if diode_type is None:
-            diode_type = self._diode_type(temperature=temperature)
+            diode_type = self._diode_type(temperature=temperature,
+                                          use_storage=False)
         total_charge = 0
         # bands charge
         carriers_concentration = self._free_carriers_concentration(z=z, psi=psi, temperature=temperature,
@@ -255,13 +275,16 @@ class SchottkyDiodeSimulator(Simulator):
         temperature = prepare_array(temperature)
         energy_scale = constants['k'] * temperature
         if xi is None:
-            xi = self.parts['Bulk Semiconductor Simulator'].electrochemical_potential(temperature=temperature)
+            xi = self.parts['Bulk Semiconductor Simulator'].electrochemical_potential(temperature=temperature,
+                                                                                      use_storage=False)
         if band_gap is None:
-            band_gap = self.parts['Bulk Semiconductor Simulator'].band_gap(temperature=temperature)
+            band_gap = self.parts['Bulk Semiconductor Simulator'].band_gap(temperature=temperature,
+                                                                           use_storage=False)
         if dos is None:
-            dos = self.parts['Bulk Semiconductor Simulator'].effective_bands_density_of_states(temperature=temperature)
+            dos = self.parts['Bulk Semiconductor Simulator'].effective_bands_density_of_states(temperature=temperature,
+                                                                                               use_storage=False)
         if diode_type is None:
-            diode_type = self._diode_type(temperature=temperature)
+            diode_type = self._diode_type(temperature=temperature, use_storage=False)
         fermi_level = psi(z) + xi
         n = dos['DOS C.band'] * np.exp(-fermi_level / energy_scale)
         p = dos['DOS V.band'] * np.exp((fermi_level - band_gap) / energy_scale)
@@ -278,9 +301,11 @@ class SchottkyDiodeSimulator(Simulator):
         z = prepare_array(z)
         temperature = prepare_array(temperature)
         if xi is None:
-            xi = self.parts['Bulk Semiconductor Simulator'].electrochemical_potential(temperature=temperature)
+            xi = self.parts['Bulk Semiconductor Simulator'].electrochemical_potential(temperature=temperature,
+                                                                                      use_storage=False)
         if band_gap is None:
-            band_gap = self.parts['Bulk Semiconductor Simulator'].band_gap(temperature=temperature)
+            band_gap = self.parts['Bulk Semiconductor Simulator'].band_gap(temperature=temperature,
+                                                                           use_storage=False)
         fermi_level = psi(z) + xi
         result = {}
         for part_name in self.parts['Bulk Semiconductor Simulator'].parts:
@@ -300,13 +325,17 @@ class SchottkyDiodeSimulator(Simulator):
         temperature = prepare_array(temperature)
         energy_scale = constants['k'] * temperature
         if xi is None:
-            xi = self.parts['Bulk Semiconductor Simulator'].electrochemical_potential(temperature=temperature)
+            xi = self.parts['Bulk Semiconductor Simulator'].electrochemical_potential(temperature=temperature,
+                                                                                      use_storage=False)
         if band_gap is None:
-            band_gap = self.parts['Bulk Semiconductor Simulator'].band_gap(temperature=temperature)
+            band_gap = self.parts['Bulk Semiconductor Simulator'].band_gap(temperature=temperature,
+                                                                           use_storage=False)
         if dos is None:
-            dos = self.parts['Bulk Semiconductor Simulator'].effective_bands_density_of_states(temperature=temperature)
+            dos = self.parts['Bulk Semiconductor Simulator'].effective_bands_density_of_states(temperature=temperature,
+                                                                                               use_storage=False)
         if diode_type is None:
-            diode_type = self._diode_type(temperature=temperature)
+            diode_type = self._diode_type(temperature=temperature,
+                                          use_storage=False)
         fermi_level = psi(z) + xi
         dn_dpsi = -dos['DOS C.band'] * np.exp(-fermi_level / energy_scale) / energy_scale
         dp_dpsi = dos['DOS V.band'] * np.exp((fermi_level - band_gap) / energy_scale) / energy_scale
@@ -323,9 +352,11 @@ class SchottkyDiodeSimulator(Simulator):
         z = prepare_array(z)
         temperature = prepare_array(temperature)
         if xi is None:
-            xi = self.parts['Bulk Semiconductor Simulator'].electrochemical_potential(temperature=temperature)
+            xi = self.parts['Bulk Semiconductor Simulator'].electrochemical_potential(temperature=temperature,
+                                                                                      use_storage=False)
         if band_gap is None:
-            band_gap = self.parts['Bulk Semiconductor Simulator'].band_gap(temperature=temperature)
+            band_gap = self.parts['Bulk Semiconductor Simulator'].band_gap(temperature=temperature,
+                                                                           use_storage=False)
         fermi_level = psi(z) + xi
         result = {}
         for part_name in self.parts['Bulk Semiconductor Simulator'].parts:
@@ -344,13 +375,17 @@ class SchottkyDiodeSimulator(Simulator):
         z = prepare_array(z)
         temperature = prepare_array(temperature)
         if xi is None:
-            xi = self.parts['Bulk Semiconductor Simulator'].electrochemical_potential(temperature=temperature)
+            xi = self.parts['Bulk Semiconductor Simulator'].electrochemical_potential(temperature=temperature,
+                                                                                      use_storage=False)
         if band_gap is None:
-            band_gap = self.parts['Bulk Semiconductor Simulator'].band_gap(temperature=temperature)
+            band_gap = self.parts['Bulk Semiconductor Simulator'].band_gap(temperature=temperature,
+                                                                           use_storage=False)
         if dos is None:
-            dos = self.parts['Bulk Semiconductor Simulator'].effective_bands_density_of_states(temperature=temperature)
+            dos = self.parts['Bulk Semiconductor Simulator'].effective_bands_density_of_states(temperature=temperature,
+                                                                                               use_storage=False)
         if diode_type is None:
-            diode_type = self._diode_type(temperature=temperature)
+            diode_type = self._diode_type(temperature=temperature,
+                                          use_storage=False)
         d_total_charge_d_psi = 0
         # bands charge
         d_carriers_concentration_d_psi = self._d_free_carriers_concentration_d_psi(z=z, psi=psi,

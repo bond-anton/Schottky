@@ -15,7 +15,6 @@ def storage_manager(spec_key, **outer_kwargs):
                 use_storage = outer_kwargs['use_storage']
             else:
                 use_storage = False
-            print('use_storage:', use_storage)
             if use_storage:
                 record = 'Starting Measurement "%s"' % (self.measurement_details[spec_key]['name'])
                 parameters = []
