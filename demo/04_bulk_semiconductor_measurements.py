@@ -78,7 +78,7 @@ plt.plot(temperature_range[p], (band_gap - e_f)[p], 'r-o')
 plt.plot(temperature_range[n], (band_gap - e_f)[n], 'b-o')
 plt.show()
 
-e_f = my_simulator.electrochemical_potential(temperature=0)
+e_f = my_simulator.electrochemical_potential(temperature=0, use_storage=False)
 print(e_f)
 
 client.user_manager.sign_out()

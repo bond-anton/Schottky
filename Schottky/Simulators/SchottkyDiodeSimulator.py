@@ -141,7 +141,7 @@ class SchottkyDiodeSimulator(Simulator):
         temperature = prepare_array(temperature)
         energy_scale = constants['k'] * temperature
         diode_type = self._diode_type(temperature=temperature)
-        band_gap = self.parts['Bulk Semiconductor Simulator'].band_gap(temperature=temperature)
+        band_gap = self.parts['Bulk Semiconductor Simulator'].band_gap(temperature=temperature, use_storage=False)
         metal_wf = self.diode.metal.work_function
         if diode_type == 'n':
             phi_bn = metal_wf - self.diode.semiconductor.affinity
@@ -159,9 +159,9 @@ class SchottkyDiodeSimulator(Simulator):
         return np.real(j)
 
     def potential(self, bias=0.0, temperature=0.0, psi=None):
-        band_gap = self.parts['Bulk Semiconductor Simulator'].band_gap(temperature=temperature)
-        xi = self.parts['Bulk Semiconductor Simulator'].electrochemical_potential(temperature=temperature)
-        dos = self.parts['Bulk Semiconductor Simulator'].effective_bands_density_of_states(temperature=temperature)
+        band_gap = self.parts['Bulk Semiconductor Simulator'].band_gap(temperature=temperature, use_storage=False)
+        xi = self.parts['Bulk Semiconductor Simulator'].electrochemical_potential(temperature=temperature, use_storage=False)
+        dos = self.parts['Bulk Semiconductor Simulator'].effective_bands_density_of_states(temperature=temperature, use_storage=False)
         diode_type = self._diode_type(temperature=temperature)
         v_bi = self.v_bi(temperature=temperature)[0]
         if diode_type == 'p':

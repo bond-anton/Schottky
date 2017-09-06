@@ -257,13 +257,12 @@ class BulkSemiconductor(Simulator):
     def electrochemical_potential(self, temperature=0.0):
         temperature = prepare_array(temperature)
         energy_scale = constants['k'] * temperature
-        band_gap = self.band_gap(temperature=temperature)
-        bands_density_of_states = self.effective_bands_density_of_states(temperature=temperature)
+        band_gap = self.band_gap(temperature=temperature, use_storage=False)
+        bands_density_of_states = self.effective_bands_density_of_states(temperature=temperature, use_storage=False)
         mu = np.zeros_like(temperature)
         for i in range(len(temperature)):
             if temperature[i] < 8:
-                e1 = self.electrochemical_potential(temperature=8)
-                e2 = self.electrochemical_potential(temperature=10)
+                e1, e2 = self.electrochemical_potential(temperature=[8, 10])
                 a = (e1 - e2) / (8 - 10)
                 b = e1 - a * 8
                 mu[i] = a * temperature[i] + b
@@ -310,7 +309,7 @@ class BulkSemiconductor(Simulator):
     def get_type(self, temperature=0.0):
         temperature = prepare_array(temperature)
         xi = self.electrochemical_potential(temperature=temperature)
-        bg2 = self.band_gap(temperature=temperature) / 2
-        p = np.where(xi - bg2 > 0)
-        n = np.where(xi - bg2 < 0)
+        half_bg = self.band_gap(temperature=temperature) / 2
+        p = np.where(xi - half_bg > 0)
+        n = np.where(xi - half_bg < 0)
         return p, n

@@ -9,10 +9,13 @@ def storage_manager(spec_key, **outer_kwargs):
     def measurement_timer(measurement_function):
         def wrapper(self, *args, **kwargs):
             start_time = timeit.default_timer()
-            if 'use_storage' in outer_kwargs:
+            if 'use_storage' in kwargs:
+                use_storage = kwargs.pop('use_storage')
+            elif 'use_storage' in outer_kwargs:
                 use_storage = outer_kwargs['use_storage']
             else:
                 use_storage = False
+            print('use_storage:', use_storage)
             if use_storage:
                 record = 'Starting Measurement "%s"' % (self.measurement_details[spec_key]['name'])
                 parameters = []
@@ -74,8 +77,8 @@ def storage_manager(spec_key, **outer_kwargs):
             start_time = timeit.default_timer()
             result = measurement_function(self, *args, **kwargs)
             measurement_time = timeit.default_timer() - start_time
-            start_time = timeit.default_timer()
             if use_storage:
+                start_time = timeit.default_timer()
                 for parameter in parameters:
                     # TODO: add commit_parameter method in parameter manager for better logging
                     self.client.session.add(parameter)
@@ -103,10 +106,10 @@ def storage_manager(spec_key, **outer_kwargs):
                                                                            float_value=result[channel_spec['name']])
                 self.client.measurement_manager.update_measurement_progress(measurement=measurement,
                                                                             progress=100)
-            db_time += timeit.default_timer() - start_time
-            record = 'Measurement "%s" complete in %.3f s (measurement: %.3f s, db: %.3f s)' % \
-                     (self.measurement_details[spec_key]['name'], db_time + measurement_time, measurement_time, db_time)
-            self.client.log_manager.log_record(record=record, category='Information')
+                db_time += timeit.default_timer() - start_time
+                record = 'Measurement "%s" complete in %.3f s (measurement: %.3f s, db: %.3f s)' % \
+                         (self.measurement_details[spec_key]['name'], db_time + measurement_time, measurement_time, db_time)
+                self.client.log_manager.log_record(record=record, category='Information')
             return result
         return wrapper
     return measurement_timer
