@@ -43,6 +43,10 @@ class SchottkyDiodeSimulator(Simulator):
                 'name': 'Built-in potential temperature dependence',
                 'description': 'Measurement of Diode Built-in potential temperature dependence',
                 'type': 'Diode energetics'},
+            'potential': {
+                'name': 'Electron potential in the diode',
+                'description': 'Measurement of Diode potential depth-profile',
+                'type': 'Diode energetics'},
             'free carriers concentration': {
                 'name': 'Free carriers concentration profile',
                 'description': 'Measurement of free carriers concentration profile',
@@ -75,13 +79,49 @@ class SchottkyDiodeSimulator(Simulator):
                          'description': 'Diode\'s Built-in potential',
                          'units': 'eV'
                          }]},
+            'potential': {'parameters': [{'name': 'temperature',
+                                          'type': 'numeric',
+                                          'default value': 0.0,
+                                          'description': 'Temperature',
+                                          'units': 'K'},
+                                         {'name': 'bias',
+                                          'type': 'numeric',
+                                          'default value': 0.0,
+                                          'description': 'Voltage bias',
+                                          'units': 'V'}
+                                         ],
+                          'input data': None,
+                          'variables': None,
+                          'result': [
+                              {
+                                  'name': 'z coordinate',
+                                  'description': 'Z coordinate',
+                                  'units': 'cm'
+                              },
+                              {
+                                  'name': 'potential',
+                                  'description': 'potential',
+                                  'units': 'V'
+                              },
+                              {
+                                  'name': 'residual error',
+                                  'description': 'Calculation residual error',
+                                  'units': 'V/cm^2'
+                              }
+                          ]},
             'free carriers concentration': {'parameters': [{'name': 'temperature',
                                                             'type': 'numeric',
                                                             'default value': 0.0,
                                                             'description': 'Temperature',
-                                                            'units': 'K'}],
+                                                            'units': 'K'},
+                                                           {'name': 'bias',
+                                                            'type': 'numeric',
+                                                            'default value': 0.0,
+                                                            'description': 'Voltage bias',
+                                                            'units': 'V'}
+                                                           ],
                                             'input data': None,
-                                            'variables': [{'name': 'z',
+                                            'variables': [{'name': 'z_coordinate',
                                                            'description': 'Z coordinate',
                                                            'units': 'cm'}],
                                             'result': [
@@ -96,21 +136,28 @@ class SchottkyDiodeSimulator(Simulator):
                                                     'units': 'cm^-3'
                                                 }
                                             ]},
-            'dopants occupation level': {'parameters': [{'name': 'temperature',
-                                                         'type': 'numeric',
-                                                         'default value': 0.0,
-                                                         'description': 'Temperature',
-                                                         'units': 'K'}],
-                                         'input data': None,
-                                         'variables': [{'name': 'z',
-                                                        'description': 'Z coordinate',
-                                                        'units': 'cm'}],
-                                         'result': [
-                                             {
-                                                 'name': dopant.trap.name,
-                                                 'description': 'dopant occupation',
-                                                 'units': ''
-                                             } for dopant in self.diode.semiconductor.dopants]}
+            'dopants equilibrium occupation': {'parameters': [{'name': 'temperature',
+                                                               'type': 'numeric',
+                                                               'default value': 0.0,
+                                                               'description': 'Temperature',
+                                                               'units': 'K'},
+                                                              {'name': 'bias',
+                                                               'type': 'numeric',
+                                                               'default value': 0.0,
+                                                               'description': 'Voltage bias',
+                                                               'units': 'V'}
+                                                              ],
+                                               'input data': None,
+                                               'variables': [{'name': 'z_coordinate',
+                                                              'description': 'Z coordinate',
+                                                              'units': 'cm'}],
+                                               'result': [
+                                                   {
+                                                       'name': dopant.trap.name,
+                                                       'description': 'dopant occupation',
+                                                       'units': ''
+                                                   } for dopant in self.diode.semiconductor.dopants]
+                                               }
         }
 
     @storage_manager('v_bi', use_storage=True)
@@ -128,8 +175,9 @@ class SchottkyDiodeSimulator(Simulator):
         return bi_voltage
 
     @storage_manager('free carriers concentration', use_storage=True)
-    def free_carriers_concentration(self, z=0.0, temperature=0.0):
-        psi = lambda x: np.zeros_like(x)
+    def free_carriers_concentration(self, z_coordinate=0.0, bias=0.0, temperature=0.0):
+        psi_grid = self.potential(bias=bias, temperature=temperature)
+        psi = interp1d(psi_grid['z'], psi_grid['psi'], bounds_error=True)
         xi = self.parts['Bulk Semiconductor Simulator'].electrochemical_potential(temperature=temperature,
                                                                                   use_storage=False)
         band_gap = self.parts['Bulk Semiconductor Simulator'].band_gap(temperature=temperature,
@@ -137,8 +185,19 @@ class SchottkyDiodeSimulator(Simulator):
         dos = self.parts['Bulk Semiconductor Simulator'].effective_bands_density_of_states(temperature=temperature,
                                                                                            use_storage=False)
         diode_type = self._diode_type(temperature=temperature, use_storage=False)
-        return self._free_carriers_concentration(z=z, psi=psi, temperature=temperature,
+        return self._free_carriers_concentration(z=z_coordinate, psi=psi, temperature=temperature,
                                                  band_gap=band_gap, xi=xi, dos=dos, diode_type=diode_type)
+
+    @storage_manager('dopants equilibrium occupation', use_storage=True)
+    def dopants_equilibrium_occupation(self, z_coordinate=0.0, bias=0.0, temperature=0.0):
+        psi_grid = self.potential(bias=bias, temperature=temperature)
+        psi = interp1d(psi_grid['z_coordinate'], psi_grid['potential'], bounds_error=True)
+        xi = self.parts['Bulk Semiconductor Simulator'].electrochemical_potential(temperature=temperature,
+                                                                                  use_storage=False)
+        band_gap = self.parts['Bulk Semiconductor Simulator'].band_gap(temperature=temperature,
+                                                                       use_storage=False)
+        return self._dopants_equilibrium_occupation(z=z_coordinate, psi=psi, temperature=temperature,
+                                                    band_gap=band_gap, xi=xi)
 
     def thermionic_emission_current(self, bias=0.0, area=None, temperature=0.0):
         """
@@ -171,6 +230,7 @@ class SchottkyDiodeSimulator(Simulator):
                      np.exp((bias + area * j_s * self.diode.serial_resistance) / energy_scale))
         return np.real(j)
 
+    @storage_manager('potential', use_storage=True)
     def potential(self, bias=0.0, temperature=0.0, psi=None):
         band_gap = self.parts['Bulk Semiconductor Simulator'].band_gap(temperature=temperature,
                                                                        use_storage=False)
@@ -214,7 +274,9 @@ class SchottkyDiodeSimulator(Simulator):
                 v_diode = v_diode_new
                 psi = interp1d(flat_grid.physical_nodes, flat_grid.solution, bounds_error=False,
                                fill_value=(v_bi + v_diode, 0))
-        return flat_grid
+        return {'z coordinate': flat_grid.physical_nodes,
+                'potential': flat_grid.solution,
+                'residual error': flat_grid.residual}
 
     def _diode_type(self, temperature=0.0, use_storage=True):
         p, n = self.parts['Bulk Semiconductor Simulator'].get_type(temperature=temperature, use_storage=use_storage)

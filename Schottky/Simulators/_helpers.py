@@ -39,6 +39,9 @@ def storage_manager(spec_key, **outer_kwargs):
                                                        progress_threshold=100)
                 match_found = False
                 for measurement in measurements:
+                    if self.measurement_specs[spec_key]['variables'] is None:
+                        match_found = True
+                        break
                     for channel_spec in self.measurement_specs[spec_key]['variables']:
                         arg = prepare_array(kwargs[channel_spec['name'].lower()])
                         channels = self.client.measurement_manager.get_data_channels(measurement=measurement,
@@ -85,12 +88,14 @@ def storage_manager(spec_key, **outer_kwargs):
                 measurement = self.measurement_new(self.measurement_details[spec_key],
                                                    parameters=parameters,
                                                    input_data=self.measurement_specs[spec_key]['input data'])
-                for channel_spec in self.measurement_specs[spec_key]['variables']:
-                    arg = prepare_array(kwargs[channel_spec['name'].lower()])
-                    channel = self.load_create_data_channel(channel_name=channel_spec['name'], measurement=measurement,
-                                                            description=channel_spec['description'],
-                                                            unit_name=channel_spec['units'])
-                    self.client.measurement_manager.create_data_points(channel=channel, float_value=arg)
+                if self.measurement_specs[spec_key]['variables'] is not None:
+                    for channel_spec in self.measurement_specs[spec_key]['variables']:
+                        arg = prepare_array(kwargs[channel_spec['name'].lower()])
+                        channel = self.load_create_data_channel(channel_name=channel_spec['name'],
+                                                                measurement=measurement,
+                                                                description=channel_spec['description'],
+                                                                unit_name=channel_spec['units'])
+                        self.client.measurement_manager.create_data_points(channel=channel, float_value=arg)
 
                 for channel_spec in self.measurement_specs[spec_key]['result']:
                     channel = self.load_create_data_channel(channel_name=channel_spec['name'],
