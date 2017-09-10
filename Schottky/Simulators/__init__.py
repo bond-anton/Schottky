@@ -223,14 +223,15 @@ class Simulator(object):
         return measurement
 
     def load_create_data_channel(self, channel_name, measurement, description, unit_name=None):
-        channels = self.client.measurement_manager.get_data_channels(measurement=measurement, name=channel_name)
+        channels = self.client.measurement_manager.get_data_channels(measurement=measurement, name=channel_name,
+                                                                     exact=True)
         if len(channels) == 1:
             return channels[0]
         elif len(channels) == 0:
             return self.client.measurement_manager.create_data_channel(name=channel_name, measurement=measurement,
                                                                        description=description, unit_name=unit_name)
         else:
-            raise ValueError('More than one channel found for given name. Check the database.')
+            raise ValueError('More than one channel found for given name (%s). Check the database.' % channel_name)
 
     def __str__(self):
         description = 'Simulator: %s' % self.name

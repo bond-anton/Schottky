@@ -109,6 +109,21 @@ class SchottkyDiodeSimulator(Simulator):
                                   'name': 'residual error',
                                   'description': 'Calculation residual error',
                                   'units': 'V/cm^2'
+                              },
+                              {
+                                  'name': 'current density',
+                                  'description': 'Current density through the diode',
+                                  'units': 'A/cm^2'
+                              },
+                              {
+                                  'name': 'diode voltage',
+                                  'description': 'Voltage drop on a diode',
+                                  'units': 'V'
+                              },
+                              {
+                                  'name': 'diode voltage error',
+                                  'description': 'Voltage drop on a diode error',
+                                  'units': 'V'
                               }
                           ]
             },
@@ -272,6 +287,9 @@ class SchottkyDiodeSimulator(Simulator):
                                                              max_level=5, mesh_refinement_threshold=1e-7)
 
             flat_grid = meshes.flatten()
+            phi_bn = self._phi_bn(psi_nodes=flat_grid.solution, v_diode=v_diode, xi=xi,
+                                  band_gap=band_gap, diode_type=diode_type)
+            print('PHIbn =', phi_bn)
             j = self.thermionic_emission_current(bias=bias, temperature=temperature)[0]
             v_serial = j * self.diode.area * self.diode.serial_resistance
             v_diode_new = bias_coeff * (bias - v_serial)
@@ -284,7 +302,65 @@ class SchottkyDiodeSimulator(Simulator):
                                fill_value=(v_bi + v_diode, 0))
         return {'z coordinate': flat_grid.physical_nodes,
                 'potential': flat_grid.solution,
-                'residual error': flat_grid.residual}
+                'residual error': flat_grid.residual,
+                'current density': np.array([j]),
+                'diode voltage': np.array([v_diode]),
+                'diode voltage error': np.array([abs(v_diode - v_diode_new)])}
+
+    def _phi_bn(self, psi_nodes, v_diode, xi, band_gap, diode_type):
+        bias_sign = 1
+        if diode_type == 'n':
+            v_b = max(psi_nodes)
+            bias_sign = -1
+        elif diode_type == 'p':
+            v_b = min(psi_nodes)
+            xi = band_gap - xi
+        else:
+            raise ValueError('Diode type is undefined')
+        return abs(v_b) + bias_sign * v_diode + xi
+
+    def _thermionic_emission_current(self, bias=0.0, area=None, psi=None, temperature=0.0):
+        """
+        Thermionic emission current simulation.
+        :param bias: 1D array or float value in Volts.
+        :param area: Diode's area in cm^2
+        :param temperature: Temperature in K
+        :return: Diode's current as 1D array of the same shape as bias
+        """
+        if area is None:
+            area = self.diode.area
+        bias = prepare_array(bias)
+        temperature = prepare_array(temperature)
+        energy_scale = constants['k'] * temperature
+        diode_type = self._diode_type(temperature=temperature, use_storage=False)
+        band_gap = self.parts['Bulk Semiconductor Simulator'].band_gap(temperature=temperature, use_storage=False)
+        metal_wf = self.diode.metal.work_function
+        if diode_type == 'n':
+            phi_bn = metal_wf - self.diode.semiconductor.affinity
+            a_r = self.diode.semiconductor.thermo_emission_coefficient['electron'] * constants['A_R']
+        elif diode_type == 'p':
+            phi_bn = self.diode.semiconductor.affinity + band_gap - metal_wf
+            print(self.diode.semiconductor.affinity, band_gap, metal_wf)
+            a_r = self.diode.semiconductor.thermo_emission_coefficient['hole'] * constants['A_R']
+        else:
+            raise ValueError('Cannot determine conductivity type of diode')
+        j_s = a_r * (temperature ** 2) * np.exp(-phi_bn / energy_scale)
+        j = -j_s + energy_scale / (area * self.diode.serial_resistance) *\
+            lambertw((area * self.diode.serial_resistance * j_s / energy_scale) *
+                     np.exp((bias + area * j_s * self.diode.serial_resistance) / energy_scale))
+        return np.real(j)
+
+    def _conduction_band(self, z=0.0, psi=None, temperature=0.0, band_gap=None, xi=None):
+        if psi is None:
+            psi = lambda x: np.zeros_like(x)
+        z = prepare_array(z)
+        temperature = prepare_array(temperature)
+        if xi is None:
+            xi = self.parts['Bulk Semiconductor Simulator'].electrochemical_potential(temperature=temperature,
+                                                                                      use_storage=False)
+        if band_gap is None:
+            band_gap = self.parts['Bulk Semiconductor Simulator'].band_gap(temperature=temperature,
+                                                                           use_storage=False)
 
     def _diode_type(self, temperature=0.0, use_storage=True):
         p, n = self.parts['Bulk Semiconductor Simulator'].get_type(temperature=temperature, use_storage=use_storage)
