@@ -79,17 +79,19 @@ class SchottkyDiodeSimulator(Simulator):
                          'description': 'Diode\'s Built-in potential',
                          'units': 'eV'
                          }]},
-            'potential': {'parameters': [{'name': 'temperature',
-                                          'type': 'numeric',
-                                          'default value': 0.0,
-                                          'description': 'Temperature',
-                                          'units': 'K'},
-                                         {'name': 'bias',
-                                          'type': 'numeric',
-                                          'default value': 0.0,
-                                          'description': 'Voltage bias',
-                                          'units': 'V'}
-                                         ],
+            'potential': {'parameters':
+                              [
+                                  {'name': 'temperature',
+                                           'type': 'numeric',
+                                           'default value': 0.0,
+                                           'description': 'Temperature',
+                                           'units': 'K'},
+                                  {'name': 'bias',
+                                           'type': 'numeric',
+                                           'default value': 0.0,
+                                           'description': 'Voltage bias',
+                                           'units': 'V'}
+                              ],
                           'input data': None,
                           'variables': None,
                           'result': [
@@ -108,18 +110,21 @@ class SchottkyDiodeSimulator(Simulator):
                                   'description': 'Calculation residual error',
                                   'units': 'V/cm^2'
                               }
-                          ]},
-            'free carriers concentration': {'parameters': [{'name': 'temperature',
-                                                            'type': 'numeric',
-                                                            'default value': 0.0,
-                                                            'description': 'Temperature',
-                                                            'units': 'K'},
-                                                           {'name': 'bias',
-                                                            'type': 'numeric',
-                                                            'default value': 0.0,
-                                                            'description': 'Voltage bias',
-                                                            'units': 'V'}
-                                                           ],
+                          ]
+            },
+            'free carriers concentration': {'parameters':
+                                                [
+                                                    {'name': 'temperature',
+                                                             'type': 'numeric',
+                                                             'default value': 0.0,
+                                                             'description': 'Temperature',
+                                                             'units': 'K'},
+                                                    {'name': 'bias',
+                                                             'type': 'numeric',
+                                                             'default value': 0.0,
+                                                             'description': 'Voltage bias',
+                                                             'units': 'V'}
+                                                ],
                                             'input data': None,
                                             'variables': [{'name': 'z_coordinate',
                                                            'description': 'Z coordinate',
@@ -135,18 +140,21 @@ class SchottkyDiodeSimulator(Simulator):
                                                     'description': 'holes concentration',
                                                     'units': 'cm^-3'
                                                 }
-                                            ]},
-            'dopants equilibrium occupation': {'parameters': [{'name': 'temperature',
-                                                               'type': 'numeric',
-                                                               'default value': 0.0,
-                                                               'description': 'Temperature',
-                                                               'units': 'K'},
-                                                              {'name': 'bias',
-                                                               'type': 'numeric',
-                                                               'default value': 0.0,
-                                                               'description': 'Voltage bias',
-                                                               'units': 'V'}
-                                                              ],
+                                            ]
+            },
+            'dopants equilibrium occupation': {'parameters':
+                                                   [
+                                                       {'name': 'temperature',
+                                                                'type': 'numeric',
+                                                                'default value': 0.0,
+                                                                'description': 'Temperature',
+                                                                'units': 'K'},
+                                                       {'name': 'bias',
+                                                                'type': 'numeric',
+                                                                'default value': 0.0,
+                                                                'description': 'Voltage bias',
+                                                                'units': 'V'}
+                                                   ],
                                                'input data': None,
                                                'variables': [{'name': 'z_coordinate',
                                                               'description': 'Z coordinate',
