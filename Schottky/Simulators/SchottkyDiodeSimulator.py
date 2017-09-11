@@ -189,7 +189,7 @@ class SchottkyDiodeSimulator(Simulator):
                             'description': 'Temperature',
                             'units': 'K'}
                        ],
-                   'input_data': None,
+                   'input data': None,
                    'variables':[
                        {'name': 'bias',
                         'description': 'Voltage bias',
@@ -253,12 +253,11 @@ class SchottkyDiodeSimulator(Simulator):
         :return: Diode's current as 1D array of the same shape as bias
         """
         bias = prepare_array(bias)
-        temperature = prepare_array(temperature)
         j = []
         for v in bias:
             psi_grid = self.potential(bias=v, temperature=temperature)
-            j.append(psi_grid['current density'])
-        return {'current density': np.array(j)}
+            j.append(psi_grid['current density'][0])
+        return np.array(j)
 
     @storage_manager('potential', use_storage=True)
     def potential(self, bias=0.0, temperature=0.0, psi=None):
@@ -296,7 +295,6 @@ class SchottkyDiodeSimulator(Simulator):
             flat_grid = meshes.flatten()
             phi_bn = self._phi_bn(psi_nodes=flat_grid.solution, v_diode=v_diode, temperature=temperature,
                                   xi=xi, band_gap=band_gap, diode_type=diode_type)
-            print('PHIbn =', phi_bn)
             j = self._thermionic_emission_current(bias=bias, temperature=temperature,
                                                   diode_type=diode_type, phi_bn=phi_bn, area=self.diode.area)[0]
             v_serial = j * self.diode.area * self.diode.serial_resistance

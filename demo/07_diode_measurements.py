@@ -54,10 +54,10 @@ ax3.plot(flat_grid['z coordinate'], rho, 'r-o')
 ax4.plot(flat_grid['z coordinate'], flat_grid['residual error'] / max(rho))
 plt.show()
 
-#bias = np.linspace(-1, 0.5, num=101)
-#j = diode_simulator.thermionic_emission_current(bias=bias, temperature=300)
-#plt.plot(bias, j, color='k', linewidth=2, linestyle='-')
-#plt.show()
+bias = np.linspace(-1, 1.5, num=26, endpoint=True)
+j = diode_simulator.thermionic_emission_current(bias=bias, temperature=300)
+plt.plot(bias, j, color='k', linewidth=2, linestyle='-')
+plt.show()
 
 
 client.user_manager.sign_out()
