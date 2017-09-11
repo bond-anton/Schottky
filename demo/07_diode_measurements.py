@@ -44,7 +44,7 @@ temperature = 300
 #ax4.plot(z, carriers_concentration['holes'], '-r')
 #plt.show()
 
-flat_grid = diode_simulator.potential(bias=1.3, temperature=temperature)
+flat_grid = diode_simulator.potential(bias=1.2, temperature=temperature)
 psi = interp1d(flat_grid['z coordinate'], flat_grid['potential'], bounds_error=False, fill_value=0.0)
 rho = diode_simulator._semiconductor_charge(z=flat_grid['z coordinate'], psi=psi, temperature=temperature)
 _, (ax1, ax2, ax3, ax4) = plt.subplots(4, sharex=True)

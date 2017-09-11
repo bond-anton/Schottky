@@ -180,7 +180,29 @@ class SchottkyDiodeSimulator(Simulator):
                                                        'description': 'dopant occupation',
                                                        'units': ''
                                                    } for dopant in self.diode.semiconductor.dopants]
-                                               }
+                                               },
+            'iv': {'parameters':
+                       [
+                           {'name': 'temperature',
+                            'type': 'numeric',
+                            'default value': 0.0,
+                            'description': 'Temperature',
+                            'units': 'K'}
+                       ],
+                   'input_data': None,
+                   'variables':[
+                       {'name': 'bias',
+                        'description': 'Voltage bias',
+                        'units': 'V'}
+                   ],
+                   'result': [
+                       {
+                           'name': 'current density',
+                           'description': 'Current density through the diode',
+                           'units': 'A/cm^2'
+                       }
+                   ]
+            }
         }
 
     @storage_manager('v_bi', use_storage=True)
@@ -200,7 +222,7 @@ class SchottkyDiodeSimulator(Simulator):
     @storage_manager('free carriers concentration', use_storage=True)
     def free_carriers_concentration(self, z_coordinate=0.0, bias=0.0, temperature=0.0):
         psi_grid = self.potential(bias=bias, temperature=temperature)
-        psi = interp1d(psi_grid['z'], psi_grid['psi'], bounds_error=True)
+        psi = interp1d(psi_grid['z coordinate'], psi_grid['potential'], bounds_error=True)
         xi = self.parts['Bulk Semiconductor Simulator'].electrochemical_potential(temperature=temperature,
                                                                                   use_storage=False)
         band_gap = self.parts['Bulk Semiconductor Simulator'].band_gap(temperature=temperature,
@@ -222,36 +244,21 @@ class SchottkyDiodeSimulator(Simulator):
         return self._dopants_equilibrium_occupation(z=z_coordinate, psi=psi, temperature=temperature,
                                                     band_gap=band_gap, xi=xi)
 
-    def thermionic_emission_current(self, bias=0.0, area=None, temperature=0.0):
+    @storage_manager('iv', use_storage=True)
+    def thermionic_emission_current(self, bias=0.0, temperature=0.0):
         """
         Thermionic emission current simulation.
         :param bias: 1D array or float value in Volts.
-        :param area: Diode's area in cm^2
         :param temperature: Temperature in K
         :return: Diode's current as 1D array of the same shape as bias
         """
-        if area is None:
-            area = self.diode.area
         bias = prepare_array(bias)
         temperature = prepare_array(temperature)
-        energy_scale = constants['k'] * temperature
-        diode_type = self._diode_type(temperature=temperature, use_storage=False)
-        band_gap = self.parts['Bulk Semiconductor Simulator'].band_gap(temperature=temperature, use_storage=False)
-        metal_wf = self.diode.metal.work_function
-        if diode_type == 'n':
-            phi_bn = metal_wf - self.diode.semiconductor.affinity
-            a_r = self.diode.semiconductor.thermo_emission_coefficient['electron'] * constants['A_R']
-        elif diode_type == 'p':
-            phi_bn = self.diode.semiconductor.affinity + band_gap - metal_wf
-            print(self.diode.semiconductor.affinity, band_gap, metal_wf)
-            a_r = self.diode.semiconductor.thermo_emission_coefficient['hole'] * constants['A_R']
-        else:
-            raise ValueError('Cannot determine conductivity type of diode')
-        j_s = a_r * (temperature ** 2) * np.exp(-phi_bn / energy_scale)
-        j = -j_s + energy_scale / (area * self.diode.serial_resistance) *\
-            lambertw((area * self.diode.serial_resistance * j_s / energy_scale) *
-                     np.exp((bias + area * j_s * self.diode.serial_resistance) / energy_scale))
-        return np.real(j)
+        j = []
+        for v in bias:
+            psi_grid = self.potential(bias=v, temperature=temperature)
+            j.append(psi_grid['current density'])
+        return {'current density': np.array(j)}
 
     @storage_manager('potential', use_storage=True)
     def potential(self, bias=0.0, temperature=0.0, psi=None):
@@ -287,10 +294,11 @@ class SchottkyDiodeSimulator(Simulator):
                                                              max_level=5, mesh_refinement_threshold=1e-7)
 
             flat_grid = meshes.flatten()
-            phi_bn = self._phi_bn(psi_nodes=flat_grid.solution, v_diode=v_diode, xi=xi,
-                                  band_gap=band_gap, diode_type=diode_type)
+            phi_bn = self._phi_bn(psi_nodes=flat_grid.solution, v_diode=v_diode, temperature=temperature,
+                                  xi=xi, band_gap=band_gap, diode_type=diode_type)
             print('PHIbn =', phi_bn)
-            j = self.thermionic_emission_current(bias=bias, temperature=temperature)[0]
+            j = self._thermionic_emission_current(bias=bias, temperature=temperature,
+                                                  diode_type=diode_type, phi_bn=phi_bn, area=self.diode.area)[0]
             v_serial = j * self.diode.area * self.diode.serial_resistance
             v_diode_new = bias_coeff * (bias - v_serial)
             print(v_diode, v_diode_new, v_serial, abs(v_diode - v_diode_new))
@@ -307,7 +315,19 @@ class SchottkyDiodeSimulator(Simulator):
                 'diode voltage': np.array([v_diode]),
                 'diode voltage error': np.array([abs(v_diode - v_diode_new)])}
 
-    def _phi_bn(self, psi_nodes, v_diode, xi, band_gap, diode_type):
+    def _phi_bn(self, psi_nodes=0.0, v_diode=0.0, temperature=0.0, xi=None, band_gap=None, diode_type=None):
+        psi_nodes = prepare_array(psi_nodes)
+        v_diode = prepare_array(v_diode)
+        temperature = prepare_array(temperature)
+        if xi is None:
+            xi = self.parts['Bulk Semiconductor Simulator'].electrochemical_potential(temperature=temperature,
+                                                                                      use_storage=False)
+        if band_gap is None:
+            band_gap = self.parts['Bulk Semiconductor Simulator'].band_gap(temperature=temperature,
+                                                                           use_storage=False)
+        if diode_type is None:
+            diode_type = self._diode_type(temperature=temperature,
+                                          use_storage=False)
         bias_sign = 1
         if diode_type == 'n':
             v_b = max(psi_nodes)
@@ -319,7 +339,7 @@ class SchottkyDiodeSimulator(Simulator):
             raise ValueError('Diode type is undefined')
         return abs(v_b) + bias_sign * v_diode + xi
 
-    def _thermionic_emission_current(self, bias=0.0, area=None, psi=None, temperature=0.0):
+    def _thermionic_emission_current(self, bias=0.0, temperature=0.0, diode_type=None, phi_bn=None, area=None):
         """
         Thermionic emission current simulation.
         :param bias: 1D array or float value in Volts.
@@ -332,35 +352,47 @@ class SchottkyDiodeSimulator(Simulator):
         bias = prepare_array(bias)
         temperature = prepare_array(temperature)
         energy_scale = constants['k'] * temperature
-        diode_type = self._diode_type(temperature=temperature, use_storage=False)
-        band_gap = self.parts['Bulk Semiconductor Simulator'].band_gap(temperature=temperature, use_storage=False)
-        metal_wf = self.diode.metal.work_function
+        if diode_type is None:
+            diode_type = self._diode_type(temperature=temperature, use_storage=False)
+        if phi_bn is None:
+            band_gap = self.parts['Bulk Semiconductor Simulator'].band_gap(temperature=temperature, use_storage=False)
+            metal_wf = self.diode.metal.work_function
         if diode_type == 'n':
-            phi_bn = metal_wf - self.diode.semiconductor.affinity
+            if phi_bn is None:
+                phi_bn = metal_wf - self.diode.semiconductor.affinity
             a_r = self.diode.semiconductor.thermo_emission_coefficient['electron'] * constants['A_R']
         elif diode_type == 'p':
-            phi_bn = self.diode.semiconductor.affinity + band_gap - metal_wf
-            print(self.diode.semiconductor.affinity, band_gap, metal_wf)
+            if phi_bn is None:
+                phi_bn = self.diode.semiconductor.affinity + band_gap - metal_wf
             a_r = self.diode.semiconductor.thermo_emission_coefficient['hole'] * constants['A_R']
         else:
-            raise ValueError('Cannot determine conductivity type of diode')
+            raise ValueError('Cannot determine conductivity type of a diode')
         j_s = a_r * (temperature ** 2) * np.exp(-phi_bn / energy_scale)
         j = -j_s + energy_scale / (area * self.diode.serial_resistance) *\
             lambertw((area * self.diode.serial_resistance * j_s / energy_scale) *
                      np.exp((bias + area * j_s * self.diode.serial_resistance) / energy_scale))
         return np.real(j)
 
-    def _conduction_band(self, z=0.0, psi=None, temperature=0.0, band_gap=None, xi=None):
-        if psi is None:
-            psi = lambda x: np.zeros_like(x)
+    def _conduction_band(self, z=0.0, psi_nodes=None, v_diode=0.0, temperature=0.0, xi=None):
         z = prepare_array(z)
+        v_diode = prepare_array(v_diode)
         temperature = prepare_array(temperature)
+        if psi_nodes is None:
+            psi_nodes = np.zeros_like(z)
+        else:
+            psi_nodes = prepare_array(psi_nodes)
         if xi is None:
             xi = self.parts['Bulk Semiconductor Simulator'].electrochemical_potential(temperature=temperature,
                                                                                       use_storage=False)
+        return psi_nodes + v_diode + xi
+
+    def _valence_band(self, z=0.0, psi_nodes=None, v_diode=0.0, temperature=0.0, band_gap=None, xi=None):
+        temperature = prepare_array(temperature)
         if band_gap is None:
             band_gap = self.parts['Bulk Semiconductor Simulator'].band_gap(temperature=temperature,
                                                                            use_storage=False)
+        return self._conduction_band(z=z, psi_nodes=psi_nodes, v_diode=v_diode,
+                                     temperature=temperature, xi=xi) - band_gap
 
     def _diode_type(self, temperature=0.0, use_storage=True):
         p, n = self.parts['Bulk Semiconductor Simulator'].get_type(temperature=temperature, use_storage=use_storage)
