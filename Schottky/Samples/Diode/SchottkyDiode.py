@@ -1,10 +1,7 @@
 from __future__ import division, print_function
-import numbers
 import numpy as np
 
 from Schottky.Samples import Sample
-from Schottky.Samples.Metal import Metal
-from Schottky.Samples.Semiconductor import Semiconductor
 
 
 class SchottkyDiode(Sample):
@@ -18,27 +15,23 @@ class SchottkyDiode(Sample):
                  description=None):
         super(SchottkyDiode, self).__init__(client=client, name=name, description=description)
         self.load_create_sample()
-        self.area = None
-        self.thickness = None
-        self.serial_resistance = None
-        self.metal = None
-        self.semiconductor = None
+        self.__area = None
+        self.__thickness = None
+        self.__serial_resistance = None
+        self.__metal = None
+        self.__semiconductor = None
         self._read_in_area(area)
         self._read_in_thickness(thickness)
         self._read_in_serial_resistance(serial_resistance)
         self._read_in_metal(metal)
         self._read_in_semiconductor(semiconductor)
 
-    def _read_in_area(self, area):
-        try:
-            self.area = self.parameters['area'].float_value
-        except KeyError:
-            pass
-        if self.area != area and area is not None:
-            self.set_area(area)
+    @property
+    def area(self):
+        return self.__area
 
-    def set_area(self, area):
-        assert isinstance(area, numbers.Number), 'area must be a number'
+    @area.setter
+    def area(self, area):
         try:
             self.parameters['area'].float_value = np.float64(area)
             self.save_sample_changes()
@@ -48,19 +41,23 @@ class SchottkyDiode(Sample):
                                                                                description='Diode area')
             self.client.sample_manager.add_parameter_to_sample(sample=self.sample,
                                                                parameter=parameter)
-            self.load_create_sample()
-        self.area = np.float64(area)
+            self.reload_parameters()
+        self.__area = np.float64(area)
 
-    def _read_in_thickness(self, thickness):
+    def _read_in_area(self, area):
         try:
-            self.thickness = self.parameters['thickness'].float_value
+            self.area = self.parameters['area'].float_value
         except KeyError:
             pass
-        if self.thickness != thickness and thickness is not None:
-            self.set_thickness(thickness)
+        if self.area != area and area is not None:
+            self.area = area
 
-    def set_thickness(self, thickness):
-        assert isinstance(thickness, numbers.Number), 'thickness must be a number'
+    @property
+    def thickness(self):
+        return self.__thickness
+
+    @thickness.setter
+    def thickness(self, thickness):
         try:
             self.parameters['thickness'].float_value = np.float64(thickness)
             self.save_sample_changes()
@@ -70,19 +67,23 @@ class SchottkyDiode(Sample):
                                                                                description='Diode thickness')
             self.client.sample_manager.add_parameter_to_sample(sample=self.sample,
                                                                parameter=parameter)
-            self.load_create_sample()
-        self.thickness = np.float64(thickness)
+            self.reload_parameters()
+        self.__thickness = np.float64(thickness)
 
-    def _read_in_serial_resistance(self, serial_resistance):
+    def _read_in_thickness(self, thickness):
         try:
-            self.serial_resistance = self.parameters['serial resistance'].float_value
+            self.thickness = self.parameters['thickness'].float_value
         except KeyError:
             pass
-        if self.serial_resistance != serial_resistance and serial_resistance is not None:
-            self.set_serial_resistance(serial_resistance)
+        if self.thickness != thickness and thickness is not None:
+            self.thickness = thickness
 
-    def set_serial_resistance(self, serial_resistance):
-        assert isinstance(serial_resistance, numbers.Number), 'serial resistance must be a number'
+    @property
+    def serial_resistance(self):
+        return self.__serial_resistance
+
+    @serial_resistance.setter
+    def serial_resistance(self, serial_resistance):
         try:
             self.parameters['serial resistance'].float_value = np.float64(serial_resistance)
             self.save_sample_changes()
@@ -92,30 +93,23 @@ class SchottkyDiode(Sample):
                                                                                description='Diode serial resistance')
             self.client.sample_manager.add_parameter_to_sample(sample=self.sample,
                                                                parameter=parameter)
-            self.load_create_sample()
-        self.serial_resistance = np.float64(serial_resistance)
+            self.reload_parameters()
+        self.__serial_resistance = np.float64(serial_resistance)
 
-    def _read_in_metal(self, metal):
+    def _read_in_serial_resistance(self, serial_resistance):
         try:
-            metal_parameter = self.parameters['Metal']
-            metal_module_name, metal_class_name, metal_name = metal_parameter.string_value.split('::')
-            metal_id = int(metal_parameter.float_value)
-            metal_module = __import__(metal_module_name, fromlist=[str(metal_class_name)])
-            metal_class = getattr(metal_module, metal_class_name)
-            metal_sample = metal_class(client=self.client.session_manager, name=metal_name)
-            if metal_sample.sample.id == metal_id:
-                self.metal = metal_sample
-            else:
-                print('Metal IDs do not match')
+            self.serial_resistance = self.parameters['serial resistance'].float_value
         except KeyError:
             pass
-        if metal is not None:
-            if self.metal != metal:
-                self.set_metal(metal)
+        if self.serial_resistance != serial_resistance and serial_resistance is not None:
+            self.serial_resistance = serial_resistance
 
-    def set_metal(self, metal):
-        assert isinstance(metal, Metal), 'Expected a Metal instance'
-        assert isinstance(metal, Sample), 'Expected a Sample instance'
+    @property
+    def metal(self):
+        return self.__metal
+
+    @metal.setter
+    def metal(self, metal):
         string_value = metal.__class__.__module__ + '::'
         string_value += metal.__class__.__name__ + '::'
         string_value += metal.name
@@ -134,30 +128,33 @@ class SchottkyDiode(Sample):
             self.client.sample_manager.add_parameter_to_sample(sample=self.sample,
                                                                parameter=parameter)
         self.parameters = {}
-        self.load_create_sample()
-        self.metal = metal
+        self.reload_parameters()
+        self.__metal = metal
 
-    def _read_in_semiconductor(self, semiconductor):
+    def _read_in_metal(self, metal):
         try:
-            semiconductor_parameter = self.parameters['Semiconductor']
-            module_name, class_name, semiconductor_name = semiconductor_parameter.string_value.split('::')
-            semiconductor_id = int(semiconductor_parameter.float_value)
-            semiconductor_module = __import__(module_name, fromlist=[str(class_name)])
-            semiconductor_class = getattr(semiconductor_module, class_name)
-            semiconductor_sample = semiconductor_class(client=self.client.session_manager, name=semiconductor_name)
-            if semiconductor_sample.sample.id == semiconductor_id:
-                self.semiconductor = semiconductor_sample
+            metal_parameter = self.parameters['Metal']
+            metal_module_name, metal_class_name, metal_name = metal_parameter.string_value.split('::')
+            metal_id = int(metal_parameter.float_value)
+            metal_module = __import__(metal_module_name, fromlist=[str(metal_class_name)])
+            metal_class = getattr(metal_module, metal_class_name)
+            metal_sample = metal_class(client=self.client.session_manager, name=metal_name)
+            if metal_sample.sample.id == metal_id:
+                self.metal = metal_sample
             else:
-                print('Semiconductor IDs do not match')
+                print('Metal IDs do not match')
         except KeyError:
             pass
-        if semiconductor is not None:
-            if self.semiconductor != semiconductor:
-                self.set_semiconductor(semiconductor)
+        if metal is not None:
+            if self.metal != metal:
+                self.metal = metal
 
-    def set_semiconductor(self, semiconductor):
-        assert isinstance(semiconductor, Semiconductor), 'Expected a Semiconductor instance'
-        assert isinstance(semiconductor, Sample), 'Expected a Sample instance'
+    @property
+    def semiconductor(self):
+        return self.__semiconductor
+
+    @semiconductor.setter
+    def semiconductor(self, semiconductor):
         string_value = semiconductor.__class__.__module__ + '::'
         string_value += semiconductor.__class__.__name__ + '::'
         string_value += semiconductor.name
@@ -176,5 +173,23 @@ class SchottkyDiode(Sample):
             self.client.sample_manager.add_parameter_to_sample(sample=self.sample,
                                                                parameter=parameter)
         self.parameters = {}
-        self.load_create_sample()
-        self.semiconductor = semiconductor
+        self.reload_parameters()
+        self.__semiconductor = semiconductor
+
+    def _read_in_semiconductor(self, semiconductor):
+        try:
+            semiconductor_parameter = self.parameters['Semiconductor']
+            module_name, class_name, semiconductor_name = semiconductor_parameter.string_value.split('::')
+            semiconductor_id = int(semiconductor_parameter.float_value)
+            semiconductor_module = __import__(module_name, fromlist=[str(class_name)])
+            semiconductor_class = getattr(semiconductor_module, class_name)
+            semiconductor_sample = semiconductor_class(client=self.client.session_manager, name=semiconductor_name)
+            if semiconductor_sample.sample.id == semiconductor_id:
+                self.semiconductor = semiconductor_sample
+            else:
+                print('Semiconductor IDs do not match')
+        except KeyError:
+            pass
+        if semiconductor is not None:
+            if self.semiconductor != semiconductor:
+                self.semiconductor = semiconductor
