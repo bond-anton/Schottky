@@ -1,6 +1,5 @@
 from __future__ import division, print_function
 import numpy as np
-import numbers
 
 from BDSpace.Coordinates import transforms as gt
 
@@ -12,10 +11,29 @@ class UniformElectrostaticField(SampleField):
     def __init__(self, client, name, strength=None, direction=None, description=None, orientation=None):
         SampleField.__init__(self, client=client, name=name, description=description,
                              field_type='electrostatic', orientation=orientation)
-        self.strength = None
-        self.direction = [None, None, None]
+        self.__strength = None
+        self.__direction = [None, None, None]
         self._read_in_strength(strength=strength)
         self._read_in_direction(direction=direction)
+
+    @property
+    def strength(self):
+        return self.__strength
+
+    @strength.setter
+    def strength(self, strength):
+        try:
+            self.parameters['Field strength'].float_value = np.float64(strength)
+            self.save_sample_changes()
+        except KeyError:
+            parameter = self.client.parameter_manager.create_numeric_parameter(name='Field strength',
+                                                                               value=np.float64(strength),
+                                                                               unit_name='V/cm',
+                                                                               description='Strength of electric field')
+            self.client.sample_manager.add_parameter_to_sample(sample=self.sample,
+                                                               parameter=parameter)
+            self.reload_parameters()
+        self.__strength = np.float64(strength)
 
     def _read_in_strength(self, strength):
         try:
@@ -23,46 +41,14 @@ class UniformElectrostaticField(SampleField):
         except KeyError:
             pass
         if self.strength != strength and strength is not None:
-            self.set_strength(strength)
+            self.strength = strength
 
-    def set_strength(self, strength):
-        assert isinstance(strength, numbers.Number), 'Field strength spread must be a number'
-        try:
-            self.parameters['Field strength'].float_value = float(strength)
-            self.save_sample_changes()
-        except KeyError:
-            parameter = self.client.parameter_manager.create_numeric_parameter(name='Field strength',
-                                                                               value=float(strength),
-                                                                               unit_name='V/cm',
-                                                                               description='Strength of electric field')
-            self.client.sample_manager.add_parameter_to_sample(sample=self.sample,
-                                                               parameter=parameter)
-            self.load_create_sample()
-        self.strength = float(strength)
+    @property
+    def direction(self):
+        return self.__direction
 
-    def _read_in_direction(self, direction):
-        try:
-            field_direction_components = self.parameters['Field direction'].children
-            for field_direction in field_direction_components:
-                if field_direction.name == 'x':
-                    self.direction[0] = field_direction.float_value
-                elif field_direction.name == 'y':
-                    self.direction[1] = field_direction.float_value
-                elif field_direction.name == 'z':
-                    self.direction[2] = field_direction.float_value
-            try:
-                self.direction = gt.unit_vector(self.direction)
-            except ValueError:
-                pass
-        except KeyError:
-            pass
-        if direction is not None:
-            if (self.direction != gt.unit_vector(direction)).any():
-                self.set_field_direction(direction)
-
-    def set_field_direction(self, direction):
-        assert isinstance(direction, (np.ndarray, list, tuple)), 'Direction must be iterable of size 3'
-        assert len(direction) == 3, 'Direction must be iterable of size 3'
+    @direction.setter
+    def direction(self, direction):
         direction = gt.unit_vector(direction)
         try:
             field_direction_components = self.parameters['Field direction'].children
@@ -91,8 +77,28 @@ class UniformElectrostaticField(SampleField):
                                                                    value=float(direction[2]),
                                                                    description='Z component of field direction vector',
                                                                    parent=parameter)
-            self.load_create_sample()
-        self.direction = direction
+            self.reload_parameters()
+        self.__direction = direction
+
+    def _read_in_direction(self, direction):
+        try:
+            field_direction_components = self.parameters['Field direction'].children
+            for field_direction in field_direction_components:
+                if field_direction.name == 'x':
+                    self.direction[0] = field_direction.float_value
+                elif field_direction.name == 'y':
+                    self.direction[1] = field_direction.float_value
+                elif field_direction.name == 'z':
+                    self.direction[2] = field_direction.float_value
+            try:
+                self.direction = gt.unit_vector(self.direction)
+            except ValueError:
+                pass
+        except KeyError:
+            pass
+        if direction is not None:
+            if (self.direction != gt.unit_vector(direction)).any():
+                self.direction = direction
 
     def scalar_field(self, xyz):
         xyz = np.array(xyz, dtype=np.float)
