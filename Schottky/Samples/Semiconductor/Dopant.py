@@ -30,7 +30,7 @@ class Dopant(Sample):
                                                                                description='Dopant net concentration')
             self.client.sample_manager.add_parameter_to_sample(sample=self.sample,
                                                                parameter=parameter)
-            self.load_create_sample()
+            self.reload_parameters()
         self.__concentration = concentration
 
     def _read_in_concentration(self, concentration):
@@ -65,7 +65,7 @@ class Dopant(Sample):
             self.client.sample_manager.add_parameter_to_sample(sample=self.sample,
                                                                parameter=parameter)
         self.parameters = {}
-        self.load_create_sample()
+        self.reload_parameters()
         self.__trap = trap
 
     def _read_in_trap(self, trap):

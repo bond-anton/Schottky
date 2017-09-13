@@ -57,7 +57,7 @@ class Semiconductor(Sample):
                                                                                description='Permittivity of space')
             self.client.sample_manager.add_parameter_to_sample(sample=self.sample,
                                                                parameter=parameter)
-            self.load_create_sample()
+            self.reload_parameters()
         self.__epsilon = np.float64(epsilon)
 
     def _read_in_epsilon(self, epsilon):
@@ -83,7 +83,7 @@ class Semiconductor(Sample):
                                                                                description='Electron affinity')
             self.client.sample_manager.add_parameter_to_sample(sample=self.sample,
                                                                parameter=parameter)
-            self.load_create_sample()
+            self.reload_parameters()
         self.__affinity = np.float64(affinity)
 
     def _read_in_affinity(self, affinity):
@@ -121,7 +121,7 @@ class Semiconductor(Sample):
                                                                    value=np.float64(effective_mass['hole']),
                                                                    description='Hole effective mass',
                                                                    parent=parameter)
-            self.load_create_sample()
+            self.reload_parameters()
         self.__effective_mass = {'electron': np.float64(effective_mass['electron']),
                                  'hole': np.float64(effective_mass['hole'])}
 
@@ -168,7 +168,7 @@ class Semiconductor(Sample):
                                                                        effective_bands_density_of_states['Nv']),
                                                                    description='Nv density of states',
                                                                    parent=parameter)
-            self.load_create_sample()
+            self.reload_parameters()
             self.__effective_bands_density_of_states = {'Nc': np.float64(effective_bands_density_of_states['Nc']),
                                                         'Nv': np.float64(effective_bands_density_of_states['Nv'])}
 
@@ -219,7 +219,7 @@ class Semiconductor(Sample):
                                                                    value=np.float64(band_gap_parameters['beta']),
                                                                    description='beta parameter',
                                                                    parent=parameter)
-            self.load_create_sample()
+            self.reload_parameters()
             self.__band_gap_parameters = {'Eg_0': np.float64(band_gap_parameters['Eg_0']),
                                           'alpha': np.float64(band_gap_parameters['alpha']),
                                           'beta': np.float64(band_gap_parameters['beta'])}
@@ -295,7 +295,7 @@ class Semiconductor(Sample):
                                                                        electron_mobility_parameters['beta']),
                                                                    description='beta parameter',
                                                                    parent=parameter)
-            self.load_create_sample()
+            self.reload_parameters()
             self.__electron_mobility_parameters = {'mu_L0': np.float64(electron_mobility_parameters['mu_L0']),
                                                    'v_s': np.float64(electron_mobility_parameters['v_s']),
                                                    'A': np.float64(electron_mobility_parameters['A']),
@@ -375,7 +375,7 @@ class Semiconductor(Sample):
                                                                    value=np.float64(hole_mobility_parameters['beta']),
                                                                    description='beta parameter',
                                                                    parent=parameter)
-            self.load_create_sample()
+            self.reload_parameters()
             self.__hole_mobility_parameters = {'mu_L0': np.float64(hole_mobility_parameters['mu_L0']),
                                                'v_s': np.float64(hole_mobility_parameters['v_s']),
                                                'A': np.float64(hole_mobility_parameters['A']),
@@ -432,7 +432,7 @@ class Semiconductor(Sample):
                                                                    value=np.float64(thermo_emission_coefficient['hole']),
                                                                    description='Hole thermo-emission coefficient',
                                                                    parent=parameter)
-            self.load_create_sample()
+            self.reload_parameters()
             self.__thermo_emission_coefficient = {'electron': np.float64(thermo_emission_coefficient['electron']),
                                                   'hole': np.float64(thermo_emission_coefficient['hole'])}
 
@@ -492,7 +492,7 @@ class Semiconductor(Sample):
                     description=dopant.description,
                     parent=parameter)
         self.parameters = {}
-        self.load_create_sample()
+        self.reload_parameters()
         self.__dopants = dopants
 
     def _read_in_dopants(self, dopants):
@@ -558,7 +558,7 @@ class Semiconductor(Sample):
                     description=interface.description,
                     parent=parameter)
         self.parameters = {}
-        self.load_create_sample()
+        self.reload_parameters()
         self.__interfaces = interfaces
 
     def _read_in_interfaces(self, interfaces):

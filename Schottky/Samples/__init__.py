@@ -10,25 +10,61 @@ class Sample(object):
     def __init__(self, client, name, description=None, parameters=None):
         assert isinstance(client, Client), 'Valid ScientificProjects Client instance is required'
         assert client.user_manager.project_manager.project_opened(), 'Please open project to work with.'
-        self.client = client.user_manager
-        self.name = name
-        self.description = description
-        self.parameters = {}
+        self.__client = client.user_manager
+        self.__name = str(name)
+        self.__description = str(description)
+        self.__parameters = {}
+        self.parameters = parameters
+        self.sample = None
+
+    @property
+    def client(self):
+        return self.__client
+
+    @property
+    def name(self):
+        return self.__name
+
+    @name.setter
+    def name(self, name):
+        self.__name = str(name)
+
+    @property
+    def description(self):
+        return self.__description
+
+    @description.setter
+    def description(self, description):
+        self.__description = str(description)
+
+    @property
+    def parameters(self):
+        return self.__parameters
+
+    @parameters.setter
+    def parameters(self, parameters):
         if isinstance(parameters, (list, tuple, np.ndarray)):
             for parameter in parameters:
                 if isinstance(parameter, Parameter):
-                    self.parameters[parameter.name] = parameter
-        self.sample = None
+                    self.__parameters[parameter.name] = parameter
+        elif isinstance(parameters, dict):
+            for parameter_key in parameters.keys():
+                if isinstance(parameters[parameter_key], Parameter):
+                    self.__parameters[parameters[parameter_key].name] = parameters[parameter_key]
+        else:
+            raise TypeError('Parameters must be provided either as iterable or as dictionary')
 
     def load_create_sample(self):
-        samples = self.client.sample_manager.get_samples(name=self.name)
+        samples = self.client.sample_manager.get_samples(name=self.name, exact=True)
         if len(samples) == 1:
             self.sample = samples[0]
         elif len(samples) == 0:
             self.sample = self.client.sample_manager.create_sample(name=self.name, description=self.description)
         else:
-            print(samples)
-            raise ValueError('More than one sample found for given name, check the database')
+            raise ValueError('More than one (%d) sample found for given name, check the database' % len(samples))
+        self.reload_parameters()
+
+    def reload_parameters(self):
         if self.sample.parameters:
             for parameter in self.sample.parameters:
                 try:
