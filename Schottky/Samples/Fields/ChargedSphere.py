@@ -1,6 +1,5 @@
 from __future__ import division, print_function
 import numpy as np
-import numbers
 
 from BDSpace.Coordinates import transforms as gt
 
@@ -13,12 +12,31 @@ class ChargedSphere(SampleField):
     def __init__(self, client, name, charge=None, radius=None, epsilon=None, description=None, orientation=None):
         SampleField.__init__(self, client=client, name=name, description=description,
                              field_type='electrostatic', orientation=orientation)
-        self.radius = None
-        self.charge = None
-        self.epsilon = None
+        self.__radius = None
+        self.__charge = None
+        self.__epsilon = None
         self._read_in_radius(radius=radius)
         self._read_in_charge(charge=charge)
         self._read_in_epsilon(epsilon=epsilon)
+
+    @property
+    def radius(self):
+        return self.__radius
+
+    @radius.setter
+    def radius(self, radius):
+        try:
+            self.parameters['Charged sphere radius'].float_value = np.float64(radius)
+            self.save_sample_changes()
+        except KeyError:
+            parameter = self.client.parameter_manager.create_numeric_parameter(name='Charged sphere radius',
+                                                                               value=np.float64(radius),
+                                                                               unit_name='cm',
+                                                                               description='Radius of charged sphere')
+            self.client.sample_manager.add_parameter_to_sample(sample=self.sample,
+                                                               parameter=parameter)
+            self.reload_parameters()
+        self.__radius = np.float64(radius)
 
     def _read_in_radius(self, radius):
         try:
@@ -26,22 +44,26 @@ class ChargedSphere(SampleField):
         except KeyError:
             pass
         if self.radius != radius and radius is not None:
-            self.set_radius(radius)
+            self.radius = radius
 
-    def set_radius(self, radius):
-        assert isinstance(radius, numbers.Number), 'Charged sphere radius must be a number'
+    @property
+    def charge(self):
+        return self.__charge
+
+    @charge.setter
+    def charge(self, charge):
         try:
-            self.parameters['Charged sphere radius'].float_value = float(radius)
+            self.parameters['Charged sphere charge'].float_value = np.float64(charge)
             self.save_sample_changes()
         except KeyError:
-            parameter = self.client.parameter_manager.create_numeric_parameter(name='Charged sphere radius',
-                                                                               value=float(radius),
-                                                                               unit_name='cm',
-                                                                               description='Radius of charged sphere')
+            parameter = self.client.parameter_manager.create_numeric_parameter(name='Charged sphere charge',
+                                                                               value=np.float64(charge),
+                                                                               unit_name='C',
+                                                                               description='Charge of charged sphere')
             self.client.sample_manager.add_parameter_to_sample(sample=self.sample,
                                                                parameter=parameter)
-            self.load_create_sample()
-        self.radius = float(radius)
+            self.reload_parameters()
+        self.__charge = np.float64(charge)
 
     def _read_in_charge(self, charge):
         try:
@@ -49,22 +71,25 @@ class ChargedSphere(SampleField):
         except KeyError:
             pass
         if self.charge != charge and charge is not None:
-            self.set_charge(charge)
+            self.charge = charge
 
-    def set_charge(self, charge):
-        assert isinstance(charge, numbers.Number), 'Charged sphere charge must be a number'
+    @property
+    def epsilon(self):
+        return self.__epsilon
+
+    @epsilon.setter
+    def epsilon(self, epsilon):
         try:
-            self.parameters['Charged sphere charge'].float_value = float(charge)
+            self.parameters['epsilon'].float_value = np.float64(epsilon)
             self.save_sample_changes()
         except KeyError:
-            parameter = self.client.parameter_manager.create_numeric_parameter(name='Charged sphere charge',
-                                                                               value=float(charge),
-                                                                               unit_name='C',
-                                                                               description='Charge of charged sphere')
+            parameter = self.client.parameter_manager.create_numeric_parameter(name='epsilon',
+                                                                               value=np.float64(epsilon),
+                                                                               description='Permittivity of space')
             self.client.sample_manager.add_parameter_to_sample(sample=self.sample,
                                                                parameter=parameter)
-            self.load_create_sample()
-        self.charge = float(charge)
+            self.reload_parameters()
+        self.__epsilon = np.float64(epsilon)
 
     def _read_in_epsilon(self, epsilon):
         try:
@@ -72,21 +97,7 @@ class ChargedSphere(SampleField):
         except KeyError:
             pass
         if self.epsilon != epsilon and epsilon is not None:
-            self.set_epsilon(epsilon)
-
-    def set_epsilon(self, epsilon):
-        assert isinstance(epsilon, numbers.Number), 'epsilon must be a number'
-        try:
-            self.parameters['epsilon'].float_value = float(epsilon)
-            self.save_sample_changes()
-        except KeyError:
-            parameter = self.client.parameter_manager.create_numeric_parameter(name='epsilon',
-                                                                               value=float(epsilon),
-                                                                               description='Permittivity of space')
-            self.client.sample_manager.add_parameter_to_sample(sample=self.sample,
-                                                               parameter=parameter)
-            self.load_create_sample()
-        self.epsilon = float(epsilon)
+            self.epsilon = epsilon
 
     def scalar_field(self, xyz):
         coefficient = self.charge / (4 * np.pi * constants['epsilon_0'] * self.epsilon)
