@@ -29,7 +29,7 @@ class Metal(Sample):
                                                                                description='Metal work function')
             self.client.sample_manager.add_parameter_to_sample(sample=self.sample,
                                                                parameter=parameter)
-            self.load_create_sample()
+            self.reload_parameters()
         self.__work_function = np.float64(work_function)
 
     def _read_in_work_function(self, work_function):
