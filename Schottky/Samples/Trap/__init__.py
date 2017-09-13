@@ -1,8 +1,6 @@
 from __future__ import division, print_function
-import numbers
 import numpy as np
 
-from BDSpace.Field import Field
 from Schottky.Samples import Sample
 from Schottky import constants
 
