@@ -38,7 +38,6 @@ class Trap(Sample):
         self._read_in_electron_capture_cross_section_activation_energy(electron_capture_cross_section_activation_energy)
         self._read_in_hole_capture_cross_section(capture_cross_section=hole_capture_cross_section)
         self._read_in_hole_capture_cross_section_activation_energy(hole_capture_cross_section_activation_energy)
-        self.trap_potential = None
         self._read_in_trap_potential(trap_potential)
 
     @property

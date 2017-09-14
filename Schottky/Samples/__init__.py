@@ -51,6 +51,8 @@ class Sample(object):
             for parameter_key in parameters.keys():
                 if isinstance(parameters[parameter_key], Parameter):
                     self.__parameters[parameters[parameter_key].name] = parameters[parameter_key]
+        elif parameters is None:
+            pass
         else:
             raise TypeError('Parameters must be provided either as iterable or as dictionary')
 
