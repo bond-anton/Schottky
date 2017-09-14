@@ -16,6 +16,8 @@ from ._helpers import storage_manager, prepare_array, fermi, d_fermi_d_delta_fer
 class SchottkyDiodeSimulator(Simulator):
 
     def __init__(self, client, diode, description=None):
+        assert isinstance(diode, SchottkyDiode), 'Valid SchottkyDiode Sample object expected'
+        self.__diode = diode
         name = 'Schottky Diode Simulator'
         category = {
             'name': 'Software',
@@ -183,8 +185,6 @@ class SchottkyDiodeSimulator(Simulator):
                        }]}
         }
 
-        assert isinstance(diode, SchottkyDiode), 'Valid SchottkyDiode Sample object expected'
-        self.__diode = diode
         samples = [self.diode]
         parts = [BulkSemiconductor(client=client, semiconductor=diode.semiconductor)]
 
