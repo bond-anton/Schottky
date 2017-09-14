@@ -1,5 +1,4 @@
 from __future__ import division, print_function
-# import timeit
 import numbers
 import numpy as np
 
@@ -13,7 +12,7 @@ class ChargeCarrierTrap(Simulator):
 
     def __init__(self, client, trap, description=None):
         assert isinstance(trap, Trap), 'Valid Trap Sample object expected'
-        self.trap = trap
+        self.__trap = trap
         samples = [self.trap]
         name = 'Charge Carrier Trap Simulator'
         label = name + ' [%s]' % trap.name
@@ -26,7 +25,7 @@ class ChargeCarrierTrap(Simulator):
         measurement_types = [{'name': 'Capture and Emission Kinetics',
                               'description': 'Measurement of charge carrier trap capture and emission kinetics',
                               'children': []}]
-        measurements = [
+        measurement_specs = [
             {'name': 'Capture rate',
              'description': 'measure charge carriers capture rate',
              'type': 'Capture and Emission Kinetics'},
@@ -43,7 +42,11 @@ class ChargeCarrierTrap(Simulator):
             samples=samples, parts=parts,
             category=category, label=label,
             measurement_types=measurement_types,
-            measurements=measurements)
+            measurement_specs=measurement_specs)
+
+    @property
+    def trap(self):
+        return self.__trap
 
     def energy_level(self, band_gap):
         if isinstance(band_gap, (list, tuple, np.ndarray)):
