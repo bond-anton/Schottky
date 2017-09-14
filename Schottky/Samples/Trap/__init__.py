@@ -55,9 +55,8 @@ class Trap(Sample):
                     parameter.float_value = charge_state['full']
             self.save_sample_changes()
         except KeyError:
-            parameter = self.client.parameter_manager._create_parameter(name='Charge state',
-                                                                        description='Charge states of the trap',
-                                                                        parameter_type='Dictionary')
+            parameter = self.client.parameter_manager.create_dict_parameter(name='Charge state',
+                                                                            description='Charge states of the trap')
             self.client.sample_manager.add_parameter_to_sample(sample=self.sample,
                                                                parameter=parameter)
             self.client.parameter_manager.create_numeric_parameter(name='empty',
