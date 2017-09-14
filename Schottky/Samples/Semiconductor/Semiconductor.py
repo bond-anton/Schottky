@@ -1,10 +1,7 @@
 from __future__ import division, print_function
-import numbers
 import numpy as np
 
 from Schottky.Samples import Sample
-from Schottky.Samples.Semiconductor.Dopant import Dopant
-from Schottky.Samples.Semiconductor.Interface import Interface
 
 
 class Semiconductor(Sample):
@@ -424,14 +421,16 @@ class Semiconductor(Sample):
                                                                             description='Thermo-emission coefficients')
             self.client.sample_manager.add_parameter_to_sample(sample=self.sample,
                                                                parameter=parameter)
-            self.client.parameter_manager.create_numeric_parameter(name='electron',
-                                                                   value=np.float64(thermo_emission_coefficient['electron']),
-                                                                   description='Electron thermo-emission coefficient',
-                                                                   parent=parameter)
-            self.client.parameter_manager.create_numeric_parameter(name='hole',
-                                                                   value=np.float64(thermo_emission_coefficient['hole']),
-                                                                   description='Hole thermo-emission coefficient',
-                                                                   parent=parameter)
+            self.client.parameter_manager.create_numeric_parameter(
+                name='electron',
+                value=np.float64(thermo_emission_coefficient['electron']),
+                description='Electron thermo-emission coefficient',
+                parent=parameter)
+            self.client.parameter_manager.create_numeric_parameter(
+                name='hole',
+                value=np.float64(thermo_emission_coefficient['hole']),
+                description='Hole thermo-emission coefficient',
+                parent=parameter)
             self.reload_parameters()
             self.__thermo_emission_coefficient = {'electron': np.float64(thermo_emission_coefficient['electron']),
                                                   'hole': np.float64(thermo_emission_coefficient['hole'])}
