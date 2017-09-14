@@ -16,9 +16,6 @@ from ._helpers import storage_manager, prepare_array, fermi, d_fermi_d_delta_fer
 class SchottkyDiodeSimulator(Simulator):
 
     def __init__(self, client, diode, description=None):
-        assert isinstance(diode, SchottkyDiode), 'Valid SchottkyDiode Sample object expected'
-        self.diode = diode
-        samples = [self.diode]
         name = 'Schottky Diode Simulator'
         category = {
             'name': 'Software',
@@ -26,7 +23,6 @@ class SchottkyDiodeSimulator(Simulator):
             'subcategory': {'name': 'Simulation',
                             'description': 'Simulation software',
                             'subcategory': None}}
-
         measurement_types = [
             {'name': 'Diode energetics',
              'description': 'Measurement of diode energetics',
@@ -34,40 +30,17 @@ class SchottkyDiodeSimulator(Simulator):
             {'name': 'Carriers concentration',
              'description': 'Measurement of carriers concentration in the Schottky diode',
              'children': []},
-            {'name': 'Current Measurement',
+            {'name': 'Traps occupation',
+             'description': 'Measurement of traps occupation in the Schottky diode',
+             'children': []},
+            {'name': 'Current measurement',
              'description': 'Measurement of electrical current',
              'children': []}]
-
-        self.measurement_details = {
-            'v_bi': {
-                'name': 'Built-in potential temperature dependence',
-                'description': 'Measurement of Diode Built-in potential temperature dependence',
-                'type': 'Diode energetics'},
-            'potential': {
-                'name': 'Electron potential in the diode',
-                'description': 'Measurement of Diode potential depth-profile',
-                'type': 'Diode energetics'},
-            'free carriers concentration': {
-                'name': 'Free carriers concentration profile',
-                'description': 'Measurement of free carriers concentration profile',
-                'type': 'Carriers concentration'},
-            'iv': {
-                'name': 'IV',
-                'description': 'measure I-V dependence',
-                'type': 'Current Measurement'},
-        }
-
-        parts = [BulkSemiconductor(client=client, semiconductor=diode.semiconductor)]
-        Simulator.__init__(
-            self,
-            client=client, name=name, description=description,
-            samples=samples, parts=parts,
-            category=category,
-            measurement_types=measurement_types,
-            measurements=list(self.measurement_details.values()))
-
-        self.measurement_specs = {
-            'v_bi': {'parameters': None,
+        measurement_specs = {
+            'v_bi': {'name': 'Built-in potential temperature dependence',
+                     'description': 'Measurement of Diode Built-in potential temperature dependence',
+                     'type': 'Diode energetics',
+                     'parameters': None,
                      'input data': None,
                      'variables': [{
                          'name': 'Temperature',
@@ -79,7 +52,10 @@ class SchottkyDiodeSimulator(Simulator):
                          'description': 'Diode\'s Built-in potential',
                          'units': 'eV'
                          }]},
-            'potential': {'parameters':
+            'potential': {'name': 'Electron potential in the diode',
+                          'description': 'Measurement of Diode potential depth-profile',
+                          'type': 'Diode energetics',
+                          'parameters':
                               [
                                   {'name': 'temperature',
                                            'type': 'numeric',
@@ -124,10 +100,11 @@ class SchottkyDiodeSimulator(Simulator):
                                   'name': 'diode voltage error',
                                   'description': 'Voltage drop on a diode error',
                                   'units': 'V'
-                              }
-                          ]
-            },
-            'free carriers concentration': {'parameters':
+                              }]},
+            'free carriers concentration': {'name': 'Free carriers concentration profile',
+                                            'description': 'Measurement of free carriers concentration profile',
+                                            'type': 'Carriers concentration',
+                                            'parameters':
                                                 [
                                                     {'name': 'temperature',
                                                              'type': 'numeric',
@@ -154,10 +131,11 @@ class SchottkyDiodeSimulator(Simulator):
                                                     'name': 'holes',
                                                     'description': 'holes concentration',
                                                     'units': 'cm^-3'
-                                                }
-                                            ]
-            },
-            'dopants equilibrium occupation': {'parameters':
+                                                }]},
+            'dopants equilibrium occupation': {'name': 'Dopants equilibrium occupation',
+                                               'description': 'Dopants equilibrium occupation profile',
+                                               'type': 'Traps occupation',
+                                               'parameters':
                                                    [
                                                        {'name': 'temperature',
                                                                 'type': 'numeric',
@@ -181,7 +159,10 @@ class SchottkyDiodeSimulator(Simulator):
                                                        'units': ''
                                                    } for dopant in self.diode.semiconductor.dopants]
                                                },
-            'iv': {'parameters':
+            'iv': {'name': 'IV',
+                   'description': 'measure I-V dependence',
+                   'type': 'Current measurement',
+                   'parameters':
                        [
                            {'name': 'temperature',
                             'type': 'numeric',
@@ -190,20 +171,34 @@ class SchottkyDiodeSimulator(Simulator):
                             'units': 'K'}
                        ],
                    'input data': None,
-                   'variables':[
+                   'variables': [
                        {'name': 'bias',
                         'description': 'Voltage bias',
-                        'units': 'V'}
-                   ],
+                        'units': 'V'}],
                    'result': [
                        {
                            'name': 'current density',
                            'description': 'Current density through the diode',
                            'units': 'A/cm^2'
-                       }
-                   ]
-            }
+                       }]}
         }
+
+        assert isinstance(diode, SchottkyDiode), 'Valid SchottkyDiode Sample object expected'
+        self.__diode = diode
+        samples = [self.diode]
+        parts = [BulkSemiconductor(client=client, semiconductor=diode.semiconductor)]
+
+        Simulator.__init__(
+            self,
+            client=client, name=name, description=description,
+            samples=samples, parts=parts,
+            category=category,
+            measurement_types=measurement_types,
+            measurement_specs=measurement_specs)
+
+    @property
+    def diode(self):
+        return self.__diode
 
     @storage_manager('v_bi', use_storage=True)
     def v_bi(self, temperature=0.0):
@@ -283,7 +278,7 @@ class SchottkyDiodeSimulator(Simulator):
         d_rho_d_psi = partial(self._d_semiconductor_charge_d_psi, temperature=temperature,
                               band_gap=band_gap, xi=xi, dos=dos, diode_type=diode_type)
         if psi is None:
-            psi = lambda x: (bias + v_diode) - x * (bias + v_diode) / self.diode.thickness
+            def psi(x): return (bias + v_diode) - x * (bias + v_diode) / self.diode.thickness
         converged = False
         while not converged:
             meshes = dirichlet_non_linear_poisson_solver_amr(0.0, self.diode.thickness, 1.0e-6,

@@ -12,6 +12,7 @@ from ._helpers import storage_manager, prepare_array
 class BulkSemiconductor(Simulator):
 
     def __init__(self, client, semiconductor, description=None):
+        name = 'Bulk Semiconductor Simulator'
         category = {
             'name': 'Software',
             'description': 'Measurement, automation, control, simulation, and other software tools',
@@ -138,7 +139,7 @@ class BulkSemiconductor(Simulator):
             parts += [ChargeCarrierTrap(client=client, trap=dopant.trap) for dopant in semiconductor.dopants]
         Simulator.__init__(
             self,
-            client=client, name='Bulk Semiconductor Simulator', description=description,
+            client=client, name=name, description=description,
             samples=samples, parts=parts,
             category=category,
             measurement_types=measurement_types,
