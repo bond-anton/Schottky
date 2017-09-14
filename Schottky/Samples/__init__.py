@@ -54,7 +54,7 @@ class Sample(object):
         elif parameters is None:
             pass
         else:
-            raise TypeError('Parameters must be provided either as iterable or as dictionary')
+            raise TypeError('Parameters must be provided either as an iterable or as a dictionary')
 
     def load_create_sample(self):
         samples = self.client.sample_manager.get_samples(name=self.name, exact=True)

@@ -12,7 +12,6 @@ from ._helpers import storage_manager, prepare_array
 class BulkSemiconductor(Simulator):
 
     def __init__(self, client, semiconductor, description=None):
-        assert isinstance(semiconductor, Semiconductor), 'Valid Semiconductor Sample object expected'
         category = {
             'name': 'Software',
             'description': 'Measurement, automation, control, simulation, and other software tools',
@@ -22,7 +21,6 @@ class BulkSemiconductor(Simulator):
                 'subcategory': None
             }
         }
-
         measurement_types = [
             {
                 'name': 'Bulk Semiconductor energetics',
@@ -30,30 +28,11 @@ class BulkSemiconductor(Simulator):
                 'children': []
             }
         ]
-
-        self.measurement_details = {
+        measurement_specs = {
             'band gap': {'name': 'Band Gap temperature dependence',
                          'description': 'Band Gap temperature dependence',
-                         'type': 'Bulk Semiconductor energetics'},
-            'xi': {'name': 'Electrochemical potential temperature dependence',
-                   'description': 'Electrochemical potential temperature dependence',
-                   'type': 'Bulk Semiconductor energetics'},
-            'dos': {'name': 'Bands effective density of states temperature dependence',
-                    'description': 'Semiconductor Bands effective density of states temperature dependence',
-                    'type': 'Bulk Semiconductor energetics'},
-            'carrier velocity': {'name': 'Charge carrier thermal velocity temperature dependence',
-                                 'description': 'Charge carrier thermal velocity temperature dependence',
-                                 'type': 'Bulk Semiconductor energetics'},
-            'mobility': {'name': 'Charge carrier mobility temperature dependence',
-                         'description': 'Charge carrier mobility temperature dependence',
-                         'type': 'Bulk Semiconductor energetics'},
-            'emission_rate': {'name': 'Emission rate',
-                              'description': 'measure charge carriers emission rate',
-                              'type': 'Capture and Emission Kinetics'},
-        }
-
-        self.measurement_specs = {
-            'band gap': {'parameters': None,
+                         'type': 'Bulk Semiconductor energetics',
+                         'parameters': None,
                          'input data': None,
                          'variables': [{
                              'name': 'Temperature',
@@ -65,7 +44,10 @@ class BulkSemiconductor(Simulator):
                              'description': 'Semiconductor Band Gap',
                              'units': 'eV'
                          }]},
-            'xi': {'parameters': None,
+            'xi': {'name': 'Electrochemical potential temperature dependence',
+                   'description': 'Electrochemical potential temperature dependence',
+                   'type': 'Bulk Semiconductor energetics',
+                   'parameters': None,
                    'input data': None,
                    'variables': [{
                        'name': 'Temperature',
@@ -77,7 +59,10 @@ class BulkSemiconductor(Simulator):
                        'description': 'Semiconductor Electrochemical potential, measured from Ec',
                        'units': 'eV'
                    }]},
-            'dos': {'parameters': None,
+            'dos': {'name': 'Bands effective density of states temperature dependence',
+                    'description': 'Semiconductor Bands effective density of states temperature dependence',
+                    'type': 'Bulk Semiconductor energetics',
+                    'parameters': None,
                     'input data': None,
                     'variables': [{
                         'name': 'Temperature',
@@ -96,7 +81,10 @@ class BulkSemiconductor(Simulator):
                             'units': 'cm^-3'
                         }
                     ]},
-            'carrier velocity': {'parameters': None,
+            'carrier velocity': {'name': 'Charge carrier thermal velocity temperature dependence',
+                                 'description': 'Charge carrier thermal velocity temperature dependence',
+                                 'type': 'Bulk Semiconductor energetics',
+                                 'parameters': None,
                                  'input data': None,
                                  'variables': [{
                                      'name': 'Temperature',
@@ -115,7 +103,10 @@ class BulkSemiconductor(Simulator):
                                          'units': 'cm/s'
                                      }
                                  ]},
-            'mobility': {'parameters': [{'name': 'field',
+            'mobility': {'name': 'Charge carrier mobility temperature dependence',
+                         'description': 'Charge carrier mobility temperature dependence',
+                         'type': 'Bulk Semiconductor energetics',
+                         'parameters': [{'name': 'field',
                                          'type': 'numeric',
                                          'default value': 0.0,
                                          'description': 'Electric field',
@@ -138,12 +129,9 @@ class BulkSemiconductor(Simulator):
                                  'units': 'cm^2/(V*s)'
                              }
                          ]},
-            'emission_rate': {'name': 'Emission rate',
-                              'description': 'measure charge carriers emission rate',
-                              'type': 'Capture and Emission Kinetics'},
         }
-
-        self.semiconductor = semiconductor
+        assert isinstance(semiconductor, Semiconductor), 'Valid Semiconductor Sample object expected'
+        self.__semiconductor = semiconductor
         samples = [self.semiconductor]
         parts = []
         if semiconductor.dopants:
@@ -154,7 +142,11 @@ class BulkSemiconductor(Simulator):
             samples=samples, parts=parts,
             category=category,
             measurement_types=measurement_types,
-            measurements=list(self.measurement_details.values()))
+            measurement_specs=measurement_specs)
+
+    @property
+    def semiconductor(self):
+        return self.__semiconductor
 
     @storage_manager('band gap', use_storage=True)
     def band_gap(self, temperature=0.0):

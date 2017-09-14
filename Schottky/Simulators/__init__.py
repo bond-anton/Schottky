@@ -10,30 +10,27 @@ class Simulator(object):
 
     def __init__(self, client, name=None, description=None, label=None,
                  samples=None, parts=None,
-                 category=None, measurement_types=None, measurements=None):
+                 category=None, measurement_types=None, measurement_specs=None):
         assert isinstance(client, Client), 'Valid ScientificProjects Client instance is required.'
         assert client.user_manager.project_manager.project_opened(), 'Please open project to work with.'
-        self.client = client.user_manager
+        self.__client = client.user_manager
         if name is None:
             name = 'Software Simulator'
-        self.name = str(name)
+        self.__name = str(name)
         if label is None:
             label = self.name
-        self.label = str(label)
+        self.__label = str(label)
         if description is None:
             description = 'Simulates properties of corresponding entity'
-        self.description = description
-        self.samples = {}
-        if isinstance(samples, (list, tuple, np.ndarray)):
-            for sample in samples:
-                if isinstance(sample, Sample):
-                    self.samples[sample.name] = sample
-        self.parts = {}
-        if isinstance(parts, (list, tuple, np.ndarray)):
-            for part in parts:
-                if isinstance(part, Simulator):
-                    self.parts[part.label] = part
-        self.manufacturer = self._create_manufacturer()
+        self.__description = description
+        self.__samples = {}
+        self.samples = samples
+
+        self.__parts = {}
+        self.parts = parts
+
+        self.__manufacturer = self._create_manufacturer()
+
         if category is None:
             category = {
                 'name': 'Software',
@@ -41,22 +38,105 @@ class Simulator(object):
                 'subcategory': {'name': 'Simulation',
                                 'description': 'Simulation software',
                                 'subcategory': None}}
-        self.equipment = self._register_equipment(category)
+        self.__equipment = self._register_equipment(category)
+
         if measurement_types is None:
             measurement_types = [{'name': 'Simulated data',
                                   'description': 'Software simulated data',
                                   'children': []}]
-        if measurements is None:
-            measurements = [{'name': 'random data generation',
-                             'description': 'generates random data',
-                             'type': 'Simulated data'}]
-        self.measurements = measurements
+        if measurement_specs is None:
+            measurement_specs = [{'name': 'random data generation',
+                                  'description': 'generates random data',
+                                  'type': 'Simulated data',
+                                  'parameters': None,
+                                  'input data': None,
+                                  'variables': [{
+                                      'name': 'Some variable',
+                                      'description': 'Some input variable',
+                                      'units': 'a. u.'
+                                  }],
+                                  'result': [{
+                                      'name': 'Some random data',
+                                      'description': 'Simulated random data',
+                                      'units': 'a. u.'
+                                  }]}]
+        self.__measurement_specs = measurement_specs
         self._register_measurement_types(measurement_types)
+
+    @property
+    def client(self):
+        return self.__client
+
+    @property
+    def name(self):
+        return self.__name
+
+    @property
+    def description(self):
+        return self.__description
+
+    @property
+    def label(self):
+        return self.__label
+
+    @label.setter
+    def label(self, label):
+        self.__label = str(label)
+
+    @property
+    def samples(self):
+        return self.__samples
+
+    @samples.setter
+    def samples(self, samples):
+        if isinstance(samples, (list, tuple, np.ndarray)):
+            for sample in samples:
+                if isinstance(sample, Sample):
+                    self.samples[sample.name] = sample
+        elif isinstance(samples, dict):
+            for sample_key in samples.keys():
+                if isinstance(samples[sample_key], Sample):
+                    self.__samples[samples[sample_key].name] = samples[sample_key]
+        elif samples is None:
+            pass
+        else:
+            raise TypeError('Samples must be provided either as an iterable or as a dictionary')
+
+    @property
+    def parts(self):
+        return self.__parts
+
+    @parts.setter
+    def parts(self, parts):
+        if isinstance(parts, (list, tuple, np.ndarray)):
+            for part in parts:
+                if isinstance(part, Simulator):
+                    self.parts[part.label] = part
+        elif isinstance(parts, dict):
+            for part_key in parts.keys():
+                if isinstance(parts[part_key], Simulator):
+                    self.__parts[parts[part_key].label] = parts[part_key]
+        elif parts is None:
+            pass
+        else:
+            raise TypeError('Parts must be provided either as an iterable or as a dictionary')
+
+    @property
+    def manufacturer(self):
+        return self.__manufacturer
+
+    @property
+    def equipment(self):
+        return self.__equipment
+
+    @property
+    def measurement_specs(self):
+        return self.__measurement_specs
 
     def _create_manufacturer(self):
         name = 'BondDevices'
         name_short = 'BD'
-        description = 'BondDevices Scientific Services'
+        description = 'Bond Devices Scientific Services'
         manufacturers = self.client.equipment_manager.get_manufacturers(name=name)
         if len(manufacturers) == 1:
             return manufacturers[0]
@@ -146,14 +226,14 @@ class Simulator(object):
                 if not found:
                     self.client.equipment_manager.add_measurement_type_to_equipment(self.equipment, new_parent)
 
-    def measurement_lookup(self, measurement_details, parameters=None, input_data=None, progress_threshold=0):
+    def measurement_lookup(self, measurement_spec, parameters=None, input_data=None, progress_threshold=0):
         if parameters is None:
             parameters = []
         samples_parameters = []
         for sample in self.samples.values():
             samples_parameters += sample.parameters.values()
         measurement_parameters = parameters + samples_parameters
-        measurements = self.client.measurement_manager.get_measurements(name=measurement_details['name'])
+        measurements = self.client.measurement_manager.get_measurements(name=measurement_spec['name'])
         matched_measurements = []
         for measurement in measurements:
             # check progress threshold
@@ -164,6 +244,7 @@ class Simulator(object):
                 continue
             # check measurement parameters match
             if len(measurement.parameters) == len(measurement_parameters):
+                parameters_match = False
                 test_parameters = [] + measurement_parameters
                 for parameter in measurement.parameters:
                     parameters_match = False
@@ -189,18 +270,17 @@ class Simulator(object):
             matched_measurements.append(measurement)
         return matched_measurements
 
-    def measurement_new(self, measurement_details, parameters=None, input_data=None):
+    def measurement_new(self, measurement_spec, parameters=None, input_data=None):
         if parameters is None:
             parameters = []
         samples_parameters = []
         for sample in self.samples.values():
             samples_parameters += sample.parameters.values()
-        measurement_parameters = parameters + samples_parameters
         measurement = self.client.measurement_manager.create_measurement(
-            name=measurement_details['name'],
-            measurement_type=measurement_details['type'],
+            name=measurement_spec['name'],
+            measurement_type=measurement_spec['type'],
             equipment=self.equipment,
-            description=measurement_details['description'])
+            description=measurement_spec['description'])
         if samples_parameters:
             copied_parameters = [self.client.parameter_manager.copy_parameter(p) for p in samples_parameters]
             for parameter in copied_parameters:
