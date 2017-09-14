@@ -226,7 +226,7 @@ class Simulator(object):
                 if not found:
                     self.client.equipment_manager.add_measurement_type_to_equipment(self.equipment, new_parent)
 
-    def measurement_lookup(self, measurement_spec, parameters=None, input_data=None, progress_threshold=0):
+    def measurement_lookup(self, measurement_spec, parameters=None, progress_threshold=0):
         if parameters is None:
             parameters = []
         samples_parameters = []
@@ -240,7 +240,7 @@ class Simulator(object):
             if measurement.progress < progress_threshold:
                 continue
             # check input_data match
-            if measurement.input_data != input_data:
+            if measurement.input_data != measurement_spec['input data']:
                 continue
             # check measurement parameters match
             if len(measurement.parameters) == len(measurement_parameters):
@@ -270,7 +270,7 @@ class Simulator(object):
             matched_measurements.append(measurement)
         return matched_measurements
 
-    def measurement_new(self, measurement_spec, parameters=None, input_data=None):
+    def measurement_new(self, measurement_spec, parameters=None):
         if parameters is None:
             parameters = []
         samples_parameters = []
@@ -296,10 +296,10 @@ class Simulator(object):
             self.client.measurement_manager.add_sample_to_measurement(
                 measurement=measurement,
                 sample=sample.sample)
-        if input_data is not None:
+        if measurement_spec['input data'] is not None:
             self.client.measurement_manager.add_input_data_to_measurement(
                 measurement=measurement,
-                measurements_collection=input_data)
+                measurements_collection=measurement_spec['input data'])
         return measurement
 
     def load_create_data_channel(self, channel_name, measurement, description, unit_name=None):

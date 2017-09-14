@@ -16,7 +16,7 @@ def storage_manager(spec_key, **outer_kwargs):
             else:
                 use_storage = False
             if use_storage:
-                record = 'Starting Measurement "%s"' % (self.measurement_details[spec_key]['name'])
+                record = 'Starting Measurement "%s"' % (self.measurement_specs[spec_key]['name'])
                 parameters = []
                 if self.measurement_specs[spec_key]['parameters'] is not None:
                     for parameter_spec in self.measurement_specs[spec_key]['parameters']:
@@ -33,9 +33,8 @@ def storage_manager(spec_key, **outer_kwargs):
                                     parent=None, commit=False)
                                 parameters.append(parameter)
                 self.client.log_manager.log_record(record=record, category='Information')
-                measurements = self.measurement_lookup(self.measurement_details[spec_key],
+                measurements = self.measurement_lookup(self.measurement_specs[spec_key],
                                                        parameters=parameters,
-                                                       input_data=self.measurement_specs[spec_key]['input data'],
                                                        progress_threshold=100)
                 match_found = False
                 for measurement in measurements:
@@ -70,7 +69,7 @@ def storage_manager(spec_key, **outer_kwargs):
                             channel)[:, 0].astype(np.float64)
                     db_time = timeit.default_timer() - start_time
                     record = 'Measurement "%s" complete in %.3f s (measurement: %.3f s, db: %.3f s)' %\
-                             (self.measurement_details[spec_key]['name'], db_time, 0.0, db_time)
+                             (self.measurement_specs[spec_key]['name'], db_time, 0.0, db_time)
                     self.client.log_manager.log_record(record=record, category='Information')
                     if len(result) == 1:
                         return result[channel_spec['name']]
@@ -85,9 +84,8 @@ def storage_manager(spec_key, **outer_kwargs):
                     # TODO: add commit_parameter method in parameter manager for better logging
                     self.client.session.add(parameter)
                     self.client.session.commit()
-                measurement = self.measurement_new(self.measurement_details[spec_key],
-                                                   parameters=parameters,
-                                                   input_data=self.measurement_specs[spec_key]['input data'])
+                measurement = self.measurement_new(self.measurement_specs[spec_key],
+                                                   parameters=parameters)
                 if self.measurement_specs[spec_key]['variables'] is not None:
                     for channel_spec in self.measurement_specs[spec_key]['variables']:
                         arg = prepare_array(kwargs[channel_spec['name'].lower()])
@@ -112,7 +110,7 @@ def storage_manager(spec_key, **outer_kwargs):
                                                                             progress=100)
                 db_time += timeit.default_timer() - start_time
                 record = 'Measurement "%s" complete in %.3f s (measurement: %.3f s, db: %.3f s)' % \
-                         (self.measurement_details[spec_key]['name'], db_time + measurement_time, measurement_time, db_time)
+                         (self.measurement_specs[spec_key]['name'], db_time + measurement_time, measurement_time, db_time)
                 self.client.log_manager.log_record(record=record, category='Information')
             return result
         return wrapper
