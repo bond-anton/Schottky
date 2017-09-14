@@ -1,5 +1,4 @@
 from __future__ import division
-import numbers
 import numpy as np
 
 from Schottky.Samples import Sample
