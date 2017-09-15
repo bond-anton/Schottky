@@ -194,7 +194,7 @@ class SuperpositionField(Sample, SuperposedField):
         self.load_create_sample()
         self.__fields = []
         self._read_in_fields(fields=fields)
-        SuperposedField.__init__(self, name=name, fields=self.fields)
+        SuperposedField.__init__(self, name=name, fields=fields)
         self.__orientation = {'origin': [0, 0, 0],
                               'rotation': [1, 0, 0, 0]}
         self._read_in_orientation(orientation)
@@ -205,6 +205,8 @@ class SuperpositionField(Sample, SuperposedField):
 
     @fields.setter
     def fields(self, fields):
+        if fields is None:
+            fields = []
         try:
             parameter = self.parameters['Fields']
             for field in fields:
@@ -255,7 +257,7 @@ class SuperpositionField(Sample, SuperposedField):
                 field_class = getattr(field_module, field_class_name)
                 field_sample = field_class(client=self.client.session_manager, name=field_name)
                 if field_sample.sample.id == field_id:
-                    self.fields.append(field_sample)
+                    self.__fields.append(field_sample)
                 else:
                     print('Field IDs do not match')
         except KeyError:

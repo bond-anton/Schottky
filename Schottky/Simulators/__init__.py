@@ -71,6 +71,13 @@ class Simulator(object):
     def name(self):
         return self.__name
 
+    @name.setter
+    def name(self, name):
+        if name != self.name:
+            record = 'Simulator name can not be changed (%s)' % self.name
+            self.client.log_manager.log_record(record=record, category='Warning')
+        pass
+
     @property
     def description(self):
         return self.__description
