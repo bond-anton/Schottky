@@ -44,7 +44,7 @@ field_simulator = FieldSimulator(client=client, field=superposed_field)
 fig = mlab.figure(bgcolor=(0.2, 0.2, 0.2))
 
 superposed_field_vis = Visual.FieldView(fig, field_simulator,
-                                        grid=np.mgrid[-50:50:20j, -50:50:20j, -5:5:20j],
+                                        grid=np.mgrid[-5:5:100j, -5:5:100j, -5:5:20j],
                                         scalar_field_visible=False,
                                         vector_field_visible=True,
                                         cs_visible=True)
