@@ -1,12 +1,12 @@
 from __future__ import division, print_function
 
-from BDProjects.Client import Client
+from BDProjects.Client import Connector, Client
 
 from Schottky import constants
 from Schottky.Samples.Trap import Trap
 from Schottky.Samples.Semiconductor import Semiconductor, Dopant
 
-client = Client(config_file_name='config.ini')
+client = Client(Connector(config_file_name='config.ini'))
 
 client.user_manager.sign_in('bond_anton', 'secret_password')
 client.user_manager.project_manager.open_project('Schottky diode')

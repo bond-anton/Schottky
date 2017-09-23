@@ -1,10 +1,10 @@
 from __future__ import division, print_function
 
-from BDProjects.Client import Client
+from BDProjects.Client import Connector, Client
 
 from Schottky.Samples.Metal import Metal
 
-client = Client(config_file_name='config.ini')
+client = Client(Connector(config_file_name='config.ini'))
 
 client.user_manager.sign_in('bond_anton', 'secret_password')
 client.user_manager.project_manager.open_project('Schottky diode')

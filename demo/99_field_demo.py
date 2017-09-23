@@ -1,7 +1,7 @@
 from __future__ import division, print_function
 
 import BDSpaceVis as Visual
-from BDProjects.Client import Client
+from BDProjects.Client import Connector, Client
 
 import numpy as np
 
@@ -24,7 +24,7 @@ def find_first_local_extrema(surface, r_grid, radius):
     return np.argmax(surface, axis=1)
 
 
-client = Client(config_file_name='config.ini')
+client = Client(Connector(config_file_name='config.ini'))
 
 client.user_manager.sign_in('bond_anton', 'secret_password')
 client.user_manager.project_manager.open_project('Schottky diode')

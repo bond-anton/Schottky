@@ -1,7 +1,7 @@
 from __future__ import division, print_function
 
 import BDSpaceVis as Visual
-from BDProjects.Client import Client
+from BDProjects.Client import Connector, Client
 
 import numpy as np
 
@@ -10,7 +10,7 @@ from mayavi import mlab
 from Schottky.Samples.Fields import UniformElectrostaticField, ChargedCylinder, SuperpositionField
 from Schottky.Simulators.Field import FieldSimulator
 
-client = Client(config_file_name='config.ini')
+client = Client(Connector(config_file_name='config.ini'))
 
 client.user_manager.sign_in('bond_anton', 'secret_password')
 client.user_manager.project_manager.open_project('Schottky diode')

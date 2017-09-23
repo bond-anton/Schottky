@@ -2,13 +2,13 @@ from __future__ import division, print_function
 import numpy as np
 from matplotlib import pyplot as plt
 
-from BDProjects.Client import Client
+from BDProjects.Client import Connector, Client
 
 from Schottky.Samples.Semiconductor import Semiconductor
 from Schottky.Simulators.BulkSemiconductor import BulkSemiconductor
 from Schottky.Simulators.ChargeCarrierTrap import ChargeCarrierTrap
 
-client = Client(config_file_name='config.ini')
+client = Client(Connector(config_file_name='config.ini'))
 
 client.user_manager.sign_in('bond_anton', 'secret_password')
 client.user_manager.project_manager.open_project('Schottky diode')

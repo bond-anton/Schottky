@@ -1,13 +1,13 @@
 from __future__ import division, print_function
 import numpy as np
 
-from BDProjects.Client import Client
+from BDProjects.Client import Connector, Client
 
 from Schottky.Samples.Metal import Metal
 from Schottky.Samples.Semiconductor import Semiconductor
 from Schottky.Samples.Diode import SchottkyDiode
 
-client = Client(config_file_name='config.ini')
+client = Client(Connector(config_file_name='config.ini'))
 
 client.user_manager.sign_in('bond_anton', 'secret_password')
 client.user_manager.project_manager.open_project('Schottky diode')

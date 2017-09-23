@@ -5,13 +5,13 @@ import numpy as np
 from matplotlib import pyplot as plt
 #from mayavi import mlab
 
-from BDProjects.Client import Client
+from BDProjects.Client import Connector, Client
 
 from Schottky.Samples.Fields import UniformElectrostaticField, ChargedCylinder, HyperbolicCylinder, SuperpositionField
 from Schottky.Samples.Trap import Trap
 from Schottky.Simulators.ChargeCarrierTrap import ChargeCarrierTrap
 
-client = Client(config_file_name='config.ini')
+client = Client(Connector(config_file_name='config.ini'))
 
 client.user_manager.sign_in('bond_anton', 'secret_password')
 client.user_manager.project_manager.open_project('Schottky diode')
