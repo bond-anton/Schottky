@@ -56,9 +56,7 @@ setup(
 
     packages=find_packages(exclude=['demo', 'tests', 'docs', 'contrib', 'venv']),
     ext_modules=cythonize('Schottky/*.pyx'),
-    # package_data={'Schottky': ['DirichletLinear.pxd', 'DirichletNonLinear.pxd',
-    #                               'NeumannLinear.pxd', 'NeumannNonLinear.pxd',
-    #                               'Function.pxd']},
+    package_data={'Schottky': ['Constants.pxd']},
     install_requires=['numpy', 'Cython', 'scipy', 'matplotlib', 'BDMesh', 'BDPoisson1D'],
     test_suite='nose.collector',
     tests_require=['nose']
