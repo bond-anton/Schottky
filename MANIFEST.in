@@ -1,0 +1,19 @@
+# Include MANIFEST.in
+include MANIFEST.in
+
+# Include the license file
+include LICENSE.txt
+include NOTICE.txt
+
+# Include README
+include README.md
+
+# Include Cython sources
+recursive-include Schottky *.pyx
+recursive-include Schottky *.pxd
+
+recursive-exclude build *
+recursive-exclude dist *
+recursive-exclude tools *
+recursive-exclude venv *
+recursive-exclude venv_2.7 *
