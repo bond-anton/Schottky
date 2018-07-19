@@ -22,7 +22,7 @@ from matplotlib import pyplot as plt
 
 # plt.xkcd()
 
-from ProjectManager import Project
+from ProjectManager.ProjectManager import Project
 
 from Schottky.Notation import q, Eg
 from Schottky.Metal import Metal

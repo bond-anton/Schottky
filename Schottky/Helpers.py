@@ -5,7 +5,7 @@ Created on 04 нояб. 2014 г.
 
 @author: anton
 '''
-from __future__ import division
+from __future__ import division, print_function
 
 import sympy as sym
 import numpy as np
@@ -101,7 +101,7 @@ def exp_fit(x, y):
         return a * np.exp(-b * x)
 
     popt, _ = curve_fit(func, x, y)
-    print popt
+    print(popt)
 
     def fitted(x):
         return func(x, *popt)
@@ -123,16 +123,16 @@ def to_numeric(expr):
 
 def to_pos_pwr(expr, debug=False):
     factor = 1
-    if debug: print expr, expr.func
+    if debug: print(expr, expr.func)
     if expr.func == sym.Pow:
         if expr.args[1] < 0:
             factor *= sym.Pow(expr.args[0], -expr.args[1])
-            if debug: print 'Factor', factor
+            if debug: print('Factor', factor)
     elif expr.func == sym.Add or expr.func == sym.Mul:
-        if debug: print 'Function', expr.func
+        if debug: print('Function', expr.func)
         for arg in expr.args:
             factor *= to_pos_pwr(arg, debug=debug)
-            if debug: print 'Factor', factor
+            if debug: print('Factor', factor)
     return factor
 
 
@@ -151,34 +151,34 @@ def symplify_factor(expr, factor):
 def to_positive_power(expr, debug=False):
     fc = 1
     if expr.func == sym.Add:
-        if debug: print 'Summation'
+        if debug: print('Summation')
         for arg in expr.args:
-            if debug: print '--> Argument:', arg
+            if debug: print('--> Argument:', arg)
             if arg.func == sym.Mul:
-                if debug: print '---> Multiplication'
+                if debug: print('---> Multiplication')
                 for arg1 in arg.args:
-                    if debug: print arg1, arg1.func
-                    if debug: print arg1.args
+                    if debug: print(arg1, arg1.func)
+                    if debug: print(arg1.args)
                     if arg1.func == sym.Pow:
                         if arg1.args[1] < 0:
                             fc *= sym.Pow(arg1.args[0], -arg1.args[1])
     elif expr.func == sym.Mul:
         for arg1 in expr.args:
-            if debug: print arg1.func
-            if debug: print arg1.args
+            if debug: print(arg1.func)
+            if debug: print(arg1.args)
             if arg1.func == sym.Pow:
                 if arg1.args[1] < 0:
                     fc *= sym.Pow(arg1.args[0], -arg1.args[1])
-    if debug: print fc
+    if debug: print(fc)
     return fc
 
 
 def build_mpf_fn(x, coeffs, debug=False):
-    if debug: print 'Polynomial equation, order:', len(coeffs) - 1
+    if debug: print('Polynomial equation, order:', len(coeffs) - 1)
     # coeffs = [mp.mpf(c) for c in coeffs]
     eq = 0
     for i in coeffs.keys():
-        if debug: print mp.mpf(x) ** i * mp.mpf(coeffs[i])
+        if debug: print(mp.mpf(x) ** i * mp.mpf(coeffs[i]))
         eq += mp.mpf(coeffs[i]) * (mp.mpf(x) ** i)
     return mp.mpf(eq)
 
@@ -188,14 +188,14 @@ def my_secant(eq, p1, p2, debug=False):
     max_count = 10000
     sol = 0
     for count in range(max_count):
-        if debug: print (count + 1), ''
+        if debug: print((count + 1), '')
         if p1 == p2:
             sol = p1
             break
         y1 = eq(p1)
         y2 = eq(p2)
-        if debug: print '-->', p1, '->', y1
-        if debug: print '-->', p2, '->', y2
+        if debug: print('-->', p1, '->', y1)
+        if debug: print('-->', p2, '->', y2)
         if abs(y1) < abs(y2):
             sol = p1
             err = abs(y1)
@@ -218,7 +218,7 @@ def my_secant(eq, p1, p2, debug=False):
             if p3 == p1 or p3 == p2:
                 break
             y3 = eq(p3)
-            if debug: print '--->', x1, x2, x3, p3, '->', y3
+            if debug: print('--->', x1, x2, x3, p3, '->', y3)
             if mp.sign(y3) == mp.sign(y1):
                 p1 = p3
             else:
@@ -233,12 +233,12 @@ def my_secant(eq, p1, p2, debug=False):
             break
         else:
             raise Exception('Functin has same sign on both ends')
-    if debug: print 'Solution:', sol
+    if debug: print('Solution:', sol)
     return sol
 
 
-def solve_polynomial_eq(coeffs, (p1, p2), debug=False):
-    if debug: print '*******'
+def solve_polynomial_eq(coeffs, p1, p2, debug=False):
+    if debug: print('*******')
     eq = lambda x: build_mpf_fn(x, coeffs, debug=False)
     # xxx = np.linspace(np.float(p1), np.float(p2), num=100)
     # yyy = np.array([np.float(eq(x)) for x in xxx])
@@ -246,10 +246,10 @@ def solve_polynomial_eq(coeffs, (p1, p2), debug=False):
     # plt.show()
     if len(coeffs) < 4:
         if len(coeffs) == 2:
-            print 'We have linear equation with analytical solution'
+            print('We have linear equation with analytical solution')
             sol = np.array([-coeffs[1] / coeffs[0]])
         elif len(coeffs) == 3:
-            print 'We have quadratic equation with analytical solution'
+            print('We have quadratic equation with analytical solution')
             Discr = coeffs[1] ** 2 - 4 * coeffs[0] * coeffs[2]
             sol = np.array(
                 [(-coeffs[1] - sym.sqrt(Discr)) / (2 * coeffs[0]), (-coeffs[1] + sym.sqrt(Discr)) / (2 * coeffs[0])])
@@ -261,8 +261,8 @@ def solve_polynomial_eq(coeffs, (p1, p2), debug=False):
         sol = my_secant(eq, p1, p2, debug=debug)
         # sol = findroot(eq, (p1, p2), solver='secant', verify=False)
         # sol = findroot(eq, (p1, p2), solver=Bisection, verify=False)
-        if debug: print sol
-    if debug: print '*******'
+        if debug: print(sol)
+    if debug: print('*******')
     return sol
 
 
@@ -380,7 +380,7 @@ def gen_interpolated_P_E_function(z_nodes, Psi, Field):
             Ev = E(Z)
             return Z, Pv, Ev
         else:
-            print z, 'Wrong argument type z:%s' % str(type(z))
-            raise
+            print(z, 'Wrong argument type z:%s' % str(type(z)))
+            raise Exception
 
     return interpolated_f

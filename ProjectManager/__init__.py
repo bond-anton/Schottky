@@ -1,1 +1,1 @@
-from ProjectManager import Project
+from .ProjectManager import Project

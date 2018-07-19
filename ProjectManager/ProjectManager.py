@@ -1,4 +1,4 @@
-from __future__ import division
+from __future__ import division, print_function
 # import time
 import datetime
 import numpy as np
@@ -9,15 +9,15 @@ from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, 
 from sqlalchemy import desc
 from sqlalchemy.sql import func, select, and_, or_
 
-from numeric_operations import number_to_four_ints
+from .numeric_operations import number_to_four_ints
 
 
 class Project():
     def __init__(self, db_name='/:memory:', backend='sqlite',
                  hostname='', port='', user='', password='',
                  overwrite=False, debug=False):
-        if debug: print db_name
-        if debug: print backend + '://' + hostname + '/' + db_name
+        if debug: print(db_name)
+        if debug: print(backend + '://' + hostname + '/' + db_name)
         # postgresql://scott:tiger@localhost:5432/mydatabase
         credentials = user + ':' + password if password else user
         if credentials:
