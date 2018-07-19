@@ -1,13 +1,4 @@
-# -*- coding: utf-8 -*-
-
-'''
-Created on 1 дек. 2014 г.
-
-@author: anton
-'''
-
-from __future__ import division
-import sympy as sym
+from __future__ import division, print_function
 
 from Schottky.Notation import q
 from Schottky import constants
