@@ -68,7 +68,7 @@ def fermihalf(x, sgn):
                       27.0 / 381503, 3923.0 / 110242, 8220.0 / 919))
         g = lambda k: -0.5 * mp.sqrt(f(k) - x) / f(k)
 
-    F = np.polyval(a, x) + 2 * np.sqrt(2 * np.pi) * sum(map(g, range(1, 21)))
+    F = np.polyval(a, x) + 2 * np.sqrt(2 * np.pi) * sum([g(arg_i) for arg_i in range(1, 21)])
     return F
 
 def centered_linspace(center, radius, step):
@@ -111,7 +111,7 @@ def exp_fit(x, y):
 
 def to_numeric(expr):
     if isinstance(expr, np.ndarray):
-        return np.array(map(to_numeric, expr))
+        return np.array([to_numeric(arg_i) for arg_i in expr])
     output = expr
     for key in constants.keys():
         try:
@@ -272,7 +272,7 @@ def smooth_dd(x, eps=None):
     if isinstance(x, (float, int)):
         return 1 / (2 * eps) * (1 + np.cos(np.pi * x / eps)) if (x < eps and x > -eps) else 0
     elif isinstance(x, np.ndarray):
-        return np.array(map(smooth_dd, x))
+        return np.array([smooth_dd(arg_i) for arg_i in x])
     else:
         return 1 / (2 * eps) * (1 + sym.cos(np.pi * x / eps)) * sym.Heaviside(x + eps) * sym.Heaviside(-x + eps)
         # raise TypeError('%s x is wrong' % type(x))
@@ -347,7 +347,7 @@ def interp_Fn(Z, F, interp_type='linear'):
                 return np.float(interpolator(x))
 
         if isinstance(z, (np.ndarray, list, tuple)):
-            return np.array(map(pointwise, z), dtype=np.float)
+            return np.array([pointwise(z_i) for z_i in z], dtype=np.float)
         else:
             return pointwise(z)
 

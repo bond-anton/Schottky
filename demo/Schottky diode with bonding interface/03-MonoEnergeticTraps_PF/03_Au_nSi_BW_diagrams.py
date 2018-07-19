@@ -96,7 +96,7 @@ sample_data_dir = join(dirname(__file__), '01-data')
 db_name = '01_Au_nSi_BW_transient' + '_%02.2fVp_%02.2fVrb_%03.2fK' % (V_p, abs(V_rb), T) + '.db'
 db_name = join(sample_data_dir, db_name)
 print(db_name)
-MyProject = Project(db_name=db_name, backend='sqlite', hostname='', overwrite=False)
+MyProject = Project(db_name=db_name, backend='sqlite', hostname='', overwrite=True)
 MyDiode = SchottkyDiode(MyProject, 'Au-Si_BW', Electrode, Si, DeadLayer=1.5e-7, L=5e-6)
 MyDiode.set_T(T)
 MyDiode.set_Va(V_p)
@@ -109,7 +109,7 @@ Psi, E, z_nodes, rho_err_points, Vd, Vd_err, J, J_err, \
                                                               equilibrium_filling=True, t=mp.inf,
                                                               initial_condition_id=-1,
                                                               rho_rel_err=Poisson_rel_err, max_iter=100,
-                                                              debug=False)
+                                                              debug=True)
 z_nodes = np.linspace(0, 3e-6, num=500, dtype=np.float)
 _, (ax1, ax2) = plt.subplots(2, sharex=True)
 Visual.BandsBendingDiagram(ax1, MyDiode, Psi, Vd, z_nodes, BI_F, dopants_F, eV=True,

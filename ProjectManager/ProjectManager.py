@@ -118,7 +118,7 @@ class Project():
             return row['field_id']
         ins = self.Project_Info_Fields.insert().values(field_name=field_name,
                                                        field_description=field_description)
-        ins.compile().params
+        ins.compile()
         result = self.connection.execute(ins)
         return result.inserted_primary_key[0]
 
@@ -134,7 +134,7 @@ class Project():
                 field_id = self.add_project_info_field(field_name)
                 field_name_rec = field_name
         ins = self.Project_Info.insert().values(info_string=info_string, info_field_id=field_id)
-        ins.compile().params
+        ins.compile()
         result = self.connection.execute(ins)
         self.log_record('Project info field \'%s\' is set to \'%s\'' % (field_name_rec, info_string), 'Information')
         return result.inserted_primary_key
@@ -169,7 +169,7 @@ class Project():
         ins = self.Log_Types.insert().values(log_type_name_long=log_type_name_long,
                                              log_type_name_short=log_type_name_short,
                                              log_type_description=log_type_description)
-        ins.compile().params
+        ins.compile()
         result = self.connection.execute(ins)
         return result.inserted_primary_key[0]
 
@@ -185,7 +185,7 @@ class Project():
         row = result.fetchone()
         log_type_id = row['log_type_id']
         ins = self.Log.insert().values(log_message=message, log_type_id=log_type_id)
-        ins.compile().params
+        ins.compile()
         result = self.connection.execute(ins)
         return result.inserted_primary_key
 
@@ -195,7 +195,7 @@ class Project():
         for row in result:
             return row['tool_id']
         ins = self.Tools.insert().values(tool_name=tool_name, tool_description=tool_description)
-        ins.compile().params
+        ins.compile()
         result = self.connection.execute(ins)
         self.log_record('Tool: %s added' % (tool_name), 'Information')
         return result.inserted_primary_key[0]
@@ -208,7 +208,7 @@ class Project():
             return row['measurement_type_id']
         ins = self.Measurements_Types.insert().values(measurement_type_name=measurement_type_name,
                                                       measurement_type_description=measurement_type_description)
-        ins.compile().params
+        ins.compile()
         result = self.connection.execute(ins)
         self.log_record('Measurement type: %s added' % (measurement_type_name), 'Information')
         return result.inserted_primary_key[0]
@@ -231,7 +231,7 @@ class Project():
                                                 measurement_name=measurement_name,
                                                 measurement_description=measurement_description,
                                                 measurement_datetime=measurement_datetime)
-        ins.compile().params
+        ins.compile()
         result = self.connection.execute(ins)
         self.log_record('Measurement: %s added' % (measurement_name), 'Information')
         return result.inserted_primary_key[0]
@@ -257,10 +257,10 @@ class Project():
               'point_name_long': point_name_long,
               'point_name_short': point_name_short,
               'point_unit_name': point_unit_name,
-              'point_sign': four_int_val[i][0],
-              'point_mantissa': four_int_val[i][1],
-              'point_exponent': four_int_val[i][2],
-              'point_bytecount': four_int_val[i][3],
+              'point_sign': int(four_int_val[i][0]),
+              'point_mantissa': int(four_int_val[i][1]),
+              'point_exponent': int(four_int_val[i][2]),
+              'point_bytecount': int(four_int_val[i][3]),
               'point_measured': point_measured,
               } for i in range(point_value.size)])
 
@@ -268,16 +268,16 @@ class Project():
                       point_name_long, point_name_short, point_unit_name,
                       point_value, point_measured):
         four_int_val = number_to_four_ints(point_value)
-        # print 'POINT_VALUE:', point_value
-        # print '4 INTS:', four_int_val
+        print('POINT_VALUE:', point_value)
+        print('4 INTS:', four_int_val)
 
         ins = self.DataPoints.insert().values(point_order=point_order, measurement_id=measurement_id, tool_id=tool_id,
                                               point_name_long=point_name_long, point_name_short=point_name_short,
                                               point_unit_name=point_unit_name,
-                                              point_sign=four_int_val[0], point_mantissa=four_int_val[1],
-                                              point_exponent=four_int_val[2], point_bytecount=four_int_val[3],
+                                              point_sign=int(four_int_val[0]), point_mantissa=int(four_int_val[1]),
+                                              point_exponent=int(four_int_val[2]), point_bytecount=int(four_int_val[3]),
                                               point_measured=point_measured)
-        ins.compile().params
+        ins.compile()
         result = self.connection.execute(ins)
         return result.inserted_primary_key
 
@@ -322,6 +322,7 @@ class Project():
         for row in result:
             sign, mantissa, exponent, bytecount = row['point_sign'], row['point_mantissa'], row['point_exponent'], row[
                 'point_bytecount']
+            print(sign, mantissa, exponent, bytecount)
             data_points.append(np.float(mpmath.mpf((sign, mantissa, exponent, bytecount))))
             measurement_date.append(row['point_measured'])
             point_unit_name.append(row['point_unit_name'])

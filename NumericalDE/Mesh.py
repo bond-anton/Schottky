@@ -5,7 +5,7 @@ Created on 30 мая 2015 г.
 @author: anton
 """
 
-from __future__ import division
+from __future__ import division, print_function
 import math as m
 
 import numpy as np
@@ -45,14 +45,14 @@ class UniformMesh1D:
 
     def trim(self, debug=False):
         if debug:
-            print 'Cropping', np.sum(self.crop), 'elements'
-            print 'phys_boundary1', self.phys_boundary1
-            print 'phys_boundary2', self.phys_boundary2
+            print('Cropping', np.sum(self.crop), 'elements')
+            print('phys_boundary1', self.phys_boundary1)
+            print('phys_boundary2', self.phys_boundary2)
         self.phys_boundary1 += self.crop[0] * self.phys_step
         self.phys_boundary2 -= self.crop[1] * self.phys_step
         if debug:
-            print 'phys_boundary1', self.phys_boundary1
-            print 'phys_boundary2', self.phys_boundary2
+            print('phys_boundary1', self.phys_boundary1)
+            print('phys_boundary2', self.phys_boundary2)
         self.num = int(np.ceil(self.num - np.sum(self.crop)))
         self.local_nodes, self.local_step = np.linspace(0.0, 1.0, num=self.num, endpoint=True, retstep=True)
         self.J = self.phys_step / self.local_step
@@ -119,10 +119,10 @@ class UniformMesh1D:
             if shift[0].is_integer() or abs(round(shift[0]) - shift[0]) < 1e-6:
                 return True
             else:
-                print 'SHIFT!!! %3.16f' % shift[0]
+                print('SHIFT!!! %3.16f' % shift[0])
                 return False
         else:
-            print abs(m.floor(step_ratio) - step_ratio)
+            print(abs(m.floor(step_ratio) - step_ratio))
             return False
 
     def merge_with(self, mesh):
@@ -141,10 +141,10 @@ class UniformMesh1D:
                 self.local_nodes, self.local_step = np.linspace(0.0, 1.0, num=self.num, endpoint=True, retstep=True)
                 self.J = self.phys_step / self.local_step
             else:
-                print 'meshes are not aligned and could not be merged'
+                print('meshes are not aligned and could not be merged')
         else:
-            print abs(self.phys_step - mesh.phys_step), self.phys_step
-            print 'meshes do not overlap or have different step size'
+            print(abs(self.phys_step - mesh.phys_step), self.phys_step)
+            print('meshes do not overlap or have different step size')
 
 
 class Uniform1DMeshesTree(object):
@@ -158,7 +158,7 @@ class Uniform1DMeshesTree(object):
         self.Tree = {0: [root_mesh]}
         self.refinement_coefficient = refinement_coefficient
         self.aligned = aligned
-        self.levels = self.Tree.keys()
+        self.levels = list(self.Tree.keys())
         self.crop = np.array(crop)
 
     def get_root_mesh(self):
@@ -190,7 +190,7 @@ class Uniform1DMeshesTree(object):
             for tree_mesh in self.Tree[level]:
                 if tree_mesh == mesh:
                     return level
-        print 'mesh not found in a tree'
+        print('mesh not found in a tree')
         return -1
 
     def get_children(self, mesh):
@@ -215,21 +215,21 @@ class Uniform1DMeshesTree(object):
                 self.Tree[level].remove(mesh)
             elif del_children:
                 for child_level in sorted(children.keys(), reverse=True):
-                    print 'deleting children at level', child_level
+                    print('deleting children at level', child_level)
                     for child in children[child_level]:
                         self.del_mesh(child, del_children=False)
                 self.del_mesh(mesh, del_children=False)
             else:
-                print 'mesh has children, use del_children=True flag'
+                print('mesh has children, use del_children=True flag')
         elif level == 0:
-            print 'Can not delete root mesh'
+            print('Can not delete root mesh')
         else:
-            print 'mesh not found in a tree'
+            print('mesh not found in a tree')
         self.cleanup()
 
     def trim(self, debug=False):
         if debug:
-            print 'Cropping', np.sum(self.crop), 'elements (of root_mesh):', self.crop
+            print('Cropping', np.sum(self.crop), 'elements (of root_mesh):', self.crop)
         self.get_root_mesh().crop = self.crop
         self.get_root_mesh().trim()
         level = 1
@@ -237,7 +237,7 @@ class Uniform1DMeshesTree(object):
         while not trimmed:
         # for level in self.levels[1:]:
             if debug:
-                print 'trimming level', level
+                print('trimming level', level)
             meshes_for_delete = []
             for mesh in self.Tree[level]:
                 mesh.trim()
@@ -252,17 +252,17 @@ class Uniform1DMeshesTree(object):
                 if crop[0] == 0 and crop[1] > 0:
                     if crop[1] >= mesh.num:
                         if debug:
-                            print 'Deleting mesh'
+                            print('Deleting mesh')
                         meshes_for_delete.append(mesh)
                         continue
                 elif crop[1] == 0 and crop[0] > 0:
                     if crop[0] >= mesh.num:
                         if debug:
-                            print 'Deleting mesh'
+                            print('Deleting mesh')
                         meshes_for_delete.append(mesh)
                         continue
                 if debug:
-                    print 'Cropping mesh by', crop
+                    print('Cropping mesh by', crop)
                 mesh.crop = np.array(crop)
                 mesh.trim()
             for mesh in meshes_for_delete:
@@ -286,7 +286,7 @@ class Uniform1DMeshesTree(object):
                     for tree_mesh in self.Tree[upper_level]:
                         if mesh.is_inside_of(tree_mesh):
                             self.Tree[level].remove(mesh)
-                            print 'mesh overlaps with coarse mesh. DELETING COARSE.'
+                            print('mesh overlaps with coarse mesh. DELETING COARSE.')
 
     def recalculate_levels(self):
         tidy = False
@@ -300,7 +300,7 @@ class Uniform1DMeshesTree(object):
         if offset != 0:
             for level in self.Tree.keys():
                 self.Tree[level - offset] = self.Tree.pop(level)
-        self.levels = self.Tree.keys()
+        self.levels = list(self.Tree.keys())
 
     def merge_overlaps(self, debug=False):
         # print 'checking overlaps'
@@ -315,7 +315,7 @@ class Uniform1DMeshesTree(object):
                         # print i, j
                         if self.Tree[level][i].overlap_with(self.Tree[level][j]):
                             if debug:
-                                print 'meshes overlap. MERGING.'
+                                print('meshes overlap. MERGING.')
                             overlap_found = True
                             self.Tree[level][i].merge_with(self.Tree[level][j])
                             self.Tree[level].remove(self.Tree[level][j])
@@ -347,15 +347,15 @@ class Uniform1DMeshesTree(object):
         flat_sol = self.get_root_mesh().solution
         flat_res = self.get_root_mesh().residual
         if debug:
-            print 'root_mesh is from', flat_grid[0] * 1e6, 'to', flat_grid[-1] * 1e6
+            print('root_mesh is from', flat_grid[0] * 1e6, 'to', flat_grid[-1] * 1e6)
         for level in self.levels[1:]:
             if debug:
-                print 'working with level', level
+                print('working with level', level)
             for mesh in self.Tree[level]:
                 if debug:
-                    print 'flat_grid is from', flat_grid[0] * 1e6, 'to', flat_grid[-1] * 1e6
-                    print 'merging mesh from', mesh.phys_boundary1 * 1e6,
-                    print 'to', mesh.phys_boundary2 * 1e6, mesh.phys_step * 1e6
+                    print('flat_grid is from', flat_grid[0] * 1e6, 'to', flat_grid[-1] * 1e6)
+                    print('merging mesh from', mesh.phys_boundary1 * 1e6,)
+                    print('to', mesh.phys_boundary2 * 1e6, mesh.phys_step * 1e6)
                 ins_idx1 = np.where(flat_grid <= mesh.phys_boundary1 + mesh.phys_step / 10)[0][-1]
                 ins_idx2 = np.where(flat_grid >= mesh.phys_boundary2 - mesh.phys_step / 10)[0][0]
                 if ins_idx2 == flat_grid.size:
@@ -374,7 +374,7 @@ class Uniform1DMeshesTree(object):
                         flat_sol = np.hstack((flat_sol[0:ins_idx1], mesh.solution, flat_sol[ins_idx2:]))
                         flat_res = np.hstack((flat_res[0:ins_idx1], mesh.residual, flat_res[ins_idx2:]))
                 if debug:
-                    print 'flat_grid is from', flat_grid[0] * 1e6, 'to', flat_grid[-1] * 1e6
+                    print('flat_grid is from', flat_grid[0] * 1e6, 'to', flat_grid[-1] * 1e6)
         return flat_grid, flat_sol, flat_res
 
 

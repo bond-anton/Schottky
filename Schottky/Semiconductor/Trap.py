@@ -1,4 +1,4 @@
-from __future__ import division
+from __future__ import division, print_function
 from functools import partial
 
 import warnings
@@ -116,8 +116,8 @@ class Trap(object):
         trap_energy_level = self.energy_level(temperature, semiconductor, charge_state_idx=0,
                                               electron_volts=electron_volts)
         if debug:
-            print 'Et = %2.2g ' % ((conduction_band - trap_energy_level)) + energy_unit
-            print 'Ef =', fermi_level, energy_unit
+            print('Et = %2.2g ' % ((conduction_band - trap_energy_level)) + energy_unit)
+            print('Ef =', fermi_level, energy_unit)
         g_ratio = self.charge_states[0][2] / self.charge_states[1][2]
 
         if self.energy_distribution_function in energy_distribution_functions['Single Level']:
@@ -132,7 +132,7 @@ class Trap(object):
             energy_distribution = energy_distribution.subs(q, to_numeric(q))
             if not use_mpmath:
                 if debug:
-                    print 'Numeric integration (numpy.trapz)'
+                    print('Numeric integration (numpy.trapz)')
                 energy_range = centered_linspace(conduction_band - trap_energy_level,
                                                  10 * to_numeric(self.energy_spread) / energy_coefficient,
                                                  to_numeric(self.energy_spread) / energy_coefficient / 1000)
@@ -143,7 +143,7 @@ class Trap(object):
                 f = np.trapz(integrand_array, energy_range_grid * energy_coefficient, axis=1)
             else:
                 if debug:
-                    print 'Numeric integration (mpmath.quad)'
+                    print('Numeric integration (mpmath.quad)')
                 fermi_level_grid, = np.meshgrid(fermi_level)
                 f = np.zeros_like(fermi_level_grid)
                 for i, fermi_level_i in enumerate(fermi_level_grid):
@@ -160,7 +160,7 @@ class Trap(object):
                                     to_numeric(energy_coefficient * (conduction_band - trap_energy_level)
                                                + 10 * self.energy_spread)])
         if debug:
-            print 'F =', f
+            print('F =', f)
         if f.size == 1:
             f = f[0]
         return f
@@ -190,15 +190,15 @@ class Trap(object):
         trap_energy_level = self.energy_level(temperature, semiconductor, charge_state_idx=0,
                                               electron_volts=electron_volts)
         if debug:
-            print 'Et = %2.2g ' % ((conduction_band - trap_energy_level)) + energy_unit
-            print 'Ef =,', fermi_level, energy_unit
+            print('Et = %2.2g ' % ((conduction_band - trap_energy_level)) + energy_unit)
+            print('Ef =,', fermi_level, energy_unit)
         g_ratio = self.charge_states[0][2] / self.charge_states[1][2]
 
         if self.energy_distribution_function in energy_distribution_functions['Single Level']:
             fermi_level_grid, = np.meshgrid(fermi_level)
             exp_arg = (np.float(conduction_band - trap_energy_level) - fermi_level_grid) / energy_scale
-            exp_term = np.exp(exp_arg)
-            exp_term = np.array(map(mp.exp, exp_arg))
+            # exp_term = np.exp(exp_arg)
+            exp_term = np.array([mp.exp(arg) for arg in exp_arg])
             a = g_ratio / (energy_coefficient * energy_scale)
             #print exp_term #/ (1 + g_ratio * exp_term)
             b = exp_term / (1 + g_ratio * exp_term) ** 2
@@ -212,7 +212,7 @@ class Trap(object):
             energy_distribution = energy_distribution.subs(q, to_numeric(q))
             if not use_mpmath:
                 if debug:
-                    print 'Numeric integration (numpy.trapz)'
+                    print('Numeric integration (numpy.trapz)')
                 energy_range = centered_linspace(conduction_band - trap_energy_level,
                                                  10 * to_numeric(self.energy_spread) / energy_coefficient,
                                                  to_numeric(self.energy_spread) / energy_coefficient / 1000)
@@ -226,7 +226,7 @@ class Trap(object):
                 d_f = np.trapz(integrand_array, energy_range_grid * energy_coefficient, axis=1)
             else:
                 if debug:
-                    print 'Numeric integration (mpmath.quad)'
+                    print('Numeric integration (mpmath.quad)')
                 fermi_level_grid, = np.meshgrid(fermi_level)
                 d_f = np.zeros_like(fermi_level_grid)
                 for i, fermi_level_i in enumerate(fermi_level_grid):
@@ -244,7 +244,7 @@ class Trap(object):
                                       to_numeric(energy_coefficient * (conduction_band - trap_energy_level)
                                                  + 10 * self.energy_spread)])
         if debug:
-            print 'dF =', d_f
+            print('dF =', d_f)
         if d_f.size == 1:
             d_f = d_f[0]
         return d_f
@@ -274,9 +274,9 @@ class Trap(object):
                                         electron_volts=True, use_mpmath=use_mpmath, debug=debug)
             residual = f - test_f
             if debug:
-                print 'Fermi level type:', type(fermi_level_from_conduction_band)
-                print 'Test F =', test_f
-                print 'F residual =', residual
+                print('Fermi level type:', type(fermi_level_from_conduction_band))
+                print('Test F =', test_f)
+                print('F residual =', residual)
             return residual
 
         def solver(args):
@@ -292,8 +292,8 @@ class Trap(object):
                     solution = mp.findroot(equation_wrap, (lower_boundary, upper_boundary),
                                            maxsteps=1000, solver='anderson', tol=5e-16)
                 except ValueError as err:
-                    print err
-                    print 'Lowering tolerance to 5e-6'
+                    print(err)
+                    print('Lowering tolerance to 5e-6')
                     solution = mp.findroot(equation_wrap, (lower_boundary, upper_boundary),
                                            maxsteps=1000, solver='anderson', tol=5e-6)
                 solution = np.float(solution)
@@ -302,8 +302,8 @@ class Trap(object):
         fermi_level_lower_boundary = abs(to_numeric(trap_energy_level - 2 * self.energy_spread / energy_coefficient))
         fermi_level_upper_boundary = abs(to_numeric(trap_energy_level + 2 * self.energy_spread / energy_coefficient))
         if debug:
-            print 'Fermi level lower boundary = %2.2g ' % fermi_level_lower_boundary + energy_unit
-            print 'Fermi level upper boundary = %2.2g ' % fermi_level_upper_boundary + energy_unit
+            print('Fermi level lower boundary = %2.2g ' % fermi_level_lower_boundary + energy_unit)
+            print('Fermi level upper boundary = %2.2g ' % fermi_level_upper_boundary + energy_unit)
         args = np.empty((len(f_grid), 6), dtype=object)
         args[:, 0] = equation
         args[:, 1] = fermi_level_lower_boundary
@@ -317,7 +317,7 @@ class Trap(object):
                 pool = Pool()
                 solutions = np.array(pool.map(solver, args))
             except ImportError:
-                print 'Parallel calculation needs pathos! Using standard map() instead.'
+                print('Parallel calculation needs pathos! Using standard map() instead.')
                 solutions = np.array(map(solver, args))
         else:
             solutions = np.array(map(solver, args))
@@ -352,8 +352,8 @@ class Trap(object):
         v_e = np.float(semiconductor.v_T('e', temperature, symbolic=False))
         v_h = np.float(semiconductor.v_T('h', temperature, symbolic=False))
         if debug:
-            print '<v_e> =', v_e, 'm/s'
-            print '<v_h> =', v_h, 'm/s'
+            print('<v_e> =', v_e, 'm/s')
+            print('<v_h> =', v_h, 'm/s')
         sigma_n, sigma_p = self.capture_cross_sections(temperature)
         c_n = sigma_n * v_e * n
         c_p = sigma_p * v_h * p
@@ -370,13 +370,13 @@ class Trap(object):
         if capture_time_constant_h.size == 1:
             capture_time_constant_h = capture_time_constant_h[0]
         if debug:
-            print 'c_n =', c_n
-            print 'c_p =', c_p
+            print('c_n =', c_n)
+            print('c_p =', c_p)
         capture_e = c_n * (1 - f)
         capture_h = c_p * f
         if debug:
-            print 'capt_e =', capture_e
-            print 'capt_h =', capture_h
+            print('capt_e =', capture_e)
+            print('capt_h =', capture_h)
         return capture_e, capture_h, capture_time_constant_e, capture_time_constant_h
 
     def emission_rate(self, temperature, semiconductor, f, poole_frenkel_e=None, poole_frenkel_h=None,
@@ -419,16 +419,16 @@ class Trap(object):
         v_e = np.float(semiconductor.v_T('e', temperature, symbolic=False))
         v_h = np.float(semiconductor.v_T('h', temperature, symbolic=False))
         if debug:
-            print '<v_e> =', v_e, 'm/s'
-            print '<v_h> =', v_h, 'm/s'
+            print('<v_e> =', v_e, 'm/s')
+            print('<v_h> =', v_h, 'm/s')
         sigma_n, sigma_p = self.capture_cross_sections(temperature)
         fore_factor_n = np.float(sigma_n * v_e * semiconductor.Nc(temperature, symbolic=False) * g_ratio_e)
         fore_factor_p = np.float(sigma_p * v_h * semiconductor.Nv(temperature, symbolic=False) * g_ratio_h)
         fore_factor_n *= poole_frenkel_e
         fore_factor_p *= poole_frenkel_h
         if debug:
-            print 'factor_n =', fore_factor_n
-            print 'factor_p =', fore_factor_p
+            print('factor_n =', fore_factor_n)
+            print('factor_p =', fore_factor_p)
 
         if self.energy_distribution_function in energy_distribution_functions['Single Level']:
             activation_energy_e = conduction_band - trap_energy_level_e_positive - barrier_lowering_e
@@ -445,7 +445,7 @@ class Trap(object):
                                                                   use_mpmath=use_mpmath, debug=False)
             quasi_fermi_level = conduction_band - quasi_fermi_level
             if debug:
-                print 'Eqf =', quasi_fermi_level / to_numeric(q), 'eV'
+                print('Eqf =', quasi_fermi_level / to_numeric(q), 'eV')
             energy = sym.symbols('E')
             energy_distribution_e = self.energy_distribution.subs([('Et', trap_energy_level_e),
                                                                    ('Ecb', conduction_band)])
@@ -473,7 +473,7 @@ class Trap(object):
             emission_time_constant_h = 1 / emission_rate_h_max
             if not use_mpmath:
                 if debug:
-                    print 'Numeric integration (numpy.trapz)'
+                    print('Numeric integration (numpy.trapz)')
                 energy_range_grid_e, fermi_level_grid_e = np.meshgrid(energy_range_e, quasi_fermi_level)
                 energy_range_grid_h, fermi_level_grid_h = np.meshgrid(energy_range_h, quasi_fermi_level)
                 fermi_function_e = 1 / (1 + g_ratio_e * np.exp((energy_range_grid_e - fermi_level_grid_e) / energy_scale))
@@ -488,7 +488,7 @@ class Trap(object):
                 emission_h = np.trapz(integrand_array_h, energy_range_grid_h, axis=1) * fore_factor_p
             else:
                 if debug:
-                    print 'Numeric integration (mpmath.quad)'
+                    print('Numeric integration (mpmath.quad)')
                 exp_term_e = sym.exp(-(conduction_band - energy + barrier_lowering_e) / energy_scale)
                 exp_term_h = sym.exp(-(energy - barrier_lowering_h - valence_band) / energy_scale)
                 quasi_fermi_level_grid, = np.meshgrid(quasi_fermi_level)
@@ -519,10 +519,10 @@ class Trap(object):
                 emission_h = emission_h[0]
                 emission_time_constant_e = emission_time_constant_e[0]
                 emission_time_constant_h = emission_time_constant_h[0]
-        if debug: print 'emission_e =', emission_e
-        if debug: print 'emission_h =', emission_h
-        if debug: print 'emission_tau_e =', emission_time_constant_e
-        if debug: print 'emission_tau_h =', emission_time_constant_e
+        if debug: print('emission_e =', emission_e)
+        if debug: print('emission_h =', emission_h)
+        if debug: print('emission_tau_e =', emission_time_constant_e)
+        if debug: print('emission_tau_h =', emission_time_constant_e)
         return emission_e, emission_h, emission_time_constant_e, emission_time_constant_h
 
     def df_dt(self, temperature, semiconductor, f, n, p,

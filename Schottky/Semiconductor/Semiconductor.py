@@ -6,7 +6,7 @@ Created on 30 окт. 2014 г.
 @author: anton
 '''
 
-from __future__ import division
+from __future__ import division, print_function
 from functools import partial
 
 import numpy as np
@@ -140,6 +140,7 @@ class Semiconductor(object):
             self.Eg_memo[(temperature, symbolic, electron_volts)] = np.float(self.__to_numeric(self.band_gap(temperature, symbolic=True, electron_volts=electron_volts)))
         return self.Eg_memo[(temperature, symbolic, electron_volts)]
 
+
     def Ech_pot(self, T=sym.symbols('T'), z=sym.symbols('z'), eV=False, debug=False):
         if isinstance(T, (tuple, list, np.ndarray)):
             Ech_pot_Wrap = partial(self.Ech_pot, z=z, eV=eV, debug=debug)
@@ -148,11 +149,11 @@ class Semiconductor(object):
             # return np.array(Parallel(n_jobs=num_cores)(delayed(Ech_pot_Wrap)(i) for i in T))
         if (T, z, eV) in self.EchPot_memo:
             return self.EchPot_memo[(T, z, eV)]
-        if debug: print 'T = %2.2f K' % T
+        if debug: print('T = %2.2f K' % T)
         if T < 0:
             raise Exception('T must be >= 0')
         elif T < 1:
-            if debug: print 'T < 1: Using derivative linear extrapolation'
+            if debug: print('T < 1: Using derivative linear extrapolation')
             dT = 0.5
             dE = ((self.Ech_pot(1 + dT, z, eV) - self.Ech_pot(1, z, eV))) / dT
             self.EchPot_memo[(T, z, eV)] = self.Ech_pot(1, z, eV) + dE * (T - dT)
@@ -164,72 +165,72 @@ class Semiconductor(object):
                 Escale /= q
                 Eunit = 'eV'
             Escale = self.__to_numeric(Escale)
-            if debug: print 'kT = %2.2g %s' % (Escale * 1000, 'm' + Eunit)
+            if debug: print('kT = %2.2g %s' % (Escale * 1000, 'm' + Eunit))
             T1, Y = sym.symbols('T Y')
             # x, y, z = sym.symbols('x y z')
             Total_charge = self.__to_numeric(self.Total_charge.subs([('z', z), (T1, T)]))
-            if debug: print 'Total charge:', Total_charge
+            if debug: print('Total charge:', Total_charge)
             coeffs = {p: Total_charge.collect(Y).coeff(Y ** p) for p in range(1, 5)}
-            coeffs = dict((k, v) for k, v in coeffs.iteritems() if v)
-            if debug: print coeffs
+            coeffs = dict((k, v) for k, v in coeffs.items() if v)
+            if debug: print(coeffs)
             poly_tmp = 0
             for i in coeffs.keys():
                 poly_tmp += coeffs[i] * Y ** i
-                if debug: print poly_tmp
+                if debug: print(poly_tmp)
             coeffs[0] = Total_charge - poly_tmp
             # for i in coeffs.keys():
             #    if abs(coeffs[i]) < 1e-150:
             #        coeffs[i] = 0
             # coeffs = dict((k, v) for k, v in coeffs.iteritems() if v)
-            if debug: print coeffs
+            if debug: print(coeffs)
             # coeffs = {}
             # coeffs_sym = sym.poly(Total_charge, Y).all_coeffs()
             # for i in range(len(coeffs_sym)):
             #    coeffs[i] = coeffs_sym[len(coeffs_sym)-1-i]
-            if debug: print 'Polynomial equation, order:', len(coeffs) - 1
+            if debug: print('Polynomial equation, order:', len(coeffs) - 1)
             for i in coeffs.keys():
-                if debug: print '  Y**%d' % i, '*', coeffs[i]
+                if debug: print('  Y**%d' % i, '*', coeffs[i])
             if len(coeffs) < 4:
                 if len(coeffs) == 2:
-                    if debug: print 'We have linear equation with analytical solution'
+                    if debug: print('We have linear equation with analytical solution')
                     sol = np.array([-coeffs[1] / coeffs[0]])
                 elif len(coeffs) == 3:
-                    if debug: print 'We have quadratic equation with analytical solution'
+                    if debug: print('We have quadratic equation with analytical solution')
                     Discr = coeffs[1] ** 2 - 4 * coeffs[0] * coeffs[2]
                     sol = np.array([(-coeffs[1] - sym.sqrt(Discr)) / (2 * coeffs[0]),
                                     (-coeffs[1] + sym.sqrt(Discr)) / (2 * coeffs[0])])
                 else:
                     raise Exception('We have no single solution please check everything')
-                if debug: print 'Solution:', sol
+                if debug: print('Solution:', sol)
                 for s in sol:
                     s = self.__to_numeric(s.subs(T1, T))
                     if s > 0:
                         Ef = sym.log(s)
-                if debug: print 'Ef in kT units =', Ef
-                if debug: print 'Ef = %2.4f %s' % (Ef * Escale, Eunit)
-            if debug: print "no analytic solution"
+                if debug: print('Ef in kT units =', Ef)
+                if debug: print('Ef = %2.4f %s' % (Ef * Escale, Eunit))
+            if debug: print("no analytic solution")
             for i in coeffs.keys():
                 coeffs[i] = self.__to_numeric(coeffs[i].subs(T1, T)).evalf()
             try:
-                if debug: print 'Trying to solve polynomial equation numerically'
-                if debug: print 'Coeffs:', coeffs
+                if debug: print('Trying to solve polynomial equation numerically')
+                if debug: print('Coeffs:', coeffs)
                 p1 = mp.mpf(1.0)
                 EgT = self.band_gap(T, symbolic=False, electron_volts=eV)
-                if debug: print 'Eg:', EgT / Escale
+                if debug: print('Eg:', EgT / Escale)
                 p2 = mp.exp(EgT / Escale)
-                sol = solve_polynomial_eq(coeffs, (p1, p2), debug=debug)
+                sol = solve_polynomial_eq(coeffs, p1, p2, debug=debug)
             except Exception as ex:
-                if debug: print 'Exception:', ex
+                if debug: print('Exception:', ex)
                 pass
-            if debug: print 'Numerical solution', sol
+            if debug: print('Numerical solution', sol)
             if isinstance(sol, np.ndarray):
-                print sol
+                print(sol)
                 if sol.size > 0:
                     sol = sol[sol > 0][0]
-            if debug: print 'Numerical solution', sol
+            if debug: print('Numerical solution', sol)
             Ef = mp.log(sol)
-            if debug: print 'Ef in kT units =', Ef
-            if debug: print 'Ef = %2.4f %s' % (Ef * Escale, Eunit)
+            if debug: print('Ef in kT units =', Ef)
+            if debug: print('Ef = %2.4f %s' % (Ef * Escale, Eunit))
             self.EchPot_memo[(T, z, eV)] = Ef * Escale
             return Ef * Escale
 

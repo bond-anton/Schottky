@@ -5,7 +5,7 @@ Created on 18 aug 2015 г.
 
 @author: anton
 '''
-from __future__ import division
+from __future__ import division, print_function
 import time
 import datetime
 
@@ -72,7 +72,7 @@ def gen_point_names_Electric_Field_measurement(SchDiode):
 
 def load_diode_state(SchDiode, measurement_id, initial_condition_id=-1, debug=False):
     point_names_long = gen_point_names_Electric_Field_measurement(SchDiode)
-    if debug: print '==> Looking for saved solution in the database'
+    if debug: print('==> Looking for saved solution in the database')
     points_names = [point_names_long['z'][0], point_names_long['Psi'][0], point_names_long['E'][0],
                     point_names_long['Vd'][0], point_names_long['Vd_err'][0], point_names_long['J'][0],
                     point_names_long['J_err'][0], point_names_long['rho_rel_err'][0], point_names_long['ic_id'][0]]
@@ -86,7 +86,7 @@ def load_diode_state(SchDiode, measurement_id, initial_condition_id=-1, debug=Fa
     try:
         data = SchDiode.Project.get_data_points_by_names(measurement_id, points_names)
     except:
-        if debug: print '==> No solutions found'
+        if debug: print('==> No solutions found')
         return False, Psi_zero, Psi_zero, np.zeros(1), np.zeros(1), 0, 0, 0, 0, {}, {}, measurement_id
 
     z_nodes = data[points_names[0]][:, 0]
@@ -99,11 +99,11 @@ def load_diode_state(SchDiode, measurement_id, initial_condition_id=-1, debug=Fa
     rho_rel_error_array = data[points_names[7]][:, 0]
     ic_id = data[points_names[8]][:, 0]
     if len(rho_rel_error_array) > 0 and (ic_id[0] == initial_condition_id or initial_condition_id == -1):
-        if debug: print '==> Solution found'
+        if debug: print('==> Solution found')
         Psi = interp_Fn(z_nodes, Psi_points, interp_type='last')
         E = interp_Fn(z_nodes, E_points, interp_type='last')
         SchDiode.FieldInversionPoint, _, _, _ = SchDiode.get_phi_bn(Psi, Vd, SchottkyEffect=False)
-        print '*** !!! Inversion pt (load) !!!', SchDiode.FieldInversionPoint
+        print('*** !!! Inversion pt (load) !!!', SchDiode.FieldInversionPoint)
         BI_F = {}
         for BI in SchDiode.Semiconductor.bonding_interfaces:
             F_tilt = []
@@ -126,7 +126,7 @@ def load_diode_state(SchDiode, measurement_id, initial_condition_id=-1, debug=Fa
             # print 'l2'
         return True, Psi, E, z_nodes, rho_rel_error_array, Vd, Vd_err, J, J_err, BI_F, dopants_F, measurement_id
     else:
-        if debug: print '==> No solutions found'
+        if debug: print('==> No solutions found')
         return False, Psi_zero, Psi_zero, np.zeros(1), np.zeros(1), 0, 0, 0, 0, {}, {}, measurement_id
 
 
@@ -134,7 +134,7 @@ def save_diode_state(SchDiode, measurement_id, initial_condition_id,
                      z_nodes, Psi_points, E_points, rho_rel_err,
                      Vd, Vd_err, J, J_err, debug=False):
     point_names_long = gen_point_names_Electric_Field_measurement(SchDiode)
-    if debug: print 'Writing data to database'
+    if debug: print('Writing data to database')
     db_write_start_time = time.time()
     measurement_time = datetime.datetime.now()
     saved_rho_rel_error_array, _, _, _ = SchDiode.Project.get_data_points(measurement_id,
@@ -197,7 +197,7 @@ def save_diode_state(SchDiode, measurement_id, initial_condition_id,
                                              dopant.F(z_nodes),
                                              measurement_time)
     db_write_elapsed_time = time.time() - db_write_start_time
-    if debug: print 'Writing to database took ', db_write_elapsed_time, 's'
+    if debug: print('Writing to database took ', db_write_elapsed_time, 's')
 
 
 def Reccurent_Poisson_solver(SchDiode, Psi=Psi_zero, Vd_guess=None, Vd_error=1e-6,
@@ -220,15 +220,15 @@ def Reccurent_Poisson_solver(SchDiode, Psi=Psi_zero, Vd_guess=None, Vd_error=1e-
         Vd_guess = Vd[-1]
         J_tmp = J[-1]
         if max(abs(rho_rel_err_points)) <= rho_rel_err:
-            if debug: print '==> Solution satisfy rel_error condition'
+            if debug: print('==> Solution satisfy rel_error condition')
             return Psi, E, z_nodes, rho_rel_err_points, Vd[0], Vd_err[0], J[0], J_err[
                 0], BI_F, dopants_F, measurement_id
         if debug or 1:
-            print '==> Solution found does not satisfy rel_error condition'
-            print '==> Recalculating...'
+            print('==> Solution found does not satisfy rel_error condition')
+            print('==> Recalculating...')
             SchDiode.FieldInversionPoint, PHI_bn, _, PHI_b = SchDiode.get_phi_bn(Psi, Vd_guess, SchottkyEffect=False)
     else:
-        if debug: print '==> No solutions found'
+        if debug: print('==> No solutions found')
         if Vd_guess is None:
             Vd_guess = Va
             PHI_b = abs(SchDiode.V_bi(eV=True))
@@ -247,19 +247,19 @@ def Reccurent_Poisson_solver(SchDiode, Psi=Psi_zero, Vd_guess=None, Vd_error=1e-
     Vd_guess_monitor_count = 0
     stalled = False
     while not converged and not stalled and current_iter < max_iter:
-        if debug: print '\nIteration:', current_iter, '**'
-        if debug or 1: print 'Vd_tmp =', Vd_guess
-        if debug: print 'PHI_b =', PHI_b
+        if debug: print('\nIteration:', current_iter, '**')
+        if debug or 1: print('Vd_tmp =', Vd_guess)
+        if debug: print('PHI_b =', PHI_b)
         if Vd_guess >= PHI_b:
             Vd_guess = PHI_b - 1 * kT_eV
-        if debug: print 'Vd_tmp =', Vd_guess
+        if debug: print('Vd_tmp =', Vd_guess)
         Vd_guess_monitor[Vd_guess_monitor_count] = Vd_guess
         Vd_guess_monitor_count += 1
         if Vd_guess_monitor_count == Vd_guess_monitor_length:
             Vd_guess_monitor_count = 0
         if np.unique(Vd_guess_monitor).size == 1:
             stalled = True
-            print 'Solution process stalled on iteration', current_iter, '!!!'
+            print('Solution process stalled on iteration', current_iter, '!!!')
             continue
         nodes_num = int(np.floor(SchDiode.L * 1e6 + 1) * 100)
         nodes, _ = np.linspace(0, SchDiode.L, num=nodes_num + 1, endpoint=True, retstep=True)
@@ -272,14 +272,14 @@ def Reccurent_Poisson_solver(SchDiode, Psi=Psi_zero, Vd_guess=None, Vd_error=1e-
         Psi = interp_Fn(z_nodes, Psi_points, interp_type='last')
         E = interp_Fn(z_nodes, E_points, interp_type='last')
         SchDiode.FieldInversionPoint, PHI_bn, _, PHI_b = SchDiode.get_phi_bn(Psi, Vd_guess, SchottkyEffect=False)
-        print '*** !!! Inversion pt (calc) !!!', SchDiode.FieldInversionPoint
-        if debug: print 'PHI_b, PHI_bn =', PHI_b, PHI_bn
+        print('*** !!! Inversion pt (calc) !!!', SchDiode.FieldInversionPoint)
+        if debug: print('PHI_b, PHI_bn =', PHI_b, PHI_bn)
         Vd_tmp_corr, J_tmp_corr = SchDiode.ThermionicEmissionCurrent(Va, PHI_bn, debug=True)
-        if debug: print 'V_corr, J =', Vd_tmp_corr, J_tmp_corr
+        if debug: print('V_corr, J =', Vd_tmp_corr, J_tmp_corr)
         Vd_err = abs(Vd_guess - Vd_tmp_corr)
         J_err = abs(J_tmp - J_tmp_corr)
-        if debug or 1: print 'Vd err =', Vd_err
-        if debug or 1: print 'J err =', J_err, '\n'
+        if debug or 1: print('Vd err =', Vd_err)
+        if debug or 1: print('J err =', J_err, '\n')
         if Vd_err < Vd_error:
             converged = True
         else:
@@ -288,9 +288,9 @@ def Reccurent_Poisson_solver(SchDiode, Psi=Psi_zero, Vd_guess=None, Vd_error=1e-
         current_iter += 1
     Vd = Vd_tmp_corr
     J = J_tmp
-    if debug: print 'Calculation converged'
+    if debug: print('Calculation converged')
     recurrent_solver_elapsed_time = time.time() - recurrent_solver_start_time
-    if debug: print 'Total recurrent solver execution time =', recurrent_solver_elapsed_time, 's\n'
+    if debug: print('Total recurrent solver execution time =', recurrent_solver_elapsed_time, 's\n')
     if save_to_db:
         save_diode_state(SchDiode, measurement_id, initial_condition_id,
                          z_nodes, Psi_points, E_points, rho_rel_err_points,
@@ -305,7 +305,7 @@ def Reccurent_Poisson_solver(SchDiode, Psi=Psi_zero, Vd_guess=None, Vd_error=1e-
     for dopant in SchDiode.Semiconductor.dopants:
         dopants_F[dopant.name + '_F'] = dopant.F(z_nodes)
     recurrent_solver_elapsed_time = time.time() - recurrent_solver_start_time
-    if debug: print 'Total recurrent solver execution time =', recurrent_solver_elapsed_time, 's'
+    if debug: print('Total recurrent solver execution time =', recurrent_solver_elapsed_time, 's')
     return Psi, E, z_nodes, rho_rel_err_points, Vd, Vd_err, J, J_err, BI_F, dopants_F, measurement_id
 
 
@@ -347,7 +347,7 @@ def Poisson_eq_num_solver(SchDiode, nodes, Psi=Psi_zero, Vd=0,
     int_res_diff_counter = 1
     W = 1
     while abs(mesh.int_residual) > threshold and i < max_iterations and np.max(abs(DPsi)) > 4 * np.finfo(np.float).eps:
-        if debug: print 'Iteration:', i
+        if debug: print('Iteration:', i)
         # time.sleep(1)
         if equilibrium_filling:
             SchDiode.dopants_set_eq_F(nodes, Psi, debug=False)
@@ -383,7 +383,7 @@ def Poisson_eq_num_solver(SchDiode, nodes, Psi=Psi_zero, Vd=0,
                 for i, trap in enumerate(bi.dsl_twist.traps):
                     trap_name = bi.label + '_twist_' + trap[0].name
                     if trap_name in fast_traps:
-                        print 'Setting trap', trap_name, 'occupation to equilibrium value'
+                        print('Setting trap', trap_name, 'occupation to equilibrium value')
                         bi_twist_f[i] = trap[0].equilibrium_f(SchDiode.T, SchDiode.Semiconductor, fermi_level_at_bi,
                                                               electron_volts=False, debug=False)
                         bi_twist_df[i] = trap[0].d_equilibrium_f_d_fermi_energy(SchDiode.T, SchDiode.Semiconductor,
@@ -422,9 +422,9 @@ def Poisson_eq_num_solver(SchDiode, nodes, Psi=Psi_zero, Vd=0,
             # int_res_diff_neg = np.where(int_res_diff < 0)[0]
             if int_res_diff_pos.size > 1:
                 W /= 2
-                print 'GENERATION: adding relaxation factor:', W
+                print('GENERATION: adding relaxation factor:', W)
                 int_res_diff_counter = 1
-        if debug: print 'Integrated residual:', mesh.int_residual
+        if debug: print('Integrated residual:', mesh.int_residual)
         if debug:
             Psi_line.set_ydata(mesh.solution)
             f_line.set_ydata(rho_z_Psi_eps(mesh.phys_nodes(), Psi))
@@ -488,7 +488,8 @@ def Poisson_eq_num_solver_amr(SchDiode, nodes, Psi=Psi_zero, Vd=0,
     converged = np.zeros(1)
     level = 0
     while (not converged.all() or level < Meshes.levels[-1]) and level <= max_level:
-        if debug or 1: print '\nSolving for Meshes of level:', level
+        if debug or 1:
+            print('\nSolving for Meshes of level:', level)
         converged = np.zeros(len(Meshes.Tree[level]))
         refinement_meshes = []
         for mesh_id, mesh in enumerate(Meshes.Tree[level]):
@@ -500,17 +501,17 @@ def Poisson_eq_num_solver_amr(SchDiode, nodes, Psi=Psi_zero, Vd=0,
             Meshes.Tree[level][mesh_id] = mesh
 
             if max(abs(mesh.residual)) < residual_threshold:
-                if debug: print 'CONVERGED!'
+                if debug: print('CONVERGED!')
                 converged[mesh_id] = True
                 continue
             refinement_points_chunks = points_for_refinement(mesh, mesh_refinement_threshold)
             if len(refinement_points_chunks) == 0 or np.all(
                     np.array([block.size == 0 for block in refinement_points_chunks])):
-                if debug: print 'CONVERGED!'
+                if debug: print('CONVERGED!')
                 converged[mesh_id] = True
                 continue
             if level < max_level:
-                if debug: print 'nodes for refinement:', refinement_points_chunks
+                if debug: print('nodes for refinement:', refinement_points_chunks)
                 for block in refinement_points_chunks:
                     idx1, idx2, crop = adjust_range(block, mesh.num - 1, crop=[50, 10], step_scale=2)
                     # print idx1, idx2, type(idx1), type(idx2)
@@ -521,9 +522,9 @@ def Poisson_eq_num_solver_amr(SchDiode, nodes, Psi=Psi_zero, Vd=0,
                     refinement_mesh = UniformMesh1D(start_point, stop_point,
                                                     mesh.phys_step / Meshes.refinement_coefficient, ref_bc1, ref_bc2,
                                                     crop=crop)
-                    if debug: print 'NEW Refinement mesh from', start_point * 1e6, 'to', stop_point * 1e6, 'phys_step', mesh.phys_step / Meshes.refinement_coefficient * 1e6
-                    if debug: print 'NEW Refinement mesh:', refinement_mesh.phys_nodes()[[0, -1]]
-                    if debug: print 'BC:', ref_bc1, ref_bc2
+                    if debug: print('NEW Refinement mesh from', start_point * 1e6, 'to', stop_point * 1e6, 'phys_step', mesh.phys_step / Meshes.refinement_coefficient * 1e6)
+                    if debug: print('NEW Refinement mesh:', refinement_mesh.phys_nodes()[[0, -1]])
+                    if debug: print('BC:', ref_bc1, ref_bc2)
                     refinement_meshes.append(refinement_mesh)
                 if debug:
                     _, ax = plt.subplots(1)
@@ -533,7 +534,7 @@ def Poisson_eq_num_solver_amr(SchDiode, nodes, Psi=Psi_zero, Vd=0,
         flat_grid, flat_sol, flat_res = Meshes.flatten(debug=False)
         Psi = interp1d(flat_grid, flat_sol)
         if len(refinement_meshes) > 0:
-            print 'adding refinement meshes for level', level
+            print('adding refinement meshes for level', level)
             for refinement_mesh in refinement_meshes:
                 Meshes.add_mesh(refinement_mesh)
         # if debug: Meshes.plot_tree()
@@ -546,6 +547,6 @@ def Poisson_eq_num_solver_amr(SchDiode, nodes, Psi=Psi_zero, Vd=0,
             plt.show()
 
         level += 1
-    if debug: print 'Mesh tree has ', Meshes.levels[-1], 'refinement levels'
+    if debug: print('Mesh tree has ', Meshes.levels[-1], 'refinement levels')
     Meshes.trim(debug=True)
     return Meshes

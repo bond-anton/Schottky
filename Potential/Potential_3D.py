@@ -1,4 +1,4 @@
-__author__ = 'anton'
+from __future__ import division, print_function
 
 import warnings
 import numpy as np
@@ -66,7 +66,7 @@ class GenericPotential(object):
                 dim_idx = i
                 break
         if dim_idx == 2:
-            print 'here'
+            print('here')
             surf = mlab.mesh(r_grid[:, :, 0] * np.cos(theta_grid[:, :, 0]),
                              r_grid[:, :, 0] * np.sin(theta_grid[:, :, 0]),
                              volumetric_data[:, :, 0] * energy_scale,
@@ -90,7 +90,7 @@ class GenericPotential(object):
             theta2 = np.linspace(0, 2*np.pi, num=50)
             barrier_lowering = np.array([self.barrier_lowering(theta_i) for theta_i in theta2])
             idx = np.where(barrier_lowering[:, 1] > 0)
-            print barrier_lowering[idx]
+            print(barrier_lowering[idx])
 
             mlab.plot3d(barrier_lowering[idx][:, 1] * np.cos(theta2[idx]),
                         barrier_lowering[idx][:, 1] * np.sin(theta2[idx]),

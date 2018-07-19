@@ -1,4 +1,4 @@
-__author__ = 'anton'
+from __future__ import division, print_function
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -61,7 +61,7 @@ def load_kinetics_data(schottky_diode, measurement_id, debug=False):
     results = {}
     point_names_long = gen_point_names_kinetics_measurement(schottky_diode)
     if debug:
-        print '==> Looking for saved solution in the database'
+        print('==> Looking for saved solution in the database')
     points_names = [point_names_long['dt_min'][0], point_names_long['dt_max'][0],
                     point_names_long['rho_rel_err'][0], point_names_long['dF_threshold'][0],
                     point_names_long['t'][0], point_names_long['ic_id'][0],
@@ -76,7 +76,7 @@ def load_kinetics_data(schottky_diode, measurement_id, debug=False):
     try:
         data = schottky_diode.Project.get_data_points_by_names(measurement_id, points_names)
     except:
-        if debug: print '==> No solutions found'
+        if debug: print('==> No solutions found')
         return False, 0, 0, 0, 0, results
     dt_min = data[points_names[0]][:, 0]
     dt_max = data[points_names[1]][:, 0]
@@ -87,7 +87,7 @@ def load_kinetics_data(schottky_diode, measurement_id, debug=False):
     results['Vd'] = data[points_names[6]][:, 0]
     results['J'] = data[points_names[7]][:, 0]
     if debug:
-        print '==> Solution found'
+        print('==> Solution found')
     for dopant in schottky_diode.Semiconductor.dopants:
         dopant_key = dopant.name + '_F'
         results[dopant_key] = data[point_names_long[dopant_key][0]][:, 0]
@@ -135,9 +135,9 @@ def dopants_df_dt(schottky_diode, initial_condition_id):
                                                                                       barrier_lowering_e=None,
                                                                                       barrier_lowering_h=None,
                                                                                       use_mpmath=False, debug=False)
-        print 'electrons: capture tau = %2.2g s, emission tau = %2.2g s' % (min(capture_tau_e), min(emission_tau_e))
-        print 'holes: capture tau = %2.2g s, emission tau = %2.2g s' % (min(capture_tau_h), min(emission_tau_h))
-        print 'tau = %2.2g s' % tau
+        print('electrons: capture tau = %2.2g s, emission tau = %2.2g s' % (min(capture_tau_e), min(emission_tau_e)))
+        print('holes: capture tau = %2.2g s, emission tau = %2.2g s' % (min(capture_tau_h), min(emission_tau_h)))
+        print('tau = %2.2g s' % tau)
         #ax3.plot(z_nodes, emission_h - emission_e)
         ax3.plot(z_nodes, df_dt)
         #ax5.plot(z_nodes, capture_tau_e)
@@ -189,7 +189,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
         fast_traps = []
     slow_traps = {}
     while t <= t_stop:
-        print '\n\nt =', t
+        print('\n\nt =', t)
         potential, field, z_nodes, _, \
             diode_voltage_drop, _, current_density, _, \
             bonding_interface_f, dopants_f, \
@@ -243,7 +243,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                 dopants_f_t[-1].update({dopant_key + '_df': np.zeros_like(z_nodes)})
             break
         if debug:
-            print '\n\nT = %2.2f K, t = %2.2g s, dt = %2.2g s' % (schottky_diode.T, t, dt)
+            print('\n\nT = %2.2f K, t = %2.2g s, dt = %2.2g s' % (schottky_diode.T, t, dt))
 
         #fast_traps = []
         dopants_skip_list = []
@@ -258,21 +258,21 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                 dopants_f_total[dopant_key].append(
                     np.trapz(dopants_f_t[-1][dopant_key][dopants_deriv_z_limit_idx],
                              x=z_nodes[dopants_deriv_z_limit_idx]))
-            print 'Total Donor charge %2.2g' % dopants_f_total[dopant_key][-1]
+            print('Total Donor charge %2.2g' % dopants_f_total[dopant_key][-1])
             if t > 0:
                 loc_der = (dopants_f_total[dopant_key][-1] - dopants_f_total[dopant_key][-2]) \
                           / (t_points[-1] - t_points[-2]) / dopants_f_total[dopant_key][0]
-                print 'local derivative %2.2g%%' % (loc_der * 100)
+                print('local derivative %2.2g%%' % (loc_der * 100))
             if dopant.name in fast_traps:
                 if debug:
-                    print '\nDopant:', dopant.name
-                    print 'This dopant is in a fast-traps list, skipping.'
+                    print('\nDopant:', dopant.name)
+                    print('This dopant is in a fast-traps list, skipping.')
                 dopants_skip_list.append(dopant_key)
                 continue
             if dopant.name in slow_traps.keys():
                 if debug:
-                    print '\nDopant:', dopant.name
-                    print 'This dopant is in a slow-traps list, skipping.'
+                    print('\nDopant:', dopant.name)
+                    print('This dopant is in a slow-traps list, skipping.')
                 df_dt = np.zeros_like(z_nodes)
                 for wp in range(dopants_deriv_window):
                     df_dt[dopants_deriv_z_limit_idx] += dopants_f_t[-wp-2][dopant_key+'_df'][dopants_deriv_z_limit_idx]
@@ -392,12 +392,12 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
             max_dt_total = df_threshold / np.max(np.abs(df_total))
             max_dt = min(max_dt_local, max_dt_total)
             if debug:
-                print '\nDopant:', dopant.name
-                print 'Z limit of %2.2g m: left %d points of %d' % (z_limit_f, len(z_nodes[z_limit_f_idx]), len(z_nodes))
-                print 'Min time constant %2.2g s' % tau
-                print 'Max dF local:', np.max(np.abs(df_dt)), 'th:', df_threshold
-                print 'Max dF total:', np.max(np.abs(df_total)), 'th:', df_threshold
-                print 'Max dt:', max_dt, 'dt:', dt
+                print('\nDopant:', dopant.name)
+                print('Z limit of %2.2g m: left %d points of %d' % (z_limit_f, len(z_nodes[z_limit_f_idx]), len(z_nodes)))
+                print('Min time constant %2.2g s' % tau)
+                print('Max dF local:', np.max(np.abs(df_dt)), 'th:', df_threshold)
+                print('Max dF total:', np.max(np.abs(df_total)), 'th:', df_threshold)
+                print('Max dt:', max_dt, 'dt:', dt)
             if len(t_points) > dopants_deriv_window:
                 deriv = np.array(dopants_f_total[dopant_key][-dopants_deriv_window + 1:]) \
                         - np.array(dopants_f_total[dopant_key][-dopants_deriv_window:-1])
@@ -405,21 +405,21 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                 deriv /= np.array(t_points[-dopants_deriv_window + 1:]) - np.array(t_points[-dopants_deriv_window:-1])
                 deriv = np.average(deriv)
                 if debug:
-                    print 'Dopants derivative: %2.2g%%' % (deriv * 100)
-                    print 'Derivative threshold: %2.2g%%' % (dopants_deriv_threshold * 100)
+                    print('Dopants derivative: %2.2g%%' % (deriv * 100))
+                    print('Derivative threshold: %2.2g%%' % (dopants_deriv_threshold * 100))
             else:
                 deriv = 1e8
             if abs(deriv) < dopants_deriv_threshold and len(t_points) >= min_t_points:
                 if debug:
-                    print 'Traps are all set. Adding dopant to slow traps.'
+                    print('Traps are all set. Adding dopant to slow traps.')
                 slow_traps[dopant.name] = deriv
             if dt > max_dt > delta_t_min:
                 if debug:
-                    print 'Setting dt to', max_dt
+                    print('Setting dt to', max_dt)
                 dt = max_dt
             elif max_dt < delta_t_min:
                 if debug:
-                    print 'Traps are too fast. Setting dopant occupation to equilibrium value'
+                    print('Traps are too fast. Setting dopant occupation to equilibrium value')
                 dopant_f = dopant.equilibrium_f(schottky_diode.T, schottky_diode.Semiconductor, fermi_level,
                                                 electron_volts=False, debug=False)
                 dopant.set_F_interp(z_nodes, dopant_f)
@@ -438,18 +438,18 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
             elif schottky_diode.Semiconductor.dop_type == 'p':
                 n_bi = 0.0
             if debug:
-                print '\nBI:', bi.label
-                print 'n_BI = %2.4g' % n_bi
-                print 'p_BI = %2.4g' % p_bi
+                print('\nBI:', bi.label)
+                print('n_BI = %2.4g' % n_bi)
+                print('p_BI = %2.4g' % p_bi)
 
             bi_tilt_f = []
             for trap_idx, trap in enumerate(bi.dsl_tilt.traps):
                 localized_trap_key = bi.label + '_tilt_' + trap[0].name + '_F'
-                print 'BI Density of Charge = %2.2g cm-2' % (bi.density_of_charge / 1e4)
-                print 'TILT F = %2.2f' % bi.dsl_tilt_f[trap_idx]
+                print('BI Density of Charge = %2.2g cm-2' % (bi.density_of_charge / 1e4))
+                print('TILT F = %2.2f' % bi.dsl_tilt_f[trap_idx])
                 dsl_charge_density = bi.dsl_tilt_f[trap_idx] * trap[1]
-                print 'TILT Density of Charge = %2.2g cm-1' % (dsl_charge_density / 1e2)
-                print 'EXT FIELD = %2.2g V*cm' % (electric_field_at_bi / 1e2)
+                print('TILT Density of Charge = %2.2g cm-1' % (dsl_charge_density / 1e2))
+                print('EXT FIELD = %2.2g V*cm' % (electric_field_at_bi / 1e2))
                 electric_field_at_bi_r = abs(electric_field_at_bi)
                 electric_field_at_bi_theta = 0 if electric_field_at_bi >= 0 else np.pi
                 electric_field_at_bi_3d = (electric_field_at_bi_r, electric_field_at_bi_theta, 0.0)
@@ -464,10 +464,10 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                 poole_frenkel_h = 1.0
                 if np.sum(barrier_lowering[:, 0]) < 0:
                     poole_frenkel_e = poole_frenkel
-                    print 'emission boost e: %2.4g' % poole_frenkel
+                    print('emission boost e: %2.4g' % poole_frenkel)
                 elif np.sum(barrier_lowering[:, 0]) > 0:
                     poole_frenkel_h = poole_frenkel
-                    print 'emission boost h: %2.4g' % poole_frenkel
+                    print('emission boost h: %2.4g' % poole_frenkel)
                 barrier_lowering_e = 0.0
                 barrier_lowering_h = 0.0
                 df_dt, tau = trap[0].df_dt(schottky_diode.T, schottky_diode.Semiconductor,
@@ -483,18 +483,18 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                 except ZeroDivisionError:
                     max_dt = 1e250
                 if debug:
-                    print '\nTrap:', trap[0].name
-                    print 'time constant %2.2g s' % tau
-                    print 'dF: %2.4g, th: %2.2f'% (df_dt, df_threshold)
-                    print 'Max dt:', max_dt, 'dt:', dt
+                    print('\nTrap:', trap[0].name)
+                    print('time constant %2.2g s' % tau)
+                    print('dF: %2.4g, th: %2.2f'% (df_dt, df_threshold))
+                    print('Max dt:', max_dt, 'dt:', dt)
                 if dt > max_dt > delta_t_min:
                     if debug:
-                        print 'Setting dt to', max_dt
+                        print('Setting dt to', max_dt)
                     dt = max_dt
                 elif max_dt < delta_t_min:
                     if dt > 10 * max_dt:
                         if debug:
-                            print 'Trap is too fast. Setting trap occupation to equilibrium value'
+                            print('Trap is too fast. Setting trap occupation to equilibrium value')
                         bonding_interface_f[localized_trap_key] = trap[0].equilibrium_f(schottky_diode.T,
                                                                                         schottky_diode.Semiconductor,
                                                                                         fermi_level_at_bi,
@@ -502,7 +502,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                         localized_traps_skip_list.append(localized_trap_key)
                     else:
                         if debug:
-                            print 'Setting dt to', max_dt
+                            print('Setting dt to', max_dt)
                         dt = max_dt
                         # fast_traps.append(bi.label + '_tilt_' + trap[0].name)
                 bi_tilt_f.append(bonding_interface_f[localized_trap_key])
@@ -510,8 +510,8 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
             for trap in bi.dsl_twist.traps:
                 localized_trap_key = bi.label + '_twist_' + trap[0].name + '_F'
                 trap[0].trap_potential.get_potential_by_name('External Field').external_field = electric_field_at_bi
-                print 'EXT FIELD = %2.2g V*cm' % (electric_field_at_bi / 1e2)
-                print trap[0].trap_potential.barrier_lowering()
+                print('EXT FIELD = %2.2g V*cm' % (electric_field_at_bi / 1e2))
+                print(trap[0].trap_potential.barrier_lowering())
                 barrier_lowering_e = 0.0
                 barrier_lowering_h = 0.0
                 df_dt, tau = trap[0].df_dt(schottky_diode.T, schottky_diode.Semiconductor,
@@ -525,18 +525,18 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                 except ZeroDivisionError:
                     max_dt = 1e250
                 if debug:
-                    print '\nTrap:', trap[0].name
-                    print 'time constant %2.2g s' % tau
-                    print 'dF: %2.4g, th: %2.2f'% (df_dt, df_threshold)
-                    print 'Max dt:', max_dt, 'dt:', dt
+                    print('\nTrap:', trap[0].name)
+                    print('time constant %2.2g s' % tau)
+                    print('dF: %2.4g, th: %2.2f'% (df_dt, df_threshold))
+                    print('Max dt:', max_dt, 'dt:', dt)
                 if dt > max_dt > delta_t_min:
                     if debug:
-                        print 'Setting dt to', max_dt
+                        print('Setting dt to', max_dt)
                     dt = max_dt
                 elif max_dt < delta_t_min:
                     if dt > 10 * max_dt:
                         if debug:
-                            print 'Trap is too fast. Setting trap occupation to equilibrium value'
+                            print('Trap is too fast. Setting trap occupation to equilibrium value')
                         bonding_interface_f[localized_trap_key] = trap[0].equilibrium_f(schottky_diode.T,
                                                                                         schottky_diode.Semiconductor,
                                                                                         fermi_level,
@@ -544,7 +544,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                         localized_traps_skip_list.append(localized_trap_key)
                     else:
                         if debug:
-                            print 'Setting dt to', max_dt
+                            print('Setting dt to', max_dt)
                         dt = max_dt
                     # fast_traps.append(bi.label + '_twist_' + trap[0].name)
                 bi_twist_f.append(bonding_interface_f[localized_trap_key])
@@ -556,7 +556,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
             dopant_key = dopant.name + '_F'
             if dopant_key in dopants_skip_list:
                 if debug:
-                    print '\nDopant', dopant.name, 'does not need an update'
+                    print('\nDopant', dopant.name, 'does not need an update')
                 continue
             dopants_f_corr = dopants_f[dopant_key] + df_dopants[dopant_key] * dt
             dopants_f_corr[np.where(dopants_f_corr > 1.0)] = 1.0
@@ -576,7 +576,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                     elif bonding_interface_f[localized_trap_key] < 0:
                         bonding_interface_f[localized_trap_key] = 0
                 if debug:
-                    print 'F:', bonding_interface_f[localized_trap_key]
+                    print('F:', bonding_interface_f[localized_trap_key])
                 bi_tilt_f.append(bonding_interface_f[localized_trap_key])
             bi_twist_f = []
             for trap in bi.dsl_twist.traps:
@@ -588,7 +588,7 @@ def traps_kinetics(schottky_diode, initial_condition_id, delta_t_min, delta_t_ma
                     elif bonding_interface_f[localized_trap_key] < 0:
                         bonding_interface_f[localized_trap_key] = 0
                 if debug:
-                    print 'F:', bonding_interface_f[localized_trap_key]
+                    print('F:', bonding_interface_f[localized_trap_key])
                 bi_twist_f.append(bonding_interface_f[localized_trap_key])
             bi.set_traps_f(np.array(bi_tilt_f), np.array(bi_twist_f))
             bi.set_traps_df(np.zeros(len(bi_tilt_f)), np.zeros(len(bi_twist_f)))

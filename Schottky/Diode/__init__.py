@@ -1,1 +1,1 @@
-from SchottkyDiode import *
+from .SchottkyDiode import *

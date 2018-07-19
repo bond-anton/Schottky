@@ -6,7 +6,7 @@ Created on 02 дек. 2014 г.
 @author: anton
 '''
 
-from __future__ import division
+from __future__ import division, print_function
 import warnings
 import datetime
 
@@ -260,8 +260,8 @@ class SchottkyDiode(object):
         for i, trap in enumerate(disl_traps):
             F.append(trap[0].equilibrium_f(self.T, self.Semiconductor, Ef, eV, debug))
             dF.append(trap[0].d_equilibrium_f_d_fermi_energy(self.T, self.Semiconductor, Ef, eV, debug))
-            if debug: print 'F = %2.2g' % F[i]
-            if debug: print 'dF = %2.2g' % dF[i]
+            if debug: print('F = %2.2g' % F[i])
+            if debug: print('dF = %2.2g' % dF[i])
         return np.array(F), np.array(dF)
 
     def BI_set_eq_F(self, BI, Psi, eV=False, debug=False):
@@ -354,9 +354,9 @@ class SchottkyDiode(object):
         else:
             Ar = self.Semiconductor.reference['A_R_coeff_p'] * constants['A_R']
         Js = Ar * (self.T ** 2) * mp.exp(-q_n * phi_bn / kT)
-        if debug: print 'Js, Is =', Js, A * Js
+        if debug: print('Js, Is =', Js, A * Js)
         J = -Js + kT / (q_n * A * Rs) * mp.lambertw((q_n * A * Rs * Js / kT) * mp.exp(q_n * (Va + A * Js * Rs) / kT))
-        if debug: print 'J, I =', J, A * J
+        if debug: print('J, I =', J, A * J)
         Vd = Va - A * J * Rs
         return np.float(Vd), np.float(J)
 

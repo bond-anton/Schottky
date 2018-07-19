@@ -6,7 +6,7 @@ Created on 10 апр. 2015 г.
 @author: anton
 '''
 
-from __future__ import division
+from __future__ import division, print_function
 from os.path import dirname, join
 
 from pathos.pools import ProcessPool as Pool
@@ -24,7 +24,7 @@ import mpmath as mp
 
 # plt.xkcd()
 
-from diode_description import *
+from .diode_description import *
 
 from ProjectManager import Project
 
@@ -108,7 +108,7 @@ args[:, 4] = V_rb
 
 pool = Pool()
 results = np.array(pool.map(calculate, args))
-print results
+print(results)
 
 sample_data_dir = join(dirname(__file__), '03-kinetics')
 

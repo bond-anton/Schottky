@@ -1,4 +1,4 @@
-__author__ = 'anton'
+from __future__ import division, print_function
 
 import warnings
 import numpy as np
@@ -72,7 +72,7 @@ class SuperposedPotential(GenericPotential):
         if solution_l.success:
             r0_l = solution_l.x[0]
             delta_phi_l = abs(self.potential(r0_l))
-            print 'left:', r0_l, delta_phi_l
+            print('left:', r0_l, delta_phi_l)
         else:
             r0_l = 0
             delta_phi_l = 0
@@ -83,7 +83,7 @@ class SuperposedPotential(GenericPotential):
         if solution_r.success:
             r0_r = solution_r.x[0]
             delta_phi_r = abs(self.potential(r0_r))
-            print 'right:', r0_r, delta_phi_r
+            print('right:', r0_r, delta_phi_r)
         else:
             r0_r = 0
             delta_phi_r = 0

@@ -1,4 +1,4 @@
-from __future__ import division
+from __future__ import division, print_function
 
 import numpy as np
 
@@ -156,7 +156,7 @@ def BandsBending_prepare_data(SchDiode, Psi, Vd, z, eV, SchottkyEffect, draw_met
 def BandsBendingDiagram(ax, SchDiode, Psi=Psi_zero, Vd=0, z=0, BI_F={}, dopants_F={}, eV=True,
                         draw_metal=True, label_bands=True, fancy_ticks=True,
                         SchottkyEffect=False, draw_energies=False):
-    print 'BB Diagram Start'
+    print('BB Diagram Start')
     Z, Ec, Ev, Ef, Eg, MirrEnergy, FieldInversionPoint = BandsBending_prepare_data(SchDiode, Psi, Vd, z, eV,
                                                                                    SchottkyEffect, draw_metal)
     bands_style = [2, 'black', '-']
@@ -217,7 +217,7 @@ def BandsBendingDiagram(ax, SchDiode, Psi=Psi_zero, Vd=0, z=0, BI_F={}, dopants_
         for i, trap in enumerate(BI.dsl_tilt.traps):
             charge_state_idx = 0
             level = trap[0].energy_level(SchDiode.T, SchDiode.Semiconductor, charge_state_idx, electron_volts=eV)
-            print 'Et =', level, 'eV'
+            print('Et =', level, 'eV')
             F_i = BI_F[BI.label + '_tilt_' + trap[0].name + '_F']
             gray = (1 - np.float(F_i), 1 - np.float(F_i), 1 - np.float(F_i))
             BI_levels[str(j) + '-tilt-' + trap[0].name] = ax.scatter(BI.depth * 1e6,
@@ -227,7 +227,7 @@ def BandsBendingDiagram(ax, SchDiode, Psi=Psi_zero, Vd=0, z=0, BI_F={}, dopants_
         for i, trap in enumerate(BI.dsl_twist.traps):
             charge_state_idx = 0
             level = trap[0].energy_level(SchDiode.T, SchDiode.Semiconductor, charge_state_idx, electron_volts=eV)
-            print 'Et =', level, 'eV'
+            print('Et =', level, 'eV')
             F_i = BI_F[BI.label + '_twist_' + trap[0].name + '_F']
             gray = (1 - np.float(F_i), 1 - np.float(F_i), 1 - np.float(F_i))
             BI_levels[str(j) + '-twist-' + trap[0].name] = ax.scatter(BI.depth * 1e6,
@@ -237,7 +237,7 @@ def BandsBendingDiagram(ax, SchDiode, Psi=Psi_zero, Vd=0, z=0, BI_F={}, dopants_
 
     BandsBending_prepare_axes(ax, eV)
     Z_coordinate_ticks(ax, SchDiode, fancy_ticks)
-    print 'BB Diagram Stop'
+    print('BB Diagram Stop')
     return bands_lines, bands_labels, annot_fig, dopant_lines, BI_levels
 
 
@@ -348,7 +348,7 @@ def BandsBendingAnimation(fig, ax, SchDiode, Psi, Va, Vd, z, BI_F, dopants_F, T,
 
 
         except Exception as e:
-            print '!!! ====>', e
+            print('!!! ====>', e)
             pass
         fig_list = bands_lines.values()
         fig_list.extend(dopant_lines.values())
@@ -364,7 +364,7 @@ def BandsBendingAnimation(fig, ax, SchDiode, Psi, Va, Vd, z, BI_F, dopants_F, T,
 
 
 def ElectricFieldDiagram(ax, SchDiode, E, z=0, dot=False):
-    print 'Electric Field Diagram Start'
+    print('Electric Field Diagram Start')
     linestyle = '-'
     if dot:
         linestyle = ':'
@@ -377,11 +377,11 @@ def ElectricFieldDiagram(ax, SchDiode, E, z=0, dot=False):
     ax.set_ylabel('Electric Field, V/cm')
     ax.set_xlabel(r'Coordinate (z), um')
     ax.grid(True)
-    print 'Electric Field Diagram Stop'
+    print('Electric Field Diagram Stop')
 
 
 def RhoDiagram(ax, SchDiode, Psi=Psi_zero, z=0):
-    print 'Rho Diagram Start'
+    print('Rho Diagram Start')
     rho_semi_num = SchDiode.build_rho_z_Psi(Psi, carriers_charge=True)
     rho = rho_semi_num(z, Psi) / to_numeric(q)
     n, p = SchDiode.n_carriers_theory(Psi, z)
@@ -406,7 +406,7 @@ def RhoDiagram(ax, SchDiode, Psi=Psi_zero, z=0):
     ax.set_ylabel('Concentration, cm$^{-3}$')
     ax.set_xlabel(r'Coordinate (z), um')
     ax.grid(True)
-    print 'Rho Diagram Stop'
+    print('Rho Diagram Stop')
 
 
 def CarriersConcentrationDiagram(ax, SchDiode, Psi=Psi_zero, z=0):

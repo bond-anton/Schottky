@@ -14,4 +14,6 @@ def number_to_four_ints(x):
     else:
         g = mp.mpf(x)
         sign, mantissa, exponent, bc = g._mpf_
-        return np.array([int(sign), int(mantissa), int(exponent), int(bc)])
+        a = np.array([int(sign), int(mantissa), int(exponent), int(bc)], dtype=np.int)
+        print(a)
+        return a

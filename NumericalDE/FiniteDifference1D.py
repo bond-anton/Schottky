@@ -5,6 +5,8 @@ Created on 30 мая 2015 г.
 @author: anton
 """
 
+from __future__ import division, print_function
+
 import time
 
 import numpy as np
@@ -42,11 +44,11 @@ def dirichlet_poisson_solver_arrays(nodes, f_nodes, bc1, bc2, J=1, debug=False):
     F[-1] -= bc2
     Psi[0] = bc1
     Psi[-1] = bc2
-    if debug: print 'Time spent on matrix filling %2.2f s' % (time.time() - t0)
+    if debug: print('Time spent on matrix filling %2.2f s' % (time.time() - t0))
     t0 = time.time()
-    if debug: print M.todense()
+    if debug: print(M.todense())
     Psi[1:-1] = linalg.spsolve(M, F, use_umfpack=True)
-    if debug: print 'Time spent on solution %2.2f s' % (time.time() - t0)
+    if debug: print('Time spent on solution %2.2f s' % (time.time() - t0))
     dPsi = np.gradient(Psi, nodes, edge_order=2) / J
     d2Psi = np.gradient(dPsi, nodes, edge_order=2) / J
     R = f_nodes - d2Psi
@@ -100,13 +102,13 @@ def neuman_poisson_solver_arrays(nodes, f_nodes, nbc1, nbc2, J=1, Psi0=0, debug=
     we suppose that nodes include boundary points
     '''
     integral = np.trapz(f_nodes, nodes)
-    if debug: print 'Checking if the problem is well-posed'
-    if debug: print 'Integral of f =', integral, '=?', nbc2 - nbc1, ':', np.allclose(integral, nbc2 - nbc1)
+    if debug: print('Checking if the problem is well-posed')
+    if debug: print('Integral of f =', integral, '=?', nbc2 - nbc1, ':', np.allclose(integral, nbc2 - nbc1))
     if not np.allclose(integral, nbc2 - nbc1):
-        print 'WARNING!!!!'
-        print 'The problem is not well-posed!'
-        print 'Redefine the f function and BCs or refine the mesh!'
-        print 'WARNING!!!!'
+        print('WARNING!!!!')
+        print('The problem is not well-posed!')
+        print('Redefine the f function and BCs or refine the mesh!')
+        print('WARNING!!!!')
     t0 = time.time()
     h = nodes[1:] - nodes[:-1] # grid step
     M = fd_d2_matrix(nodes.size - 1)
@@ -117,11 +119,11 @@ def neuman_poisson_solver_arrays(nodes, f_nodes, nbc1, nbc2, J=1, Psi0=0, debug=
     F[0] += h[0]**2 * f_nodes[0] + 2*h[0]*nbc1 + Psi0
     F[-1] -= 2*h[-1]*nbc2
     Psi[0] = Psi0
-    if debug: print 'Time spent on matrix filling %2.2f s' % (time.time() - t0)
+    if debug: print('Time spent on matrix filling %2.2f s' % (time.time() - t0))
     t0 = time.time()
-    if debug: print M.todense()
+    if debug: print(M.todense())
     Psi[1:] = linalg.spsolve(M, F, use_umfpack=True)
-    if debug: print 'Time spent on solution %2.2f s' % (time.time() - t0)
+    if debug: print('Time spent on solution %2.2f s' % (time.time() - t0))
     dPsi = np.gradient(Psi, nodes, edge_order=2) / J
     d2Psi = np.gradient(dPsi, nodes, edge_order=2) / J
     R = f_nodes - d2Psi
@@ -156,12 +158,12 @@ def dirichlet_non_linear_poisson_solver_arrays(nodes, Psi0_nodes, f_nodes, dfdDP
     F[-1] -= bc2
     DPsi[0] = bc1 - Psi0_nodes[0]
     DPsi[-1] = bc2 - Psi0_nodes[-1]
-    if debug: print 'Time spent on matrix filling %2.2f s' % (time.time() - t0)
+    if debug: print('Time spent on matrix filling %2.2f s' % (time.time() - t0))
     t0 = time.time()
-    if debug: print M.todense()
+    if debug: print(M.todense())
     DPsi[1:-1] = linalg.spsolve(M, F, use_umfpack=True)
     Psi = Psi0_nodes + W*DPsi
-    if debug: print 'Time spent on solution %2.2f s' % (time.time() - t0)
+    if debug: print('Time spent on solution %2.2f s' % (time.time() - t0))
     dPsi0 = np.gradient(Psi0_nodes, nodes, edge_order=2) / J
     d2Psi0 = np.gradient(dPsi0, nodes, edge_order=2) / J
     dDPsi = np.gradient(DPsi, nodes, edge_order=2) / J
@@ -257,11 +259,11 @@ def dirichlet_non_linear_poisson_solver_reccurent_mesh(mesh, Psi0, f, dfdDPsi,
 
     i = 1
     while abs(mesh.int_residual) > threshold and i < max_iterations and np.max(abs(DPsi)) > 2*np.finfo(np.float).eps:
-        if debug: print 'Iteration:', i
+        if debug: print('Iteration:', i)
         #time.sleep(1)
         mesh, Psi0, DPsi = dirichlet_non_linear_poisson_solver_mesh(mesh, Psi0, f, dfdDPsi, debug=False)
         int_residual_array.append(mesh.int_residual)
-        if debug: print 'Integrated residual:', mesh.int_residual
+        if debug: print('Integrated residual:', mesh.int_residual)
         if debug:
             Psi_line.set_ydata(mesh.solution)
             f_line.set_ydata(f(mesh.phys_nodes(), Psi0))
@@ -299,18 +301,18 @@ def dirichlet_poisson_solver_amr(nodes, f, bc1, bc2, threshold, max_level=20):
     converged = np.zeros(1)
     level = 0
     while (not converged.all() or level < Meshes.levels[-1]) and level <= max_level:
-        print 'Solving for Meshes of level:', level, 'of', Meshes.levels[-1]
+        print('Solving for Meshes of level:', level, 'of', Meshes.levels[-1])
         converged = np.zeros(len(Meshes.Tree[level]))
         for mesh_id, mesh in enumerate(Meshes.Tree[level]):
             mesh = dirichlet_poisson_solver_mesh(mesh, f, debug=False)
             mesh.trim()
             refinement_points_chunks = points_for_refinement(mesh, threshold)
             if len(refinement_points_chunks) == 0 or np.all(np.array([block.size == 0 for block in refinement_points_chunks])):
-                print 'CONVERGED!'
+                print('CONVERGED!')
                 converged[mesh_id] = True
                 continue
             if level < max_level:
-                print 'nodes for refinement:', refinement_points_chunks
+                print('nodes for refinement:', refinement_points_chunks)
                 for block in refinement_points_chunks:
                     idx1, idx2, mesh_crop = adjust_range(block, mesh.num-1, crop=[3, 3], step_scale=Meshes.refinement_coefficient)
                     start_point = mesh.to_phys(mesh.local_nodes[idx1])
@@ -323,8 +325,8 @@ def dirichlet_poisson_solver_amr(nodes, f, bc1, bc2, threshold, max_level=20):
                     Meshes.add_mesh(refinement_mesh)
                     #Meshes.plot_tree()
         level += 1
-        print
-    print 'Mesh tree has ', Meshes.levels[-1], 'refinement levels'
+        print('')
+    print('Mesh tree has ', Meshes.levels[-1], 'refinement levels')
     return Meshes
 
 def dirichlet_non_linear_poisson_solver_amr(nodes, Psi, f, dfdDPsi, bc1, bc2,
@@ -339,31 +341,31 @@ def dirichlet_non_linear_poisson_solver_amr(nodes, Psi, f, dfdDPsi, bc1, bc2,
     converged = np.zeros(1)
     level = 0
     while (not converged.all() or level < Meshes.levels[-1]) and level <= max_level:
-        if debug: print 'Solving for Meshes of level:', level, 'of', Meshes.levels[-1]
+        if debug: print('Solving for Meshes of level:', level, 'of', Meshes.levels[-1])
         converged = np.zeros(len(Meshes.Tree[level]))
         for mesh_id, mesh in enumerate(Meshes.Tree[level]):
             mesh, Psi = dirichlet_non_linear_poisson_solver_reccurent_mesh(mesh, Psi, f, dfdDPsi,
                                                                            max_iterations, int_residual_threshold, debug=debug)
             mesh.trim()
             if max(abs(mesh.residual)) < residual_threshold:
-                if debug: print 'CONVERGED!'
+                if debug: print('CONVERGED!')
                 converged[mesh_id] = True
                 continue
             refinement_points_chunks = points_for_refinement(mesh, mesh_refinement_threshold)
             if len(refinement_points_chunks) == 0 or np.all(np.array([block.size == 0 for block in refinement_points_chunks])):
-                if debug: print 'CONVERGED!'
+                if debug: print('CONVERGED!')
                 converged[mesh_id] = True
                 continue
             if level < max_level:
-                if debug: print 'nodes for refinement:', refinement_points_chunks
+                if debug: print('nodes for refinement:', refinement_points_chunks)
                 for block in refinement_points_chunks:
                     idx1, idx2, crop = adjust_range(block, mesh.num-1, crop=[3, 3], step_scale=2)
                     start_point = mesh.to_phys(mesh.local_nodes[idx1])
                     stop_point = mesh.to_phys(mesh.local_nodes[idx2])
                     ref_bc1 = mesh.solution[idx1]
                     ref_bc2 = mesh.solution[idx2]
-                    print start_point, stop_point
-                    print ref_bc1, ref_bc2
+                    print(start_point, stop_point)
+                    print(ref_bc1, ref_bc2)
                     refinement_mesh = UniformMesh1D(start_point, stop_point,
                                                     mesh.phys_step / Meshes.refinement_coefficient, ref_bc1, ref_bc2, crop=crop)
                     #print 'CROP:', crop
@@ -377,7 +379,7 @@ def dirichlet_non_linear_poisson_solver_amr(nodes, Psi, f, dfdDPsi, bc1, bc2,
                         plt.show()
                 if debug: Meshes.plot_tree()
         level += 1
-    if debug: print 'Mesh tree has ', Meshes.levels[-1], 'refinement levels'
+    if debug: print('Mesh tree has ', Meshes.levels[-1], 'refinement levels')
     return Meshes
 
 def adjust_range(idx_range, max_index, crop=[0, 0], step_scale=1):

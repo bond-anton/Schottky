@@ -1,10 +1,10 @@
 # author: anton
 
-from __future__ import division
+from __future__ import division, print_function
 import matplotlib
-print matplotlib.rcsetup.all_backends
+print(matplotlib.rcsetup.all_backends)
 #matplotlib.use("Qt4Agg")
-from diode_description import *
+from .diode_description import *
 from pathos.pools import ProcessPool as Pool
 
 from matplotlib import pyplot as plt
@@ -39,7 +39,7 @@ poisson_relative_error = 1e-1
 
 def calculate_for_temperature(args):
     silicon, electrode, temperature, voltage_range = args
-    print temperature
+    print(temperature)
     db_name = prefix + '_dc_%03.2fK.db' % temperature
     db_name = join(data_dir, db_name)
     project = Project(db_name=db_name, backend='sqlite', hostname='', overwrite=False)
@@ -115,7 +115,7 @@ ax_iv.set_xlabel('Voltage drop on diode, V')
 ax_iv.set_ylabel('Current density, A / m^2')
 for record in data:
     temperature = record.keys()[0]
-    print 'T = %03.2f K' % temperature
+    print('T = %03.2f K' % temperature)
     df = pd.DataFrame(record[temperature])
     df.plot(x='diode_voltage', y='current_density', ax=ax_iv, style='-o', label='%2.2f K' % temperature)
 
@@ -134,8 +134,8 @@ def bb_animation(f, ax, temperature, z, data, dopants_f, potential):
         if current_temperature == temperature:
             df = pd.DataFrame(record[temperature])
             break
-    print i
-    print potential[i]
+    print(i)
+    print(potential[i])
     bi_trap_labels = []
     bi_f = []
     for bi in diode.Semiconductor.bonding_interfaces:
@@ -149,7 +149,7 @@ def bb_animation(f, ax, temperature, z, data, dopants_f, potential):
             try:
                 df_i = df.loc[df['applied_voltage'] == voltage]
                 bi_f_i[trap_label] = df_i[trap_label].values[0]
-                print bi_f_i[trap_label]
+                print(bi_f_i[trap_label])
             except KeyError:
                 pass
         bi_f.append(bi_f_i)

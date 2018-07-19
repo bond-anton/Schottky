@@ -1,5 +1,4 @@
-#__author__ = 'anton'
-
+from __future__ import division, print_function
 import numpy as np
 from matplotlib import pyplot as plt
 
@@ -8,20 +7,20 @@ from Potential.Potential_1D import CoulombPotential, LinearPotential, Superposed
 
 cp = CoulombPotential('Coulomb')
 dp = DislocationDeformationPotential('Deformation', 5, 4e-10 * 1.0)
-print dp.a * 100
+print(dp.a * 100)
 ef = LinearPotential('External Field', -1e6 * 1)
 cc = ChargedCylinderPotential('Charged Dislocation', charge_sign=-1, linear_charge_density=1e7, radius=1e-9)
 zp = ConstantPotential('Zero', 0)
 
 sp = SuperposedPotential('Superposed', [dp, cc, ef])
 #sp = SuperposedPotential('Superposed', [zp, ef])
-print sp.barrier_lowering()
+print(sp.barrier_lowering())
 _, ax = plt.subplots()
 
 #ef.external_field = 1e6
 sp.get_potential_by_name('External Field').external_field = 1e6
 #sp.get_potential_by_name('Charged Dislocation').set_linear_charge_density(0.5e7)
-print sp.barrier_lowering()
+print(sp.barrier_lowering())
 x = np.linspace(-5e-7, 5e-7, num=500)
 
 cc.plot_potential(ax=ax, x=x)

@@ -6,7 +6,7 @@ Created on 10 апр. 2015 г.
 @author: anton
 '''
 
-from __future__ import division
+from __future__ import division, print_function
 from os.path import dirname, join
 
 from pathos.pools import ProcessPool as Pool
@@ -31,7 +31,7 @@ from Schottky.Metal import Metal
 from Schottky.Semiconductor import Semiconductor, Trap, Dopant, Dislocation, BondingInterface
 from Schottky.Diode import SchottkyDiode, Poisson, Kinetics, Visual
 from Schottky.Helpers import Psi_approx
-from diode_description import *
+from .diode_description import *
 
 colors = ['b', 'g', 'y', 'k', 'm', 'c', 'b', 'g', 'y', 'k', 'm', 'c', 'b', 'g', 'y', 'k', 'm', 'c', 'b', 'g', 'y', 'k',
           'm', 'c']
@@ -99,7 +99,7 @@ def calculate(args):
     MyDiode = SchottkyDiode(MyProject, 'Au-Si_BW', Electrode, Si, DeadLayer=1.5e-7, L=5e-6)
     MyDiode.set_T(T)
     MyDiode.set_Va(V_p)
-    print T
+    print(T)
 
     type_sign = -1 if MyDiode.Semiconductor.dop_type == 'n' else 1
     Psi = Psi_approx(MyDiode.L, -(MyDiode.V_bi(eV=True) + type_sign * V_p), 0.0)
@@ -121,5 +121,5 @@ args[:, 3] = V_p
 
 pool = Pool()
 db_names = np.array(pool.map(calculate, args))
-print db_names
+print(db_names)
 

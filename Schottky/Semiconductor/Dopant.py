@@ -96,7 +96,7 @@ class Dopant(Trap):
 
         def final_f(z):
             if isinstance(z, np.ndarray):
-                return np.array(map(pre_f, z))
+                return np.array([pre_f(z_i) for z_i in z])
             else:
                 return pre_f(z)
 
