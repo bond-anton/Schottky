@@ -86,7 +86,7 @@ class SchottkyDiode(object):
                 _, WF = self.Project.add_monitored_datapoint(measurement_type, 'Electrode work function',
                                                              'Work function of metal electrode',
                                                              self.tool_id, 'Metal electrode work function', 'Metal WF',
-                                                             'J', None, to_numeric(Metal.WF))
+                                                             'J', None, to_numeric(Metal.work_function))
             self.Metal = Metal
 
     def set_semiconductor(self, Semicond=None):
@@ -221,9 +221,9 @@ class SchottkyDiode(object):
         point_unit_name = 'V' if eV else 'J'
         point_order = self.Project.get_next_data_point_order(measurement_id, point_name_long)
         if eV:
-            Vbi = to_numeric(self.Metal.WF / q) - self.Semiconductor.WF(self.T, z=1e3, eV=eV)
+            Vbi = to_numeric(self.Metal.work_function / q) - self.Semiconductor.WF(self.T, z=1e3, eV=eV)
         else:
-            Vbi = to_numeric(self.Metal.WF) - self.Semiconductor.WF(self.T, z=1e3, eV=eV)
+            Vbi = to_numeric(self.Metal.work_function) - self.Semiconductor.WF(self.T, z=1e3, eV=eV)
         self.Project.add_datapoint(point_order, measurement_id, self.tool_id,
                                    point_name_long, point_name_short, point_unit_name,
                                    Vbi, datetime.datetime.now())

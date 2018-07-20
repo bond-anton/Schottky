@@ -25,6 +25,7 @@ from matplotlib import pyplot as plt
 from ProjectManager.ProjectManager import Project
 
 from Schottky.Notation import q, Eg
+from Schottky import constant
 from Schottky.Metal import Metal
 from Schottky.Semiconductor import Semiconductor, Trap, Dopant, Dislocation, BondingInterface
 from Schottky.Diode import SchottkyDiode, Poisson, Kinetics, Visual
@@ -33,7 +34,7 @@ from Schottky.Helpers import Psi_approx
 colors = ['b', 'g', 'y', 'k', 'm', 'c', 'b', 'g', 'y', 'k', 'm', 'c', 'b', 'g', 'y', 'k', 'm', 'c', 'b', 'g', 'y', 'k',
           'm', 'c']
 
-Electrode = Metal('Au', q * 5.1)
+Electrode = Metal('Au', constant.q * 5.1)
 
 P = Dopant('Phosphorus', 1.0e21, [[+1, 0.045 * q, 1], [0, 0.045 * q, 1]])
 
