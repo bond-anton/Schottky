@@ -1,12 +1,15 @@
-from .Constants import Constants
-from scipy.constants import c, N_A, k, e, m_e, epsilon_0
+from .Constants import Constants as __Constants
+
+
+constant = __Constants()
+
 
 constants = {
-    'c': c,
-    'Avogadro': N_A,
-    'q': e,
-    'm_e': m_e,
-    'A_R': 1.20173e6,  # A*m-2*K-2
-    'k': k,
-    'epsilon_0': epsilon_0,
+    'c': constant.c,
+    'Avogadro': constant.avogadro,
+    'q': constant.q,
+    'm_e': constant.m_e,
+    'A_R': constant.A_R,  # A*m-2*K-2
+    'k': constant.k,
+    'epsilon_0': constant.epsilon_0,
 }

@@ -38,3 +38,5 @@ cdef class Constants(object):
     @property
     def epsilon_0(self):
         return self.__epsilon_0
+
+constant = Constants()

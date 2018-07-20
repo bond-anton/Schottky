@@ -55,8 +55,9 @@ setup(
     keywords='Semiconductors, Schottky diode, electronics',
 
     packages=find_packages(exclude=['demo', 'tests', 'docs', 'contrib', 'venv']),
-    ext_modules=cythonize('Schottky/*.pyx'),
-    package_data={'Schottky': ['Constants.pxd']},
+    ext_modules=cythonize(['Schottky/*.pyx', 'Schottky/Metal/*.pyx']),
+    package_data={'Schottky': ['Constants.pxd'],
+                  'Schottky.Metal': ['Metal/__init__.pxd']},
     install_requires=['numpy', 'Cython', 'scipy', 'matplotlib', 'BDMesh', 'BDPoisson1D'],
     test_suite='nose.collector',
     tests_require=['nose']

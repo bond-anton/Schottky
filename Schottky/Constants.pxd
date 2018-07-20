@@ -7,3 +7,5 @@ cdef class Constants(object):
         double __A_R
         double __k
         double __epsilon_0
+
+cdef Constants constant
