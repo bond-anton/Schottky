@@ -1,11 +1,3 @@
-# -*- coding: utf-8 -*-
-
-'''
-Created on 30 окт. 2014 г.
-
-@author: anton
-'''
-
 from __future__ import division, print_function
 from functools import partial
 

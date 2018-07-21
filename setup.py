@@ -1,4 +1,5 @@
 from setuptools import setup, find_packages
+from setuptools.extension import Extension
 from Cython.Build import cythonize
 
 from codecs import open
@@ -21,6 +22,19 @@ else:
 readme_file = path.join(here, 'README.md')
 with open(readme_file, encoding='utf-8') as f:
     long_description = f.read()
+
+extensions = [
+    Extension(
+        'Schottky.Constants',
+        ['Schottky/Constants.pyx'],
+        depends=['Schottky/Constants.pxd'],
+    ),
+    Extension(
+        'Schottky.Metal',
+        ['Schottky/Metal/__init__.pyx'],
+        depends=['Schottky/Metal/__init__.pxd'],
+    ),
+]
 
 setup(
     name=package_name,
@@ -55,9 +69,9 @@ setup(
     keywords='Semiconductors, Schottky diode, electronics',
 
     packages=find_packages(exclude=['demo', 'tests', 'docs', 'contrib', 'venv']),
-    ext_modules=cythonize(['Schottky/*.pyx', 'Schottky/Metal/*.pyx']),
-    package_data={'Schottky': ['Constants.pxd'],
-                  'Schottky.Metal': ['Metal/__init__.pxd']},
+    ext_modules=cythonize(extensions),
+    package_data={'Schottky.Constants': ['Constants.pxd'],
+                  'Schottky.Metal': ['Schottky/Metal/__init__.pxd']},
     install_requires=['numpy', 'Cython', 'scipy', 'matplotlib', 'BDMesh', 'BDPoisson1D'],
     test_suite='nose.collector',
     tests_require=['nose']

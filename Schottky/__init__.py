@@ -1,4 +1,4 @@
-from .Constants import Constants as __Constants
+from Schottky.Constants import Constants as __Constants
 
 
 constant = __Constants()

@@ -1,6 +1,6 @@
 from __future__ import division, print_function
 
-from ..Constants cimport constant
+from Schottky.Constants cimport constant
 
 
 cdef class Metal(object):
