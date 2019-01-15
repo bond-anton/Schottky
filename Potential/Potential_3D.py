@@ -277,7 +277,7 @@ class ConstantFieldPotential(GenericPotential):
         F_phi = np.ones_like(r_grid) * self.external_field[2]
         x, y, z = Vectors3D.spherical_to_cartesian(r_grid, theta_grid, phi_grid)
         F_x, F_y, F_z = Vectors3D.spherical_to_cartesian(F_r, F_theta, F_phi)
-        angles_grid = Vectors3D.angle_between_vectors((x, y, z), (F_x, F_y, F_z))
+        angles_grid = Vectors3D.angle_between_vectors(x, y, z, F_x, F_y, F_z)
         return F_r * r_grid * np.cos(angles_grid)
 
     def potential_on_grid(self, r_grid, theta_grid, phi_grid):
