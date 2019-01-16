@@ -1,4 +1,7 @@
-from Schottky.Notation import q
+from Schottky import constant
+
+
+q = constant.q
 
 database = [
     {

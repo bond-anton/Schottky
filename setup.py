@@ -3,6 +3,7 @@ from setuptools.extension import Extension
 from Cython.Build import cythonize
 
 from codecs import open
+import sys
 from os import path
 import re
 
@@ -33,6 +34,11 @@ extensions = [
         'Schottky.Metal',
         ['Schottky/Metal/__init__.pyx'],
         depends=['Schottky/Metal/__init__.pxd'],
+    ),
+    Extension(
+        'Schottky.Trap',
+        ['Schottky/Trap/__init__.pyx'],
+        depends=['Schottky/Trap/__init__.pxd'],
     ),
 ]
 
@@ -69,9 +75,10 @@ setup(
     keywords='Semiconductors, Schottky diode, electronics',
 
     packages=find_packages(exclude=['demo', 'tests', 'docs', 'contrib', 'venv']),
-    ext_modules=cythonize(extensions),
+    ext_modules=cythonize(extensions, compiler_directives={'language_level': sys.version_info[0]}),
     package_data={'Schottky.Constants': ['Constants.pxd'],
-                  'Schottky.Metal': ['Schottky/Metal/__init__.pxd']},
+                  'Schottky.Metal': ['Schottky/Metal/__init__.pxd'],
+                  'Schottky.Trap': ['Schottky/Trap/__init__.pxd']},
     install_requires=['numpy', 'Cython', 'scipy', 'matplotlib', 'BDMesh', 'BDPoisson1D'],
     test_suite='nose.collector',
     tests_require=['nose']

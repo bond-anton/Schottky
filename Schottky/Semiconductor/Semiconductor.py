@@ -2,25 +2,14 @@ from __future__ import division, print_function
 from functools import partial
 
 import numpy as np
-import mpmath as mp
-import sympy as sym
-
-import multiprocessing
-from joblib import Parallel, delayed
 
 from matplotlib import pyplot as plt
 
 from Schottky import constants
 from Schottky.Helpers import to_pos_pwr, symplify_factor, solve_polynomial_eq
-from Schottky.Notation import q, k
 from Schottky.Reference import database
 from Schottky.Semiconductor.Dopant import Dopant
 from Schottky.Semiconductor.BondingInterface import BondingInterface
-
-
-def EchPotEc(Semi, T):
-    return mp.mpf(Semi.band_gap(T, symbolic=False, electron_volts=True)) - mp.mpf(Semi.Ech_pot(T, eV=True, debug=True))
-    # return 2*T
 
 
 Fermi = lambda E, Ef, T: 1 / (1 + sym.exp((E - Ef) / (k * T)))  # fermi distribution function

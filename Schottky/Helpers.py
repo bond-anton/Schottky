@@ -7,16 +7,14 @@ Created on 04 нояб. 2014 г.
 '''
 from __future__ import division, print_function
 
-import sympy as sym
 import numpy as np
 import math as m
 
-import mpmath as mp
 from scipy.interpolate import interp1d
 from scipy.optimize import curve_fit
 
 from Schottky import constants
-from Schottky.Notation import k
+
 
 def fermi(energy, fermi_energy, temperature, g_ratio):
     """

@@ -2,14 +2,13 @@ from __future__ import division, print_function
 from functools import partial
 
 import warnings
-import sympy as sym
+
 import numpy as np
-import mpmath as mp
+
 from scipy.optimize import root
 
-from Schottky.Notation import k, q
 from Schottky.Helpers import to_numeric, fermi, d_fermi_d_delta_fermi_energy, centered_linspace
-from Potential.Potential_1D import ConstantPotential, LinearPotential, SuperposedPotential
+
 
 energy_distribution_functions = {'Single Level': ['single level', 'monoenergetic level', 'single', 'monoenergetic'],
                                  'Gaussian Level': ['gaussian level', 'gaussian'],

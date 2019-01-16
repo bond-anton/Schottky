@@ -1,11 +1,8 @@
 from __future__ import division
 
-import sympy as sym
 
-from Schottky.Notation import q
 from Schottky.Semiconductor.Trap import Trap
 from Schottky.Helpers import interp_Fn
-from Schottky.Notation import q, k
 from Schottky.Helpers import to_numeric
 import numpy as np
 import os.path
