@@ -868,8 +868,8 @@ struct __pyx_obj_8Schottky_4Trap_Trap {
   PyObject *__pyx___label;
   double __pyx___energy_c;
   double __pyx___energy_v;
-  double __pyx___e_cs;
-  double __pyx___h_cs;
+  double __pyx___e_cs0;
+  double __pyx___h_cs0;
   double __pyx___e_cs_activation;
   double __pyx___h_cs_activation;
   PyObject *__pyx___charge_state;
@@ -981,15 +981,6 @@ static int __Pyx_ParseOptionalKeywords(PyObject *kwds, PyObject **argnames[],\
     ((likely((Py_TYPE(obj) == type) | (none_allowed && (obj == Py_None)))) ? 1 :\
         __Pyx__ArgTypeTest(obj, type, name, exact))
 static int __Pyx__ArgTypeTest(PyObject *obj, PyTypeObject *type, const char *name, int exact);
-
-/* PyObjectSetAttrStr.proto */
-#if CYTHON_USE_TYPE_SLOTS
-#define __Pyx_PyObject_DelAttrStr(o,n) __Pyx_PyObject_SetAttrStr(o, n, NULL)
-static CYTHON_INLINE int __Pyx_PyObject_SetAttrStr(PyObject* obj, PyObject* attr_name, PyObject* value);
-#else
-#define __Pyx_PyObject_DelAttrStr(o,n)   PyObject_DelAttr(o,n)
-#define __Pyx_PyObject_SetAttrStr(o,n,v) PyObject_SetAttr(o,n,v)
-#endif
 
 /* PyObjectGetAttrStr.proto */
 #if CYTHON_USE_TYPE_SLOTS
@@ -1314,8 +1305,6 @@ static const char __pyx_k_import[] = "__import__";
 static const char __pyx_k_pickle[] = "pickle";
 static const char __pyx_k_reduce[] = "__reduce__";
 static const char __pyx_k_update[] = "update";
-static const char __pyx_k_e_cs0_2[] = "__e_cs0";
-static const char __pyx_k_h_cs0_2[] = "__h_cs0";
 static const char __pyx_k_energy_c[] = "energy_c";
 static const char __pyx_k_energy_v[] = "energy_v";
 static const char __pyx_k_getstate[] = "__getstate__";
@@ -1339,9 +1328,9 @@ static const char __pyx_k_pyx_PickleError[] = "__pyx_PickleError";
 static const char __pyx_k_setstate_cython[] = "__setstate_cython__";
 static const char __pyx_k_pyx_unpickle_Trap[] = "__pyx_unpickle_Trap";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
-static const char __pyx_k_Incompatible_checksums_s_vs_0xde[] = "Incompatible checksums (%s vs 0xde1d42a = (__charge_state, __e_cs, __e_cs_activation, __energy_c, __energy_v, __g, __h_cs, __h_cs_activation, __label))";
+static const char __pyx_k_Incompatible_checksums_s_vs_0x05[] = "Incompatible checksums (%s vs 0x05ee7ad = (__charge_state, __e_cs0, __e_cs_activation, __energy_c, __energy_v, __g, __h_cs0, __h_cs_activation, __label))";
 static const char __pyx_k_Trap_s_Ec_Et_2_2f_eV_2_2g_J_Et_E[] = "Trap: %s\nEc-Et: %2.2f eV (%2.2g J)\nEt-Ev: %2.2f eV (%2.2g J)";
-static PyObject *__pyx_kp_s_Incompatible_checksums_s_vs_0xde;
+static PyObject *__pyx_kp_s_Incompatible_checksums_s_vs_0x05;
 static PyObject *__pyx_n_s_PickleError;
 static PyObject *__pyx_n_s_Schottky_Trap;
 static PyObject *__pyx_n_s_Trap;
@@ -1353,7 +1342,6 @@ static PyObject *__pyx_n_s_e_c;
 static PyObject *__pyx_n_s_e_cr;
 static PyObject *__pyx_n_s_e_cs;
 static PyObject *__pyx_n_s_e_cs0;
-static PyObject *__pyx_n_s_e_cs0_2;
 static PyObject *__pyx_n_s_e_cs_activation;
 static PyObject *__pyx_n_s_e_er;
 static PyObject *__pyx_n_s_energy_c;
@@ -1367,7 +1355,6 @@ static PyObject *__pyx_n_s_h_c;
 static PyObject *__pyx_n_s_h_cr;
 static PyObject *__pyx_n_s_h_cs;
 static PyObject *__pyx_n_s_h_cs0;
-static PyObject *__pyx_n_s_h_cs0_2;
 static PyObject *__pyx_n_s_h_cs_activation;
 static PyObject *__pyx_n_s_h_er;
 static PyObject *__pyx_n_s_import;
@@ -1443,7 +1430,7 @@ static PyObject *__pyx_tp_new_8Schottky_4Trap_Trap(PyTypeObject *t, PyObject *a,
 static PyObject *__pyx_int_0;
 static PyObject *__pyx_int_1;
 static PyObject *__pyx_int_2;
-static PyObject *__pyx_int_232903722;
+static PyObject *__pyx_int_6219693;
 static PyObject *__pyx_int_neg_1;
 static PyObject *__pyx_tuple_;
 static PyObject *__pyx_codeobj__2;
@@ -1638,10 +1625,7 @@ static int __pyx_pf_8Schottky_4Trap_4Trap___init__(struct __pyx_obj_8Schottky_4T
  *         self.__h_cs0 = h_cs0
  *         self.__e_cs_activation = e_cs_activation
  */
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_e_cs0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 23, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  if (__Pyx_PyObject_SetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_e_cs0_2, __pyx_t_1) < 0) __PYX_ERR(0, 23, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_v_self->__pyx___e_cs0 = __pyx_v_e_cs0;
 
   /* "Schottky/Trap/__init__.pyx":24
  *         self.__energy_v = energy_v
@@ -1650,10 +1634,7 @@ static int __pyx_pf_8Schottky_4Trap_4Trap___init__(struct __pyx_obj_8Schottky_4T
  *         self.__e_cs_activation = e_cs_activation
  *         self.__h_cs_activation = h_cs_activation
  */
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_h_cs0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 24, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  if (__Pyx_PyObject_SetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_h_cs0_2, __pyx_t_1) < 0) __PYX_ERR(0, 24, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_v_self->__pyx___h_cs0 = __pyx_v_h_cs0;
 
   /* "Schottky/Trap/__init__.pyx":25
  *         self.__e_cs0 = e_cs0
@@ -2357,7 +2338,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_5e_cs0___get__(struct __pyx_obj_
  *     @e_cs0.setter
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_e_cs0_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 72, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->__pyx___e_cs0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 72, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2416,7 +2397,6 @@ static int __pyx_pw_8Schottky_4Trap_4Trap_5e_cs0_3__set__(PyObject *__pyx_v_self
 static int __pyx_pf_8Schottky_4Trap_4Trap_5e_cs0_2__set__(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_e_cs0) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
-  PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("__set__", 0);
 
   /* "Schottky/Trap/__init__.pyx":76
@@ -2426,10 +2406,7 @@ static int __pyx_pf_8Schottky_4Trap_4Trap_5e_cs0_2__set__(struct __pyx_obj_8Scho
  * 
  *     @property
  */
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_e_cs0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 76, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  if (__Pyx_PyObject_SetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_e_cs0_2, __pyx_t_1) < 0) __PYX_ERR(0, 76, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_v_self->__pyx___e_cs0 = __pyx_v_e_cs0;
 
   /* "Schottky/Trap/__init__.pyx":75
  * 
@@ -2441,12 +2418,6 @@ static int __pyx_pf_8Schottky_4Trap_4Trap_5e_cs0_2__set__(struct __pyx_obj_8Scho
 
   /* function exit code */
   __pyx_r = 0;
-  goto __pyx_L0;
-  __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("Schottky.Trap.Trap.e_cs0.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = -1;
-  __pyx_L0:;
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -2486,7 +2457,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_5h_cs0___get__(struct __pyx_obj_
  *     @h_cs0.setter
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_h_cs0_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 80, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->__pyx___h_cs0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 80, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2545,7 +2516,6 @@ static int __pyx_pw_8Schottky_4Trap_4Trap_5h_cs0_3__set__(PyObject *__pyx_v_self
 static int __pyx_pf_8Schottky_4Trap_4Trap_5h_cs0_2__set__(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_h_cs0) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
-  PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("__set__", 0);
 
   /* "Schottky/Trap/__init__.pyx":84
@@ -2555,10 +2525,7 @@ static int __pyx_pf_8Schottky_4Trap_4Trap_5h_cs0_2__set__(struct __pyx_obj_8Scho
  * 
  *     @property
  */
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_h_cs0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 84, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  if (__Pyx_PyObject_SetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_h_cs0_2, __pyx_t_1) < 0) __PYX_ERR(0, 84, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_v_self->__pyx___h_cs0 = __pyx_v_h_cs0;
 
   /* "Schottky/Trap/__init__.pyx":83
  * 
@@ -2570,12 +2537,6 @@ static int __pyx_pf_8Schottky_4Trap_4Trap_5h_cs0_2__set__(struct __pyx_obj_8Scho
 
   /* function exit code */
   __pyx_r = 0;
-  goto __pyx_L0;
-  __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("Schottky.Trap.Trap.h_cs0.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = -1;
-  __pyx_L0:;
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -3142,23 +3103,13 @@ static double __pyx_f_8Schottky_4Trap_4Trap_e_cs(struct __pyx_obj_8Schottky_4Tra
  * 
  *     cpdef double h_cs(self, double temperature):
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_e_cs0_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 119, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_6 = (-__pyx_v_self->__pyx___e_cs_activation);
   __pyx_t_7 = (__pyx_v_8Schottky_9Constants_constant->__pyx___k * __pyx_v_temperature);
   if (unlikely(__pyx_t_7 == 0)) {
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
     __PYX_ERR(0, 119, __pyx_L1_error)
   }
-  __pyx_t_2 = PyFloat_FromDouble(exp((__pyx_t_6 / __pyx_t_7))); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 119, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_4 = PyNumber_Multiply(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 119, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_4);
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_7 = __pyx_PyFloat_AsDouble(__pyx_t_4); if (unlikely((__pyx_t_7 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 119, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_r = __pyx_t_7;
+  __pyx_r = (__pyx_v_self->__pyx___e_cs0 * exp((__pyx_t_6 / __pyx_t_7)));
   goto __pyx_L0;
 
   /* "Schottky/Trap/__init__.pyx":118
@@ -3307,23 +3258,13 @@ static double __pyx_f_8Schottky_4Trap_4Trap_h_cs(struct __pyx_obj_8Schottky_4Tra
  * 
  *     cpdef double e_c(self, double temperature, double v_e):
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_h_cs0_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 122, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_6 = (-__pyx_v_self->__pyx___h_cs_activation);
   __pyx_t_7 = (__pyx_v_8Schottky_9Constants_constant->__pyx___k * __pyx_v_temperature);
   if (unlikely(__pyx_t_7 == 0)) {
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
     __PYX_ERR(0, 122, __pyx_L1_error)
   }
-  __pyx_t_2 = PyFloat_FromDouble(exp((__pyx_t_6 / __pyx_t_7))); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 122, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_4 = PyNumber_Multiply(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 122, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_4);
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_7 = __pyx_PyFloat_AsDouble(__pyx_t_4); if (unlikely((__pyx_t_7 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 122, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_r = __pyx_t_7;
+  __pyx_r = (__pyx_v_self->__pyx___h_cs0 * exp((__pyx_t_6 / __pyx_t_7)));
   goto __pyx_L0;
 
   /* "Schottky/Trap/__init__.pyx":121
@@ -6266,11 +6207,11 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_24__reduce_cython__(struct __pyx
   /* "(tree fragment)":5
  *     cdef object _dict
  *     cdef bint use_setstate
- *     state = (self.__charge_state, self.__e_cs, self.__e_cs_activation, self.__energy_c, self.__energy_v, self.__g, self.__h_cs, self.__h_cs_activation, self.__label)             # <<<<<<<<<<<<<<
+ *     state = (self.__charge_state, self.__e_cs0, self.__e_cs_activation, self.__energy_c, self.__energy_v, self.__g, self.__h_cs0, self.__h_cs_activation, self.__label)             # <<<<<<<<<<<<<<
  *     _dict = getattr(self, '__dict__', None)
  *     if _dict is not None:
  */
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->__pyx___e_cs); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 5, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->__pyx___e_cs0); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 5, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_2 = PyFloat_FromDouble(__pyx_v_self->__pyx___e_cs_activation); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 5, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -6278,7 +6219,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_24__reduce_cython__(struct __pyx
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_4 = PyFloat_FromDouble(__pyx_v_self->__pyx___energy_v); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 5, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_5 = PyFloat_FromDouble(__pyx_v_self->__pyx___h_cs); if (unlikely(!__pyx_t_5)) __PYX_ERR(1, 5, __pyx_L1_error)
+  __pyx_t_5 = PyFloat_FromDouble(__pyx_v_self->__pyx___h_cs0); if (unlikely(!__pyx_t_5)) __PYX_ERR(1, 5, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __pyx_t_6 = PyFloat_FromDouble(__pyx_v_self->__pyx___h_cs_activation); if (unlikely(!__pyx_t_6)) __PYX_ERR(1, 5, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
@@ -6316,7 +6257,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_24__reduce_cython__(struct __pyx
 
   /* "(tree fragment)":6
  *     cdef bint use_setstate
- *     state = (self.__charge_state, self.__e_cs, self.__e_cs_activation, self.__energy_c, self.__energy_v, self.__g, self.__h_cs, self.__h_cs_activation, self.__label)
+ *     state = (self.__charge_state, self.__e_cs0, self.__e_cs_activation, self.__energy_c, self.__energy_v, self.__g, self.__h_cs0, self.__h_cs_activation, self.__label)
  *     _dict = getattr(self, '__dict__', None)             # <<<<<<<<<<<<<<
  *     if _dict is not None:
  *         state += (_dict,)
@@ -6327,7 +6268,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_24__reduce_cython__(struct __pyx
   __pyx_t_7 = 0;
 
   /* "(tree fragment)":7
- *     state = (self.__charge_state, self.__e_cs, self.__e_cs_activation, self.__energy_c, self.__energy_v, self.__g, self.__h_cs, self.__h_cs_activation, self.__label)
+ *     state = (self.__charge_state, self.__e_cs0, self.__e_cs_activation, self.__energy_c, self.__energy_v, self.__g, self.__h_cs0, self.__h_cs_activation, self.__label)
  *     _dict = getattr(self, '__dict__', None)
  *     if _dict is not None:             # <<<<<<<<<<<<<<
  *         state += (_dict,)
@@ -6365,7 +6306,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_24__reduce_cython__(struct __pyx
     __pyx_v_use_setstate = 1;
 
     /* "(tree fragment)":7
- *     state = (self.__charge_state, self.__e_cs, self.__e_cs_activation, self.__energy_c, self.__energy_v, self.__g, self.__h_cs, self.__h_cs_activation, self.__label)
+ *     state = (self.__charge_state, self.__e_cs0, self.__e_cs_activation, self.__energy_c, self.__energy_v, self.__g, self.__h_cs0, self.__h_cs_activation, self.__label)
  *     _dict = getattr(self, '__dict__', None)
  *     if _dict is not None:             # <<<<<<<<<<<<<<
  *         state += (_dict,)
@@ -6379,7 +6320,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_24__reduce_cython__(struct __pyx
  *     else:
  *         use_setstate = self.__charge_state is not None or self.__g is not None or self.__label is not None             # <<<<<<<<<<<<<<
  *     if use_setstate:
- *         return __pyx_unpickle_Trap, (type(self), 0xde1d42a, None), state
+ *         return __pyx_unpickle_Trap, (type(self), 0x05ee7ad, None), state
  */
   /*else*/ {
     __pyx_t_8 = (__pyx_v_self->__pyx___charge_state != ((PyObject*)Py_None));
@@ -6408,7 +6349,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_24__reduce_cython__(struct __pyx
  *     else:
  *         use_setstate = self.__charge_state is not None or self.__g is not None or self.__label is not None
  *     if use_setstate:             # <<<<<<<<<<<<<<
- *         return __pyx_unpickle_Trap, (type(self), 0xde1d42a, None), state
+ *         return __pyx_unpickle_Trap, (type(self), 0x05ee7ad, None), state
  *     else:
  */
   __pyx_t_9 = (__pyx_v_use_setstate != 0);
@@ -6417,9 +6358,9 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_24__reduce_cython__(struct __pyx
     /* "(tree fragment)":13
  *         use_setstate = self.__charge_state is not None or self.__g is not None or self.__label is not None
  *     if use_setstate:
- *         return __pyx_unpickle_Trap, (type(self), 0xde1d42a, None), state             # <<<<<<<<<<<<<<
+ *         return __pyx_unpickle_Trap, (type(self), 0x05ee7ad, None), state             # <<<<<<<<<<<<<<
  *     else:
- *         return __pyx_unpickle_Trap, (type(self), 0xde1d42a, state)
+ *         return __pyx_unpickle_Trap, (type(self), 0x05ee7ad, state)
  */
     __Pyx_XDECREF(__pyx_r);
     __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_pyx_unpickle_Trap); if (unlikely(!__pyx_t_6)) __PYX_ERR(1, 13, __pyx_L1_error)
@@ -6429,9 +6370,9 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_24__reduce_cython__(struct __pyx
     __Pyx_INCREF(((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self))));
     __Pyx_GIVEREF(((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self))));
     PyTuple_SET_ITEM(__pyx_t_7, 0, ((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self))));
-    __Pyx_INCREF(__pyx_int_232903722);
-    __Pyx_GIVEREF(__pyx_int_232903722);
-    PyTuple_SET_ITEM(__pyx_t_7, 1, __pyx_int_232903722);
+    __Pyx_INCREF(__pyx_int_6219693);
+    __Pyx_GIVEREF(__pyx_int_6219693);
+    PyTuple_SET_ITEM(__pyx_t_7, 1, __pyx_int_6219693);
     __Pyx_INCREF(Py_None);
     __Pyx_GIVEREF(Py_None);
     PyTuple_SET_ITEM(__pyx_t_7, 2, Py_None);
@@ -6454,15 +6395,15 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_24__reduce_cython__(struct __pyx
  *     else:
  *         use_setstate = self.__charge_state is not None or self.__g is not None or self.__label is not None
  *     if use_setstate:             # <<<<<<<<<<<<<<
- *         return __pyx_unpickle_Trap, (type(self), 0xde1d42a, None), state
+ *         return __pyx_unpickle_Trap, (type(self), 0x05ee7ad, None), state
  *     else:
  */
   }
 
   /* "(tree fragment)":15
- *         return __pyx_unpickle_Trap, (type(self), 0xde1d42a, None), state
+ *         return __pyx_unpickle_Trap, (type(self), 0x05ee7ad, None), state
  *     else:
- *         return __pyx_unpickle_Trap, (type(self), 0xde1d42a, state)             # <<<<<<<<<<<<<<
+ *         return __pyx_unpickle_Trap, (type(self), 0x05ee7ad, state)             # <<<<<<<<<<<<<<
  * def __setstate_cython__(self, __pyx_state):
  *     __pyx_unpickle_Trap__set_state(self, __pyx_state)
  */
@@ -6475,9 +6416,9 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_24__reduce_cython__(struct __pyx
     __Pyx_INCREF(((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self))));
     __Pyx_GIVEREF(((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self))));
     PyTuple_SET_ITEM(__pyx_t_7, 0, ((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self))));
-    __Pyx_INCREF(__pyx_int_232903722);
-    __Pyx_GIVEREF(__pyx_int_232903722);
-    PyTuple_SET_ITEM(__pyx_t_7, 1, __pyx_int_232903722);
+    __Pyx_INCREF(__pyx_int_6219693);
+    __Pyx_GIVEREF(__pyx_int_6219693);
+    PyTuple_SET_ITEM(__pyx_t_7, 1, __pyx_int_6219693);
     __Pyx_INCREF(__pyx_v_state);
     __Pyx_GIVEREF(__pyx_v_state);
     PyTuple_SET_ITEM(__pyx_t_7, 2, __pyx_v_state);
@@ -6521,7 +6462,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_24__reduce_cython__(struct __pyx
 
 /* "(tree fragment)":16
  *     else:
- *         return __pyx_unpickle_Trap, (type(self), 0xde1d42a, state)
+ *         return __pyx_unpickle_Trap, (type(self), 0x05ee7ad, state)
  * def __setstate_cython__(self, __pyx_state):             # <<<<<<<<<<<<<<
  *     __pyx_unpickle_Trap__set_state(self, __pyx_state)
  */
@@ -6546,7 +6487,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_26__setstate_cython__(struct __p
   __Pyx_RefNannySetupContext("__setstate_cython__", 0);
 
   /* "(tree fragment)":17
- *         return __pyx_unpickle_Trap, (type(self), 0xde1d42a, state)
+ *         return __pyx_unpickle_Trap, (type(self), 0x05ee7ad, state)
  * def __setstate_cython__(self, __pyx_state):
  *     __pyx_unpickle_Trap__set_state(self, __pyx_state)             # <<<<<<<<<<<<<<
  */
@@ -6557,7 +6498,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_26__setstate_cython__(struct __p
 
   /* "(tree fragment)":16
  *     else:
- *         return __pyx_unpickle_Trap, (type(self), 0xde1d42a, state)
+ *         return __pyx_unpickle_Trap, (type(self), 0x05ee7ad, state)
  * def __setstate_cython__(self, __pyx_state):             # <<<<<<<<<<<<<<
  *     __pyx_unpickle_Trap__set_state(self, __pyx_state)
  */
@@ -6670,18 +6611,18 @@ static PyObject *__pyx_pf_8Schottky_4Trap___pyx_unpickle_Trap(CYTHON_UNUSED PyOb
   /* "(tree fragment)":4
  *     cdef object __pyx_PickleError
  *     cdef object __pyx_result
- *     if __pyx_checksum != 0xde1d42a:             # <<<<<<<<<<<<<<
+ *     if __pyx_checksum != 0x05ee7ad:             # <<<<<<<<<<<<<<
  *         from pickle import PickleError as __pyx_PickleError
- *         raise __pyx_PickleError("Incompatible checksums (%s vs 0xde1d42a = (__charge_state, __e_cs, __e_cs_activation, __energy_c, __energy_v, __g, __h_cs, __h_cs_activation, __label))" % __pyx_checksum)
+ *         raise __pyx_PickleError("Incompatible checksums (%s vs 0x05ee7ad = (__charge_state, __e_cs0, __e_cs_activation, __energy_c, __energy_v, __g, __h_cs0, __h_cs_activation, __label))" % __pyx_checksum)
  */
-  __pyx_t_1 = ((__pyx_v___pyx_checksum != 0xde1d42a) != 0);
+  __pyx_t_1 = ((__pyx_v___pyx_checksum != 0x05ee7ad) != 0);
   if (__pyx_t_1) {
 
     /* "(tree fragment)":5
  *     cdef object __pyx_result
- *     if __pyx_checksum != 0xde1d42a:
+ *     if __pyx_checksum != 0x05ee7ad:
  *         from pickle import PickleError as __pyx_PickleError             # <<<<<<<<<<<<<<
- *         raise __pyx_PickleError("Incompatible checksums (%s vs 0xde1d42a = (__charge_state, __e_cs, __e_cs_activation, __energy_c, __energy_v, __g, __h_cs, __h_cs_activation, __label))" % __pyx_checksum)
+ *         raise __pyx_PickleError("Incompatible checksums (%s vs 0x05ee7ad = (__charge_state, __e_cs0, __e_cs_activation, __energy_c, __energy_v, __g, __h_cs0, __h_cs_activation, __label))" % __pyx_checksum)
  *     __pyx_result = Trap.__new__(__pyx_type)
  */
     __pyx_t_2 = PyList_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 5, __pyx_L1_error)
@@ -6700,15 +6641,15 @@ static PyObject *__pyx_pf_8Schottky_4Trap___pyx_unpickle_Trap(CYTHON_UNUSED PyOb
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
     /* "(tree fragment)":6
- *     if __pyx_checksum != 0xde1d42a:
+ *     if __pyx_checksum != 0x05ee7ad:
  *         from pickle import PickleError as __pyx_PickleError
- *         raise __pyx_PickleError("Incompatible checksums (%s vs 0xde1d42a = (__charge_state, __e_cs, __e_cs_activation, __energy_c, __energy_v, __g, __h_cs, __h_cs_activation, __label))" % __pyx_checksum)             # <<<<<<<<<<<<<<
+ *         raise __pyx_PickleError("Incompatible checksums (%s vs 0x05ee7ad = (__charge_state, __e_cs0, __e_cs_activation, __energy_c, __energy_v, __g, __h_cs0, __h_cs_activation, __label))" % __pyx_checksum)             # <<<<<<<<<<<<<<
  *     __pyx_result = Trap.__new__(__pyx_type)
  *     if __pyx_state is not None:
  */
     __pyx_t_2 = __Pyx_PyInt_From_long(__pyx_v___pyx_checksum); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 6, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_4 = __Pyx_PyString_Format(__pyx_kp_s_Incompatible_checksums_s_vs_0xde, __pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 6, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyString_Format(__pyx_kp_s_Incompatible_checksums_s_vs_0x05, __pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 6, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_INCREF(__pyx_v___pyx_PickleError);
@@ -6735,15 +6676,15 @@ static PyObject *__pyx_pf_8Schottky_4Trap___pyx_unpickle_Trap(CYTHON_UNUSED PyOb
     /* "(tree fragment)":4
  *     cdef object __pyx_PickleError
  *     cdef object __pyx_result
- *     if __pyx_checksum != 0xde1d42a:             # <<<<<<<<<<<<<<
+ *     if __pyx_checksum != 0x05ee7ad:             # <<<<<<<<<<<<<<
  *         from pickle import PickleError as __pyx_PickleError
- *         raise __pyx_PickleError("Incompatible checksums (%s vs 0xde1d42a = (__charge_state, __e_cs, __e_cs_activation, __energy_c, __energy_v, __g, __h_cs, __h_cs_activation, __label))" % __pyx_checksum)
+ *         raise __pyx_PickleError("Incompatible checksums (%s vs 0x05ee7ad = (__charge_state, __e_cs0, __e_cs_activation, __energy_c, __energy_v, __g, __h_cs0, __h_cs_activation, __label))" % __pyx_checksum)
  */
   }
 
   /* "(tree fragment)":7
  *         from pickle import PickleError as __pyx_PickleError
- *         raise __pyx_PickleError("Incompatible checksums (%s vs 0xde1d42a = (__charge_state, __e_cs, __e_cs_activation, __energy_c, __energy_v, __g, __h_cs, __h_cs_activation, __label))" % __pyx_checksum)
+ *         raise __pyx_PickleError("Incompatible checksums (%s vs 0x05ee7ad = (__charge_state, __e_cs0, __e_cs_activation, __energy_c, __energy_v, __g, __h_cs0, __h_cs_activation, __label))" % __pyx_checksum)
  *     __pyx_result = Trap.__new__(__pyx_type)             # <<<<<<<<<<<<<<
  *     if __pyx_state is not None:
  *         __pyx_unpickle_Trap__set_state(<Trap> __pyx_result, __pyx_state)
@@ -6769,7 +6710,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap___pyx_unpickle_Trap(CYTHON_UNUSED PyOb
   __pyx_t_3 = 0;
 
   /* "(tree fragment)":8
- *         raise __pyx_PickleError("Incompatible checksums (%s vs 0xde1d42a = (__charge_state, __e_cs, __e_cs_activation, __energy_c, __energy_v, __g, __h_cs, __h_cs_activation, __label))" % __pyx_checksum)
+ *         raise __pyx_PickleError("Incompatible checksums (%s vs 0x05ee7ad = (__charge_state, __e_cs0, __e_cs_activation, __energy_c, __energy_v, __g, __h_cs0, __h_cs_activation, __label))" % __pyx_checksum)
  *     __pyx_result = Trap.__new__(__pyx_type)
  *     if __pyx_state is not None:             # <<<<<<<<<<<<<<
  *         __pyx_unpickle_Trap__set_state(<Trap> __pyx_result, __pyx_state)
@@ -6792,7 +6733,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap___pyx_unpickle_Trap(CYTHON_UNUSED PyOb
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
     /* "(tree fragment)":8
- *         raise __pyx_PickleError("Incompatible checksums (%s vs 0xde1d42a = (__charge_state, __e_cs, __e_cs_activation, __energy_c, __energy_v, __g, __h_cs, __h_cs_activation, __label))" % __pyx_checksum)
+ *         raise __pyx_PickleError("Incompatible checksums (%s vs 0x05ee7ad = (__charge_state, __e_cs0, __e_cs_activation, __energy_c, __energy_v, __g, __h_cs0, __h_cs_activation, __label))" % __pyx_checksum)
  *     __pyx_result = Trap.__new__(__pyx_type)
  *     if __pyx_state is not None:             # <<<<<<<<<<<<<<
  *         __pyx_unpickle_Trap__set_state(<Trap> __pyx_result, __pyx_state)
@@ -6805,7 +6746,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap___pyx_unpickle_Trap(CYTHON_UNUSED PyOb
  *         __pyx_unpickle_Trap__set_state(<Trap> __pyx_result, __pyx_state)
  *     return __pyx_result             # <<<<<<<<<<<<<<
  * cdef __pyx_unpickle_Trap__set_state(Trap __pyx_result, tuple __pyx_state):
- *     __pyx_result.__charge_state = __pyx_state[0]; __pyx_result.__e_cs = __pyx_state[1]; __pyx_result.__e_cs_activation = __pyx_state[2]; __pyx_result.__energy_c = __pyx_state[3]; __pyx_result.__energy_v = __pyx_state[4]; __pyx_result.__g = __pyx_state[5]; __pyx_result.__h_cs = __pyx_state[6]; __pyx_result.__h_cs_activation = __pyx_state[7]; __pyx_result.__label = __pyx_state[8]
+ *     __pyx_result.__charge_state = __pyx_state[0]; __pyx_result.__e_cs0 = __pyx_state[1]; __pyx_result.__e_cs_activation = __pyx_state[2]; __pyx_result.__energy_c = __pyx_state[3]; __pyx_result.__energy_v = __pyx_state[4]; __pyx_result.__g = __pyx_state[5]; __pyx_result.__h_cs0 = __pyx_state[6]; __pyx_result.__h_cs_activation = __pyx_state[7]; __pyx_result.__label = __pyx_state[8]
  */
   __Pyx_XDECREF(__pyx_r);
   __Pyx_INCREF(__pyx_v___pyx_result);
@@ -6838,7 +6779,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap___pyx_unpickle_Trap(CYTHON_UNUSED PyOb
  *         __pyx_unpickle_Trap__set_state(<Trap> __pyx_result, __pyx_state)
  *     return __pyx_result
  * cdef __pyx_unpickle_Trap__set_state(Trap __pyx_result, tuple __pyx_state):             # <<<<<<<<<<<<<<
- *     __pyx_result.__charge_state = __pyx_state[0]; __pyx_result.__e_cs = __pyx_state[1]; __pyx_result.__e_cs_activation = __pyx_state[2]; __pyx_result.__energy_c = __pyx_state[3]; __pyx_result.__energy_v = __pyx_state[4]; __pyx_result.__g = __pyx_state[5]; __pyx_result.__h_cs = __pyx_state[6]; __pyx_result.__h_cs_activation = __pyx_state[7]; __pyx_result.__label = __pyx_state[8]
+ *     __pyx_result.__charge_state = __pyx_state[0]; __pyx_result.__e_cs0 = __pyx_state[1]; __pyx_result.__e_cs_activation = __pyx_state[2]; __pyx_result.__energy_c = __pyx_state[3]; __pyx_result.__energy_v = __pyx_state[4]; __pyx_result.__g = __pyx_state[5]; __pyx_result.__h_cs0 = __pyx_state[6]; __pyx_result.__h_cs_activation = __pyx_state[7]; __pyx_result.__label = __pyx_state[8]
  *     if len(__pyx_state) > 9 and hasattr(__pyx_result, '__dict__'):
  */
 
@@ -6859,7 +6800,7 @@ static PyObject *__pyx_f_8Schottky_4Trap___pyx_unpickle_Trap__set_state(struct _
   /* "(tree fragment)":12
  *     return __pyx_result
  * cdef __pyx_unpickle_Trap__set_state(Trap __pyx_result, tuple __pyx_state):
- *     __pyx_result.__charge_state = __pyx_state[0]; __pyx_result.__e_cs = __pyx_state[1]; __pyx_result.__e_cs_activation = __pyx_state[2]; __pyx_result.__energy_c = __pyx_state[3]; __pyx_result.__energy_v = __pyx_state[4]; __pyx_result.__g = __pyx_state[5]; __pyx_result.__h_cs = __pyx_state[6]; __pyx_result.__h_cs_activation = __pyx_state[7]; __pyx_result.__label = __pyx_state[8]             # <<<<<<<<<<<<<<
+ *     __pyx_result.__charge_state = __pyx_state[0]; __pyx_result.__e_cs0 = __pyx_state[1]; __pyx_result.__e_cs_activation = __pyx_state[2]; __pyx_result.__energy_c = __pyx_state[3]; __pyx_result.__energy_v = __pyx_state[4]; __pyx_result.__g = __pyx_state[5]; __pyx_result.__h_cs0 = __pyx_state[6]; __pyx_result.__h_cs_activation = __pyx_state[7]; __pyx_result.__label = __pyx_state[8]             # <<<<<<<<<<<<<<
  *     if len(__pyx_state) > 9 and hasattr(__pyx_result, '__dict__'):
  *         __pyx_result.__dict__.update(__pyx_state[9])
  */
@@ -6883,7 +6824,7 @@ static PyObject *__pyx_f_8Schottky_4Trap___pyx_unpickle_Trap__set_state(struct _
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_2 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(1, 12, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_v___pyx_result->__pyx___e_cs = __pyx_t_2;
+  __pyx_v___pyx_result->__pyx___e_cs0 = __pyx_t_2;
   if (unlikely(__pyx_v___pyx_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
     __PYX_ERR(1, 12, __pyx_L1_error)
@@ -6931,7 +6872,7 @@ static PyObject *__pyx_f_8Schottky_4Trap___pyx_unpickle_Trap__set_state(struct _
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_2 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(1, 12, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_v___pyx_result->__pyx___h_cs = __pyx_t_2;
+  __pyx_v___pyx_result->__pyx___h_cs0 = __pyx_t_2;
   if (unlikely(__pyx_v___pyx_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
     __PYX_ERR(1, 12, __pyx_L1_error)
@@ -6956,7 +6897,7 @@ static PyObject *__pyx_f_8Schottky_4Trap___pyx_unpickle_Trap__set_state(struct _
 
   /* "(tree fragment)":13
  * cdef __pyx_unpickle_Trap__set_state(Trap __pyx_result, tuple __pyx_state):
- *     __pyx_result.__charge_state = __pyx_state[0]; __pyx_result.__e_cs = __pyx_state[1]; __pyx_result.__e_cs_activation = __pyx_state[2]; __pyx_result.__energy_c = __pyx_state[3]; __pyx_result.__energy_v = __pyx_state[4]; __pyx_result.__g = __pyx_state[5]; __pyx_result.__h_cs = __pyx_state[6]; __pyx_result.__h_cs_activation = __pyx_state[7]; __pyx_result.__label = __pyx_state[8]
+ *     __pyx_result.__charge_state = __pyx_state[0]; __pyx_result.__e_cs0 = __pyx_state[1]; __pyx_result.__e_cs_activation = __pyx_state[2]; __pyx_result.__energy_c = __pyx_state[3]; __pyx_result.__energy_v = __pyx_state[4]; __pyx_result.__g = __pyx_state[5]; __pyx_result.__h_cs0 = __pyx_state[6]; __pyx_result.__h_cs_activation = __pyx_state[7]; __pyx_result.__label = __pyx_state[8]
  *     if len(__pyx_state) > 9 and hasattr(__pyx_result, '__dict__'):             # <<<<<<<<<<<<<<
  *         __pyx_result.__dict__.update(__pyx_state[9])
  */
@@ -6978,7 +6919,7 @@ static PyObject *__pyx_f_8Schottky_4Trap___pyx_unpickle_Trap__set_state(struct _
   if (__pyx_t_3) {
 
     /* "(tree fragment)":14
- *     __pyx_result.__charge_state = __pyx_state[0]; __pyx_result.__e_cs = __pyx_state[1]; __pyx_result.__e_cs_activation = __pyx_state[2]; __pyx_result.__energy_c = __pyx_state[3]; __pyx_result.__energy_v = __pyx_state[4]; __pyx_result.__g = __pyx_state[5]; __pyx_result.__h_cs = __pyx_state[6]; __pyx_result.__h_cs_activation = __pyx_state[7]; __pyx_result.__label = __pyx_state[8]
+ *     __pyx_result.__charge_state = __pyx_state[0]; __pyx_result.__e_cs0 = __pyx_state[1]; __pyx_result.__e_cs_activation = __pyx_state[2]; __pyx_result.__energy_c = __pyx_state[3]; __pyx_result.__energy_v = __pyx_state[4]; __pyx_result.__g = __pyx_state[5]; __pyx_result.__h_cs0 = __pyx_state[6]; __pyx_result.__h_cs_activation = __pyx_state[7]; __pyx_result.__label = __pyx_state[8]
  *     if len(__pyx_state) > 9 and hasattr(__pyx_result, '__dict__'):
  *         __pyx_result.__dict__.update(__pyx_state[9])             # <<<<<<<<<<<<<<
  */
@@ -7013,7 +6954,7 @@ static PyObject *__pyx_f_8Schottky_4Trap___pyx_unpickle_Trap__set_state(struct _
 
     /* "(tree fragment)":13
  * cdef __pyx_unpickle_Trap__set_state(Trap __pyx_result, tuple __pyx_state):
- *     __pyx_result.__charge_state = __pyx_state[0]; __pyx_result.__e_cs = __pyx_state[1]; __pyx_result.__e_cs_activation = __pyx_state[2]; __pyx_result.__energy_c = __pyx_state[3]; __pyx_result.__energy_v = __pyx_state[4]; __pyx_result.__g = __pyx_state[5]; __pyx_result.__h_cs = __pyx_state[6]; __pyx_result.__h_cs_activation = __pyx_state[7]; __pyx_result.__label = __pyx_state[8]
+ *     __pyx_result.__charge_state = __pyx_state[0]; __pyx_result.__e_cs0 = __pyx_state[1]; __pyx_result.__e_cs_activation = __pyx_state[2]; __pyx_result.__energy_c = __pyx_state[3]; __pyx_result.__energy_v = __pyx_state[4]; __pyx_result.__g = __pyx_state[5]; __pyx_result.__h_cs0 = __pyx_state[6]; __pyx_result.__h_cs_activation = __pyx_state[7]; __pyx_result.__label = __pyx_state[8]
  *     if len(__pyx_state) > 9 and hasattr(__pyx_result, '__dict__'):             # <<<<<<<<<<<<<<
  *         __pyx_result.__dict__.update(__pyx_state[9])
  */
@@ -7023,7 +6964,7 @@ static PyObject *__pyx_f_8Schottky_4Trap___pyx_unpickle_Trap__set_state(struct _
  *         __pyx_unpickle_Trap__set_state(<Trap> __pyx_result, __pyx_state)
  *     return __pyx_result
  * cdef __pyx_unpickle_Trap__set_state(Trap __pyx_result, tuple __pyx_state):             # <<<<<<<<<<<<<<
- *     __pyx_result.__charge_state = __pyx_state[0]; __pyx_result.__e_cs = __pyx_state[1]; __pyx_result.__e_cs_activation = __pyx_state[2]; __pyx_result.__energy_c = __pyx_state[3]; __pyx_result.__energy_v = __pyx_state[4]; __pyx_result.__g = __pyx_state[5]; __pyx_result.__h_cs = __pyx_state[6]; __pyx_result.__h_cs_activation = __pyx_state[7]; __pyx_result.__label = __pyx_state[8]
+ *     __pyx_result.__charge_state = __pyx_state[0]; __pyx_result.__e_cs0 = __pyx_state[1]; __pyx_result.__e_cs_activation = __pyx_state[2]; __pyx_result.__energy_c = __pyx_state[3]; __pyx_result.__energy_v = __pyx_state[4]; __pyx_result.__g = __pyx_state[5]; __pyx_result.__h_cs0 = __pyx_state[6]; __pyx_result.__h_cs_activation = __pyx_state[7]; __pyx_result.__label = __pyx_state[8]
  *     if len(__pyx_state) > 9 and hasattr(__pyx_result, '__dict__'):
  */
 
@@ -7418,7 +7359,7 @@ static struct PyModuleDef __pyx_moduledef = {
 #endif
 
 static __Pyx_StringTabEntry __pyx_string_tab[] = {
-  {&__pyx_kp_s_Incompatible_checksums_s_vs_0xde, __pyx_k_Incompatible_checksums_s_vs_0xde, sizeof(__pyx_k_Incompatible_checksums_s_vs_0xde), 0, 0, 1, 0},
+  {&__pyx_kp_s_Incompatible_checksums_s_vs_0x05, __pyx_k_Incompatible_checksums_s_vs_0x05, sizeof(__pyx_k_Incompatible_checksums_s_vs_0x05), 0, 0, 1, 0},
   {&__pyx_n_s_PickleError, __pyx_k_PickleError, sizeof(__pyx_k_PickleError), 0, 0, 1, 1},
   {&__pyx_n_s_Schottky_Trap, __pyx_k_Schottky_Trap, sizeof(__pyx_k_Schottky_Trap), 0, 0, 1, 1},
   {&__pyx_n_s_Trap, __pyx_k_Trap, sizeof(__pyx_k_Trap), 0, 0, 1, 1},
@@ -7430,7 +7371,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_e_cr, __pyx_k_e_cr, sizeof(__pyx_k_e_cr), 0, 0, 1, 1},
   {&__pyx_n_s_e_cs, __pyx_k_e_cs, sizeof(__pyx_k_e_cs), 0, 0, 1, 1},
   {&__pyx_n_s_e_cs0, __pyx_k_e_cs0, sizeof(__pyx_k_e_cs0), 0, 0, 1, 1},
-  {&__pyx_n_s_e_cs0_2, __pyx_k_e_cs0_2, sizeof(__pyx_k_e_cs0_2), 0, 0, 1, 1},
   {&__pyx_n_s_e_cs_activation, __pyx_k_e_cs_activation, sizeof(__pyx_k_e_cs_activation), 0, 0, 1, 1},
   {&__pyx_n_s_e_er, __pyx_k_e_er, sizeof(__pyx_k_e_er), 0, 0, 1, 1},
   {&__pyx_n_s_energy_c, __pyx_k_energy_c, sizeof(__pyx_k_energy_c), 0, 0, 1, 1},
@@ -7444,7 +7384,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_h_cr, __pyx_k_h_cr, sizeof(__pyx_k_h_cr), 0, 0, 1, 1},
   {&__pyx_n_s_h_cs, __pyx_k_h_cs, sizeof(__pyx_k_h_cs), 0, 0, 1, 1},
   {&__pyx_n_s_h_cs0, __pyx_k_h_cs0, sizeof(__pyx_k_h_cs0), 0, 0, 1, 1},
-  {&__pyx_n_s_h_cs0_2, __pyx_k_h_cs0_2, sizeof(__pyx_k_h_cs0_2), 0, 0, 1, 1},
   {&__pyx_n_s_h_cs_activation, __pyx_k_h_cs_activation, sizeof(__pyx_k_h_cs_activation), 0, 0, 1, 1},
   {&__pyx_n_s_h_er, __pyx_k_h_er, sizeof(__pyx_k_h_er), 0, 0, 1, 1},
   {&__pyx_n_s_import, __pyx_k_import, sizeof(__pyx_k_import), 0, 0, 1, 1},
@@ -7506,7 +7445,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitGlobals(void) {
   __pyx_int_0 = PyInt_FromLong(0); if (unlikely(!__pyx_int_0)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_1 = PyInt_FromLong(1); if (unlikely(!__pyx_int_1)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_2 = PyInt_FromLong(2); if (unlikely(!__pyx_int_2)) __PYX_ERR(0, 1, __pyx_L1_error)
-  __pyx_int_232903722 = PyInt_FromLong(232903722L); if (unlikely(!__pyx_int_232903722)) __PYX_ERR(0, 1, __pyx_L1_error)
+  __pyx_int_6219693 = PyInt_FromLong(6219693L); if (unlikely(!__pyx_int_6219693)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_neg_1 = PyInt_FromLong(-1); if (unlikely(!__pyx_int_neg_1)) __PYX_ERR(0, 1, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
@@ -8050,20 +7989,6 @@ static int __Pyx__ArgTypeTest(PyObject *obj, PyTypeObject *type, const char *nam
         name, type->tp_name, Py_TYPE(obj)->tp_name);
     return 0;
 }
-
-/* PyObjectSetAttrStr */
-#if CYTHON_USE_TYPE_SLOTS
-static CYTHON_INLINE int __Pyx_PyObject_SetAttrStr(PyObject* obj, PyObject* attr_name, PyObject* value) {
-    PyTypeObject* tp = Py_TYPE(obj);
-    if (likely(tp->tp_setattro))
-        return tp->tp_setattro(obj, attr_name, value);
-#if PY_MAJOR_VERSION < 3
-    if (likely(tp->tp_setattr))
-        return tp->tp_setattr(obj, PyString_AS_STRING(attr_name), value);
-#endif
-    return PyObject_SetAttr(obj, attr_name, value);
-}
-#endif
 
 /* PyObjectGetAttrStr */
 #if CYTHON_USE_TYPE_SLOTS

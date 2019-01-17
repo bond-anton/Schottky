@@ -6,5 +6,5 @@ cdef class Dopant(Trap):
         TreeMesh1DUniform __concentration
         TreeMesh1DUniform __f
 
-    cpdef double n_t(self, double z)
-    cpdef double f(self, double z)
+    cpdef double[:] n_t(self, double[:] z)
+    cpdef double[:] f(self, double[:] z)

@@ -11,14 +11,12 @@ import warnings
 import datetime
 
 import numpy as np
-import mpmath as mp
 
 from scipy.constants.codata import epsilon0
 
 from scipy.optimize import fmin
 
 from Schottky import constants
-from Schottky.Notation import q, k
 from Schottky.Helpers import smooth_dd, Psi_zero, to_numeric  # , interp_Fn#, fermihalf, gen_interpolated_P_E_function
 
 from Schottky.Semiconductor import Semiconductor  # , Trap, Dopant, Dislocation, BondingInterface

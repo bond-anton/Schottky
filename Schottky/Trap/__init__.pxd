@@ -3,8 +3,8 @@ cdef class Trap(object):
         str __label
         double __energy_c
         double __energy_v
-        double __e_cs
-        double __h_cs
+        double __e_cs0
+        double __h_cs0
         double __e_cs_activation
         double __h_cs_activation
         dict __charge_state

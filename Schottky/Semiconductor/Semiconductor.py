@@ -74,7 +74,7 @@ class Semiconductor(object):
         assert isinstance(bonding_interface, BondingInterface), "BI must be an object of BondingInterface class"
         self.bonding_interfaces.append(bonding_interface)
 
-    def Nc(self, T=sym.symbols('T'), symbolic=True):
+    def Nc(self, T='T', symbolic=True):
         if isinstance(T, (tuple, list, np.ndarray)):
             Nc_Wrap = partial(self.Nc, symbolic=symbolic)
             return np.array(map(Nc_Wrap, T))
@@ -84,7 +84,7 @@ class Semiconductor(object):
         else:
             return sym.N(self.__to_numeric(Nc))
 
-    def Nv(self, T=sym.symbols('T'), symbolic=True):
+    def Nv(self, T='T', symbolic=True):
         if isinstance(T, (tuple, list, np.ndarray)):
             Nv_Wrap = partial(self.Nv, symbolic=symbolic)
             return np.array(map(Nv_Wrap, T))
@@ -94,7 +94,7 @@ class Semiconductor(object):
         else:
             return sym.N(self.__to_numeric(Nv))
 
-    def v_T(self, carrier='e', T=sym.symbols('T'), symbolic=True):
+    def v_T(self, carrier='e', T='T', symbolic=True):
         m = sym.symbols('m_' + carrier + '_coeff') * sym.symbols('m_e')
         v = sym.sqrt(3 * k * T / m)
         if symbolic:
@@ -102,7 +102,7 @@ class Semiconductor(object):
         else:
             return sym.N(self.__to_numeric(v))
 
-    def band_gap(self, temperature=sym.symbols('temperature'), symbolic=True, electron_volts=False):
+    def band_gap(self, temperature='temperature', symbolic=True, electron_volts=False):
         '''
         Energy gap temperature dependence approximation 
         '''
@@ -122,7 +122,7 @@ class Semiconductor(object):
         return self.Eg_memo[(temperature, symbolic, electron_volts)]
 
 
-    def Ech_pot(self, T=sym.symbols('T'), z=sym.symbols('z'), eV=False, debug=False):
+    def Ech_pot(self, T='T', z='z', eV=False, debug=False):
         if isinstance(T, (tuple, list, np.ndarray)):
             Ech_pot_Wrap = partial(self.Ech_pot, z=z, eV=eV, debug=debug)
             return np.array(map(Ech_pot_Wrap, T))
@@ -215,7 +215,7 @@ class Semiconductor(object):
             self.EchPot_memo[(T, z, eV)] = Ef * Escale
             return Ef * Escale
 
-    def WF(self, T, z=sym.symbols('z'), eV=False):
+    def WF(self, T, z='z', eV=False):
         if (T, z, eV) in self.WF_memo:
             return self.WF_memo[(T, z, eV)]
         if eV:

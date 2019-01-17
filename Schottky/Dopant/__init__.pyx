@@ -40,11 +40,11 @@ cdef class Dopant(Trap):
     def occupation(self, TreeMesh1DUniform f):
         self.__f = f
 
-    cpdef double n_t(self, double z):
-        return 1.0
+    cpdef double[:] n_t(self, double[:] z):
+        return self.__concentration.interpolate_solution(z)
 
-    cpdef double f(self, double z):
-        return 1.0
+    cpdef double[:] f(self, double[:] z):
+        return self.__f.interpolate_solution(z)
 
     def __str__(self):
         description = 'Dopant: %s\n' % self.label
