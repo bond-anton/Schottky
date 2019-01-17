@@ -873,6 +873,8 @@ struct __pyx_obj_8Schottky_4Trap_Trap {
   double __pyx___e_cs_activation;
   double __pyx___h_cs_activation;
   double __pyx___f;
+  PyObject *__pyx___charge_state;
+  PyObject *__pyx___g;
 };
 
 
@@ -886,12 +888,17 @@ struct __pyx_obj_8Schottky_4Trap_Trap {
  */
 
 struct __pyx_vtabstruct_8Schottky_4Trap_Trap {
+  double (*__pyx___coerce_f)(struct __pyx_obj_8Schottky_4Trap_Trap *, double);
   double (*e_cs)(struct __pyx_obj_8Schottky_4Trap_Trap *, double, int __pyx_skip_dispatch);
   double (*h_cs)(struct __pyx_obj_8Schottky_4Trap_Trap *, double, int __pyx_skip_dispatch);
   double (*e_c)(struct __pyx_obj_8Schottky_4Trap_Trap *, double, double, int __pyx_skip_dispatch);
   double (*h_c)(struct __pyx_obj_8Schottky_4Trap_Trap *, double, double, int __pyx_skip_dispatch);
   double (*e_cr)(struct __pyx_obj_8Schottky_4Trap_Trap *, double, double, double, int __pyx_skip_dispatch);
   double (*h_cr)(struct __pyx_obj_8Schottky_4Trap_Trap *, double, double, double, int __pyx_skip_dispatch);
+  double (*e_er)(struct __pyx_obj_8Schottky_4Trap_Trap *, double, double, double, int __pyx_skip_dispatch);
+  double (*h_er)(struct __pyx_obj_8Schottky_4Trap_Trap *, double, double, double, int __pyx_skip_dispatch);
+  PyObject *(*f_eq)(struct __pyx_obj_8Schottky_4Trap_Trap *, double, double, double, double, double, double, double, int __pyx_skip_dispatch);
+  PyObject *(*df_dt)(struct __pyx_obj_8Schottky_4Trap_Trap *, double, double, double, double, double, double, double, int __pyx_skip_dispatch);
 };
 static struct __pyx_vtabstruct_8Schottky_4Trap_Trap *__pyx_vtabptr_8Schottky_4Trap_Trap;
 
@@ -1082,6 +1089,39 @@ static void __Pyx_WriteUnraisable(const char *name, int clineno,
                                   int lineno, const char *filename,
                                   int full_traceback, int nogil);
 
+/* DictGetItem.proto */
+#if PY_MAJOR_VERSION >= 3 && !CYTHON_COMPILING_IN_PYPY
+static PyObject *__Pyx_PyDict_GetItem(PyObject *d, PyObject* key);
+#define __Pyx_PyObject_Dict_GetItem(obj, name)\
+    (likely(PyDict_CheckExact(obj)) ?\
+     __Pyx_PyDict_GetItem(obj, name) : PyObject_GetItem(obj, name))
+#else
+#define __Pyx_PyDict_GetItem(d, key) PyObject_GetItem(d, key)
+#define __Pyx_PyObject_Dict_GetItem(obj, name)  PyObject_GetItem(obj, name)
+#endif
+
+/* GetItemInt.proto */
+#define __Pyx_GetItemInt(o, i, type, is_signed, to_py_func, is_list, wraparound, boundscheck)\
+    (__Pyx_fits_Py_ssize_t(i, type, is_signed) ?\
+    __Pyx_GetItemInt_Fast(o, (Py_ssize_t)i, is_list, wraparound, boundscheck) :\
+    (is_list ? (PyErr_SetString(PyExc_IndexError, "list index out of range"), (PyObject*)NULL) :\
+               __Pyx_GetItemInt_Generic(o, to_py_func(i))))
+#define __Pyx_GetItemInt_List(o, i, type, is_signed, to_py_func, is_list, wraparound, boundscheck)\
+    (__Pyx_fits_Py_ssize_t(i, type, is_signed) ?\
+    __Pyx_GetItemInt_List_Fast(o, (Py_ssize_t)i, wraparound, boundscheck) :\
+    (PyErr_SetString(PyExc_IndexError, "list index out of range"), (PyObject*)NULL))
+static CYTHON_INLINE PyObject *__Pyx_GetItemInt_List_Fast(PyObject *o, Py_ssize_t i,
+                                                              int wraparound, int boundscheck);
+#define __Pyx_GetItemInt_Tuple(o, i, type, is_signed, to_py_func, is_list, wraparound, boundscheck)\
+    (__Pyx_fits_Py_ssize_t(i, type, is_signed) ?\
+    __Pyx_GetItemInt_Tuple_Fast(o, (Py_ssize_t)i, wraparound, boundscheck) :\
+    (PyErr_SetString(PyExc_IndexError, "tuple index out of range"), (PyObject*)NULL))
+static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Tuple_Fast(PyObject *o, Py_ssize_t i,
+                                                              int wraparound, int boundscheck);
+static PyObject *__Pyx_GetItemInt_Generic(PyObject *o, PyObject* j);
+static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Fast(PyObject *o, Py_ssize_t i,
+                                                     int is_list, int wraparound, int boundscheck);
+
 /* PyErrExceptionMatches.proto */
 #if CYTHON_FAST_THREAD_STATE
 #define __Pyx_PyErr_ExceptionMatches(err) __Pyx_PyErr_ExceptionMatchesInState(__pyx_tstate, err)
@@ -1128,28 +1168,6 @@ static PyObject* __Pyx_ImportFrom(PyObject* module, PyObject* name);
 
 /* RaiseException.proto */
 static void __Pyx_Raise(PyObject *type, PyObject *value, PyObject *tb, PyObject *cause);
-
-/* GetItemInt.proto */
-#define __Pyx_GetItemInt(o, i, type, is_signed, to_py_func, is_list, wraparound, boundscheck)\
-    (__Pyx_fits_Py_ssize_t(i, type, is_signed) ?\
-    __Pyx_GetItemInt_Fast(o, (Py_ssize_t)i, is_list, wraparound, boundscheck) :\
-    (is_list ? (PyErr_SetString(PyExc_IndexError, "list index out of range"), (PyObject*)NULL) :\
-               __Pyx_GetItemInt_Generic(o, to_py_func(i))))
-#define __Pyx_GetItemInt_List(o, i, type, is_signed, to_py_func, is_list, wraparound, boundscheck)\
-    (__Pyx_fits_Py_ssize_t(i, type, is_signed) ?\
-    __Pyx_GetItemInt_List_Fast(o, (Py_ssize_t)i, wraparound, boundscheck) :\
-    (PyErr_SetString(PyExc_IndexError, "list index out of range"), (PyObject*)NULL))
-static CYTHON_INLINE PyObject *__Pyx_GetItemInt_List_Fast(PyObject *o, Py_ssize_t i,
-                                                              int wraparound, int boundscheck);
-#define __Pyx_GetItemInt_Tuple(o, i, type, is_signed, to_py_func, is_list, wraparound, boundscheck)\
-    (__Pyx_fits_Py_ssize_t(i, type, is_signed) ?\
-    __Pyx_GetItemInt_Tuple_Fast(o, (Py_ssize_t)i, wraparound, boundscheck) :\
-    (PyErr_SetString(PyExc_IndexError, "tuple index out of range"), (PyObject*)NULL))
-static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Tuple_Fast(PyObject *o, Py_ssize_t i,
-                                                              int wraparound, int boundscheck);
-static PyObject *__Pyx_GetItemInt_Generic(PyObject *o, PyObject* j);
-static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Fast(PyObject *o, Py_ssize_t i,
-                                                     int is_list, int wraparound, int boundscheck);
 
 /* HasAttr.proto */
 static CYTHON_INLINE int __Pyx_HasAttr(PyObject *, PyObject *);
@@ -1248,6 +1266,11 @@ static double __pyx_f_8Schottky_4Trap_4Trap_e_c(struct __pyx_obj_8Schottky_4Trap
 static double __pyx_f_8Schottky_4Trap_4Trap_h_c(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_temperature, double __pyx_v_v_h, int __pyx_skip_dispatch); /* proto*/
 static double __pyx_f_8Schottky_4Trap_4Trap_e_cr(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_temperature, double __pyx_v_v_e, double __pyx_v_n_e, int __pyx_skip_dispatch); /* proto*/
 static double __pyx_f_8Schottky_4Trap_4Trap_h_cr(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_temperature, double __pyx_v_v_h, double __pyx_v_n_h, int __pyx_skip_dispatch); /* proto*/
+static double __pyx_f_8Schottky_4Trap_4Trap_e_er(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_temperature, double __pyx_v_v_e, double __pyx_v_n_c, int __pyx_skip_dispatch); /* proto*/
+static double __pyx_f_8Schottky_4Trap_4Trap_h_er(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_temperature, double __pyx_v_v_h, double __pyx_v_n_v, int __pyx_skip_dispatch); /* proto*/
+static PyObject *__pyx_f_8Schottky_4Trap_4Trap_f_eq(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_temperature, double __pyx_v_v_e, double __pyx_v_n_e, double __pyx_v_n_c, double __pyx_v_v_h, double __pyx_v_n_h, double __pyx_v_n_v, int __pyx_skip_dispatch); /* proto*/
+static PyObject *__pyx_f_8Schottky_4Trap_4Trap_df_dt(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_temperature, double __pyx_v_v_e, double __pyx_v_n_e, double __pyx_v_n_c, double __pyx_v_v_h, double __pyx_v_n_h, double __pyx_v_n_v, int __pyx_skip_dispatch); /* proto*/
+static double __pyx_f_8Schottky_4Trap_4Trap___coerce_f(CYTHON_UNUSED struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_f); /* proto*/
 
 /* Module declarations from 'libc.math' */
 
@@ -1266,8 +1289,10 @@ int __pyx_module_is_main_Schottky__Trap = 0;
 /* Implementation of 'Schottky.Trap' */
 static const char __pyx_k_e_c[] = "e_c";
 static const char __pyx_k_h_c[] = "h_c";
+static const char __pyx_k_n_c[] = "n_c";
 static const char __pyx_k_n_e[] = "n_e";
 static const char __pyx_k_n_h[] = "n_h";
+static const char __pyx_k_n_v[] = "n_v";
 static const char __pyx_k_new[] = "__new__";
 static const char __pyx_k_v_e[] = "v_e";
 static const char __pyx_k_v_h[] = "v_h";
@@ -1275,11 +1300,15 @@ static const char __pyx_k_Trap[] = "Trap";
 static const char __pyx_k_dict[] = "__dict__";
 static const char __pyx_k_e_cr[] = "e_cr";
 static const char __pyx_k_e_cs[] = "e_cs";
+static const char __pyx_k_e_er[] = "e_er";
+static const char __pyx_k_f_eq[] = "f_eq";
 static const char __pyx_k_h_cr[] = "h_cr";
 static const char __pyx_k_h_cs[] = "h_cs";
+static const char __pyx_k_h_er[] = "h_er";
 static const char __pyx_k_main[] = "__main__";
 static const char __pyx_k_name[] = "__name__";
 static const char __pyx_k_test[] = "__test__";
+static const char __pyx_k_df_dt[] = "df_dt";
 static const char __pyx_k_e_cs0[] = "e_cs0";
 static const char __pyx_k_h_cs0[] = "h_cs0";
 static const char __pyx_k_label[] = "label";
@@ -1312,14 +1341,15 @@ static const char __pyx_k_pyx_PickleError[] = "__pyx_PickleError";
 static const char __pyx_k_setstate_cython[] = "__setstate_cython__";
 static const char __pyx_k_pyx_unpickle_Trap[] = "__pyx_unpickle_Trap";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
-static const char __pyx_k_Incompatible_checksums_s_vs_0xf1[] = "Incompatible checksums (%s vs 0xf11b600 = (__e_cs, __e_cs_activation, __energy_c, __energy_v, __f, __h_cs, __h_cs_activation, __label))";
+static const char __pyx_k_Incompatible_checksums_s_vs_0xb9[] = "Incompatible checksums (%s vs 0xb97128a = (__charge_state, __e_cs, __e_cs_activation, __energy_c, __energy_v, __f, __g, __h_cs, __h_cs_activation, __label))";
 static const char __pyx_k_Trap_s_Ec_Et_2_2f_eV_2_2g_J_Et_E[] = "Trap: %s\nEc-Et: %2.2f eV (%2.2g J)\nEt-Ev: %2.2f eV (%2.2g J)";
-static PyObject *__pyx_kp_s_Incompatible_checksums_s_vs_0xf1;
+static PyObject *__pyx_kp_s_Incompatible_checksums_s_vs_0xb9;
 static PyObject *__pyx_n_s_PickleError;
 static PyObject *__pyx_n_s_Schottky_Trap;
 static PyObject *__pyx_n_s_Trap;
 static PyObject *__pyx_kp_u_Trap_s_Ec_Et_2_2f_eV_2_2g_J_Et_E;
 static PyObject *__pyx_n_s_cline_in_traceback;
+static PyObject *__pyx_n_s_df_dt;
 static PyObject *__pyx_n_s_dict;
 static PyObject *__pyx_n_s_e_c;
 static PyObject *__pyx_n_s_e_cr;
@@ -1327,10 +1357,12 @@ static PyObject *__pyx_n_s_e_cs;
 static PyObject *__pyx_n_s_e_cs0;
 static PyObject *__pyx_n_s_e_cs0_2;
 static PyObject *__pyx_n_s_e_cs_activation;
+static PyObject *__pyx_n_s_e_er;
 static PyObject *__pyx_n_s_energy_c;
 static PyObject *__pyx_n_s_energy_c_ev;
 static PyObject *__pyx_n_s_energy_v;
 static PyObject *__pyx_n_s_energy_v_ev;
+static PyObject *__pyx_n_s_f_eq;
 static PyObject *__pyx_n_s_getstate;
 static PyObject *__pyx_n_s_h_c;
 static PyObject *__pyx_n_s_h_cr;
@@ -1338,11 +1370,14 @@ static PyObject *__pyx_n_s_h_cs;
 static PyObject *__pyx_n_s_h_cs0;
 static PyObject *__pyx_n_s_h_cs0_2;
 static PyObject *__pyx_n_s_h_cs_activation;
+static PyObject *__pyx_n_s_h_er;
 static PyObject *__pyx_n_s_import;
 static PyObject *__pyx_n_s_label;
 static PyObject *__pyx_n_s_main;
+static PyObject *__pyx_n_s_n_c;
 static PyObject *__pyx_n_s_n_e;
 static PyObject *__pyx_n_s_n_h;
+static PyObject *__pyx_n_s_n_v;
 static PyObject *__pyx_n_s_name;
 static PyObject *__pyx_n_s_new;
 static PyObject *__pyx_n_s_pickle;
@@ -1393,13 +1428,26 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_6e_c(struct __pyx_obj_8Schottky_
 static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_8h_c(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_temperature, double __pyx_v_v_h); /* proto */
 static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_10e_cr(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_temperature, double __pyx_v_v_e, double __pyx_v_n_e); /* proto */
 static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_12h_cr(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_temperature, double __pyx_v_v_h, double __pyx_v_n_h); /* proto */
+static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_14e_er(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_temperature, double __pyx_v_v_e, double __pyx_v_n_c); /* proto */
+static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_16h_er(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_temperature, double __pyx_v_v_h, double __pyx_v_n_v); /* proto */
+static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_18f_eq(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_temperature, double __pyx_v_v_e, double __pyx_v_n_e, double __pyx_v_n_c, double __pyx_v_v_h, double __pyx_v_n_h, double __pyx_v_n_v); /* proto */
+static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_20df_dt(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_temperature, double __pyx_v_v_e, double __pyx_v_n_e, double __pyx_v_n_c, double __pyx_v_v_h, double __pyx_v_n_h, double __pyx_v_n_v); /* proto */
+static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_12charge_state___get__(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self); /* proto */
+static int __pyx_pf_8Schottky_4Trap_4Trap_12charge_state_2__set__(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, PyObject *__pyx_v_charge_state); /* proto */
+static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_1g___get__(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self); /* proto */
+static int __pyx_pf_8Schottky_4Trap_4Trap_1g_2__set__(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, PyObject *__pyx_v_g); /* proto */
 static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_1f___get__(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_14__str__(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_16__reduce_cython__(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_18__setstate_cython__(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, PyObject *__pyx_v___pyx_state); /* proto */
+static int __pyx_pf_8Schottky_4Trap_4Trap_1f_2__set__(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_f); /* proto */
+static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_22__str__(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_24__reduce_cython__(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_26__setstate_cython__(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, PyObject *__pyx_v___pyx_state); /* proto */
 static PyObject *__pyx_pf_8Schottky_4Trap___pyx_unpickle_Trap(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v___pyx_type, long __pyx_v___pyx_checksum, PyObject *__pyx_v___pyx_state); /* proto */
 static PyObject *__pyx_tp_new_8Schottky_4Trap_Trap(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
-static PyObject *__pyx_int_252818944;
+static PyObject *__pyx_int_0;
+static PyObject *__pyx_int_1;
+static PyObject *__pyx_int_2;
+static PyObject *__pyx_int_194450058;
+static PyObject *__pyx_int_neg_1;
 static PyObject *__pyx_tuple_;
 static PyObject *__pyx_codeobj__2;
 /* Late includes */
@@ -1624,7 +1672,7 @@ static int __pyx_pf_8Schottky_4Trap_4Trap___init__(struct __pyx_obj_8Schottky_4T
  *         self.__e_cs_activation = e_cs_activation
  *         self.__h_cs_activation = h_cs_activation             # <<<<<<<<<<<<<<
  *         self.__f = 0.0
- * 
+ *         self.__charge_state = {0: 0, 1: -1}
  */
   __pyx_v_self->__pyx___h_cs_activation = __pyx_v_h_cs_activation;
 
@@ -1632,10 +1680,44 @@ static int __pyx_pf_8Schottky_4Trap_4Trap___init__(struct __pyx_obj_8Schottky_4T
  *         self.__e_cs_activation = e_cs_activation
  *         self.__h_cs_activation = h_cs_activation
  *         self.__f = 0.0             # <<<<<<<<<<<<<<
+ *         self.__charge_state = {0: 0, 1: -1}
+ *         self.__g = {0: 1, 1: 2}
+ */
+  __pyx_v_self->__pyx___f = 0.0;
+
+  /* "Schottky/Trap/__init__.pyx":28
+ *         self.__h_cs_activation = h_cs_activation
+ *         self.__f = 0.0
+ *         self.__charge_state = {0: 0, 1: -1}             # <<<<<<<<<<<<<<
+ *         self.__g = {0: 1, 1: 2}
+ * 
+ */
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 28, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (PyDict_SetItem(__pyx_t_1, __pyx_int_0, __pyx_int_0) < 0) __PYX_ERR(0, 28, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_int_1, __pyx_int_neg_1) < 0) __PYX_ERR(0, 28, __pyx_L1_error)
+  __Pyx_GIVEREF(__pyx_t_1);
+  __Pyx_GOTREF(__pyx_v_self->__pyx___charge_state);
+  __Pyx_DECREF(__pyx_v_self->__pyx___charge_state);
+  __pyx_v_self->__pyx___charge_state = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
+
+  /* "Schottky/Trap/__init__.pyx":29
+ *         self.__f = 0.0
+ *         self.__charge_state = {0: 0, 1: -1}
+ *         self.__g = {0: 1, 1: 2}             # <<<<<<<<<<<<<<
  * 
  *     @property
  */
-  __pyx_v_self->__pyx___f = 0.0;
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 29, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (PyDict_SetItem(__pyx_t_1, __pyx_int_0, __pyx_int_1) < 0) __PYX_ERR(0, 29, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_int_1, __pyx_int_2) < 0) __PYX_ERR(0, 29, __pyx_L1_error)
+  __Pyx_GIVEREF(__pyx_t_1);
+  __Pyx_GOTREF(__pyx_v_self->__pyx___g);
+  __Pyx_DECREF(__pyx_v_self->__pyx___g);
+  __pyx_v_self->__pyx___g = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
 
   /* "Schottky/Trap/__init__.pyx":13
  *     '''
@@ -1657,7 +1739,7 @@ static int __pyx_pf_8Schottky_4Trap_4Trap___init__(struct __pyx_obj_8Schottky_4T
   return __pyx_r;
 }
 
-/* "Schottky/Trap/__init__.pyx":30
+/* "Schottky/Trap/__init__.pyx":32
  * 
  *     @property
  *     def label(self):             # <<<<<<<<<<<<<<
@@ -1683,7 +1765,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_5label___get__(struct __pyx_obj_
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "Schottky/Trap/__init__.pyx":31
+  /* "Schottky/Trap/__init__.pyx":33
  *     @property
  *     def label(self):
  *         return self.__label             # <<<<<<<<<<<<<<
@@ -1695,7 +1777,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_5label___get__(struct __pyx_obj_
   __pyx_r = __pyx_v_self->__pyx___label;
   goto __pyx_L0;
 
-  /* "Schottky/Trap/__init__.pyx":30
+  /* "Schottky/Trap/__init__.pyx":32
  * 
  *     @property
  *     def label(self):             # <<<<<<<<<<<<<<
@@ -1710,7 +1792,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_5label___get__(struct __pyx_obj_
   return __pyx_r;
 }
 
-/* "Schottky/Trap/__init__.pyx":34
+/* "Schottky/Trap/__init__.pyx":36
  * 
  *     @label.setter
  *     def label(self, str label):             # <<<<<<<<<<<<<<
@@ -1724,7 +1806,7 @@ static int __pyx_pw_8Schottky_4Trap_4Trap_5label_3__set__(PyObject *__pyx_v_self
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_label), (&PyUnicode_Type), 1, "label", 1))) __PYX_ERR(0, 34, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_label), (&PyUnicode_Type), 1, "label", 1))) __PYX_ERR(0, 36, __pyx_L1_error)
   __pyx_r = __pyx_pf_8Schottky_4Trap_4Trap_5label_2__set__(((struct __pyx_obj_8Schottky_4Trap_Trap *)__pyx_v_self), ((PyObject*)__pyx_v_label));
 
   /* function exit code */
@@ -1741,7 +1823,7 @@ static int __pyx_pf_8Schottky_4Trap_4Trap_5label_2__set__(struct __pyx_obj_8Scho
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__set__", 0);
 
-  /* "Schottky/Trap/__init__.pyx":35
+  /* "Schottky/Trap/__init__.pyx":37
  *     @label.setter
  *     def label(self, str label):
  *         self.__label = label             # <<<<<<<<<<<<<<
@@ -1754,7 +1836,7 @@ static int __pyx_pf_8Schottky_4Trap_4Trap_5label_2__set__(struct __pyx_obj_8Scho
   __Pyx_DECREF(__pyx_v_self->__pyx___label);
   __pyx_v_self->__pyx___label = __pyx_v_label;
 
-  /* "Schottky/Trap/__init__.pyx":34
+  /* "Schottky/Trap/__init__.pyx":36
  * 
  *     @label.setter
  *     def label(self, str label):             # <<<<<<<<<<<<<<
@@ -1768,7 +1850,7 @@ static int __pyx_pf_8Schottky_4Trap_4Trap_5label_2__set__(struct __pyx_obj_8Scho
   return __pyx_r;
 }
 
-/* "Schottky/Trap/__init__.pyx":38
+/* "Schottky/Trap/__init__.pyx":40
  * 
  *     @property
  *     def energy_c(self):             # <<<<<<<<<<<<<<
@@ -1795,7 +1877,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_8energy_c___get__(struct __pyx_o
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "Schottky/Trap/__init__.pyx":39
+  /* "Schottky/Trap/__init__.pyx":41
  *     @property
  *     def energy_c(self):
  *         return self.__energy_c             # <<<<<<<<<<<<<<
@@ -1803,13 +1885,13 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_8energy_c___get__(struct __pyx_o
  *     @energy_c.setter
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->__pyx___energy_c); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 39, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->__pyx___energy_c); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 41, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "Schottky/Trap/__init__.pyx":38
+  /* "Schottky/Trap/__init__.pyx":40
  * 
  *     @property
  *     def energy_c(self):             # <<<<<<<<<<<<<<
@@ -1828,7 +1910,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_8energy_c___get__(struct __pyx_o
   return __pyx_r;
 }
 
-/* "Schottky/Trap/__init__.pyx":42
+/* "Schottky/Trap/__init__.pyx":44
  * 
  *     @energy_c.setter
  *     def energy_c(self, double energy_c):             # <<<<<<<<<<<<<<
@@ -1844,7 +1926,7 @@ static int __pyx_pw_8Schottky_4Trap_4Trap_8energy_c_3__set__(PyObject *__pyx_v_s
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
   assert(__pyx_arg_energy_c); {
-    __pyx_v_energy_c = __pyx_PyFloat_AsDouble(__pyx_arg_energy_c); if (unlikely((__pyx_v_energy_c == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 42, __pyx_L3_error)
+    __pyx_v_energy_c = __pyx_PyFloat_AsDouble(__pyx_arg_energy_c); if (unlikely((__pyx_v_energy_c == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 44, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -1864,7 +1946,7 @@ static int __pyx_pf_8Schottky_4Trap_4Trap_8energy_c_2__set__(struct __pyx_obj_8S
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__set__", 0);
 
-  /* "Schottky/Trap/__init__.pyx":43
+  /* "Schottky/Trap/__init__.pyx":45
  *     @energy_c.setter
  *     def energy_c(self, double energy_c):
  *         self.__energy_c = energy_c             # <<<<<<<<<<<<<<
@@ -1873,7 +1955,7 @@ static int __pyx_pf_8Schottky_4Trap_4Trap_8energy_c_2__set__(struct __pyx_obj_8S
  */
   __pyx_v_self->__pyx___energy_c = __pyx_v_energy_c;
 
-  /* "Schottky/Trap/__init__.pyx":42
+  /* "Schottky/Trap/__init__.pyx":44
  * 
  *     @energy_c.setter
  *     def energy_c(self, double energy_c):             # <<<<<<<<<<<<<<
@@ -1887,7 +1969,7 @@ static int __pyx_pf_8Schottky_4Trap_4Trap_8energy_c_2__set__(struct __pyx_obj_8S
   return __pyx_r;
 }
 
-/* "Schottky/Trap/__init__.pyx":46
+/* "Schottky/Trap/__init__.pyx":48
  * 
  *     @property
  *     def energy_v(self):             # <<<<<<<<<<<<<<
@@ -1914,7 +1996,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_8energy_v___get__(struct __pyx_o
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "Schottky/Trap/__init__.pyx":47
+  /* "Schottky/Trap/__init__.pyx":49
  *     @property
  *     def energy_v(self):
  *         return self.__energy_v             # <<<<<<<<<<<<<<
@@ -1922,13 +2004,13 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_8energy_v___get__(struct __pyx_o
  *     @energy_v.setter
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->__pyx___energy_v); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 47, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->__pyx___energy_v); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 49, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "Schottky/Trap/__init__.pyx":46
+  /* "Schottky/Trap/__init__.pyx":48
  * 
  *     @property
  *     def energy_v(self):             # <<<<<<<<<<<<<<
@@ -1947,7 +2029,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_8energy_v___get__(struct __pyx_o
   return __pyx_r;
 }
 
-/* "Schottky/Trap/__init__.pyx":50
+/* "Schottky/Trap/__init__.pyx":52
  * 
  *     @energy_v.setter
  *     def energy_v(self, double energy_v):             # <<<<<<<<<<<<<<
@@ -1963,7 +2045,7 @@ static int __pyx_pw_8Schottky_4Trap_4Trap_8energy_v_3__set__(PyObject *__pyx_v_s
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
   assert(__pyx_arg_energy_v); {
-    __pyx_v_energy_v = __pyx_PyFloat_AsDouble(__pyx_arg_energy_v); if (unlikely((__pyx_v_energy_v == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 50, __pyx_L3_error)
+    __pyx_v_energy_v = __pyx_PyFloat_AsDouble(__pyx_arg_energy_v); if (unlikely((__pyx_v_energy_v == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 52, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -1983,7 +2065,7 @@ static int __pyx_pf_8Schottky_4Trap_4Trap_8energy_v_2__set__(struct __pyx_obj_8S
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__set__", 0);
 
-  /* "Schottky/Trap/__init__.pyx":51
+  /* "Schottky/Trap/__init__.pyx":53
  *     @energy_v.setter
  *     def energy_v(self, double energy_v):
  *         self.__energy_v = energy_v             # <<<<<<<<<<<<<<
@@ -1992,7 +2074,7 @@ static int __pyx_pf_8Schottky_4Trap_4Trap_8energy_v_2__set__(struct __pyx_obj_8S
  */
   __pyx_v_self->__pyx___energy_v = __pyx_v_energy_v;
 
-  /* "Schottky/Trap/__init__.pyx":50
+  /* "Schottky/Trap/__init__.pyx":52
  * 
  *     @energy_v.setter
  *     def energy_v(self, double energy_v):             # <<<<<<<<<<<<<<
@@ -2006,7 +2088,7 @@ static int __pyx_pf_8Schottky_4Trap_4Trap_8energy_v_2__set__(struct __pyx_obj_8S
   return __pyx_r;
 }
 
-/* "Schottky/Trap/__init__.pyx":54
+/* "Schottky/Trap/__init__.pyx":56
  * 
  *     @property
  *     def energy_c_ev(self):             # <<<<<<<<<<<<<<
@@ -2033,7 +2115,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_11energy_c_ev___get__(struct __p
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "Schottky/Trap/__init__.pyx":55
+  /* "Schottky/Trap/__init__.pyx":57
  *     @property
  *     def energy_c_ev(self):
  *         return self.__energy_c / constant.__q             # <<<<<<<<<<<<<<
@@ -2043,15 +2125,15 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_11energy_c_ev___get__(struct __p
   __Pyx_XDECREF(__pyx_r);
   if (unlikely(__pyx_v_8Schottky_9Constants_constant->__pyx___q == 0)) {
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-    __PYX_ERR(0, 55, __pyx_L1_error)
+    __PYX_ERR(0, 57, __pyx_L1_error)
   }
-  __pyx_t_1 = PyFloat_FromDouble((__pyx_v_self->__pyx___energy_c / __pyx_v_8Schottky_9Constants_constant->__pyx___q)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 55, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble((__pyx_v_self->__pyx___energy_c / __pyx_v_8Schottky_9Constants_constant->__pyx___q)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 57, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "Schottky/Trap/__init__.pyx":54
+  /* "Schottky/Trap/__init__.pyx":56
  * 
  *     @property
  *     def energy_c_ev(self):             # <<<<<<<<<<<<<<
@@ -2070,7 +2152,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_11energy_c_ev___get__(struct __p
   return __pyx_r;
 }
 
-/* "Schottky/Trap/__init__.pyx":58
+/* "Schottky/Trap/__init__.pyx":60
  * 
  *     @energy_c_ev.setter
  *     def energy_c_ev(self, double energy_c_ev):             # <<<<<<<<<<<<<<
@@ -2086,7 +2168,7 @@ static int __pyx_pw_8Schottky_4Trap_4Trap_11energy_c_ev_3__set__(PyObject *__pyx
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
   assert(__pyx_arg_energy_c_ev); {
-    __pyx_v_energy_c_ev = __pyx_PyFloat_AsDouble(__pyx_arg_energy_c_ev); if (unlikely((__pyx_v_energy_c_ev == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 58, __pyx_L3_error)
+    __pyx_v_energy_c_ev = __pyx_PyFloat_AsDouble(__pyx_arg_energy_c_ev); if (unlikely((__pyx_v_energy_c_ev == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 60, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -2106,7 +2188,7 @@ static int __pyx_pf_8Schottky_4Trap_4Trap_11energy_c_ev_2__set__(struct __pyx_ob
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__set__", 0);
 
-  /* "Schottky/Trap/__init__.pyx":59
+  /* "Schottky/Trap/__init__.pyx":61
  *     @energy_c_ev.setter
  *     def energy_c_ev(self, double energy_c_ev):
  *         self.__energy_c = energy_c_ev * constant.__q             # <<<<<<<<<<<<<<
@@ -2115,7 +2197,7 @@ static int __pyx_pf_8Schottky_4Trap_4Trap_11energy_c_ev_2__set__(struct __pyx_ob
  */
   __pyx_v_self->__pyx___energy_c = (__pyx_v_energy_c_ev * __pyx_v_8Schottky_9Constants_constant->__pyx___q);
 
-  /* "Schottky/Trap/__init__.pyx":58
+  /* "Schottky/Trap/__init__.pyx":60
  * 
  *     @energy_c_ev.setter
  *     def energy_c_ev(self, double energy_c_ev):             # <<<<<<<<<<<<<<
@@ -2129,7 +2211,7 @@ static int __pyx_pf_8Schottky_4Trap_4Trap_11energy_c_ev_2__set__(struct __pyx_ob
   return __pyx_r;
 }
 
-/* "Schottky/Trap/__init__.pyx":62
+/* "Schottky/Trap/__init__.pyx":64
  * 
  *     @property
  *     def energy_v_ev(self):             # <<<<<<<<<<<<<<
@@ -2156,7 +2238,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_11energy_v_ev___get__(struct __p
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "Schottky/Trap/__init__.pyx":63
+  /* "Schottky/Trap/__init__.pyx":65
  *     @property
  *     def energy_v_ev(self):
  *         return self.__energy_v / constant.__q             # <<<<<<<<<<<<<<
@@ -2166,15 +2248,15 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_11energy_v_ev___get__(struct __p
   __Pyx_XDECREF(__pyx_r);
   if (unlikely(__pyx_v_8Schottky_9Constants_constant->__pyx___q == 0)) {
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-    __PYX_ERR(0, 63, __pyx_L1_error)
+    __PYX_ERR(0, 65, __pyx_L1_error)
   }
-  __pyx_t_1 = PyFloat_FromDouble((__pyx_v_self->__pyx___energy_v / __pyx_v_8Schottky_9Constants_constant->__pyx___q)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 63, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble((__pyx_v_self->__pyx___energy_v / __pyx_v_8Schottky_9Constants_constant->__pyx___q)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 65, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "Schottky/Trap/__init__.pyx":62
+  /* "Schottky/Trap/__init__.pyx":64
  * 
  *     @property
  *     def energy_v_ev(self):             # <<<<<<<<<<<<<<
@@ -2193,7 +2275,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_11energy_v_ev___get__(struct __p
   return __pyx_r;
 }
 
-/* "Schottky/Trap/__init__.pyx":66
+/* "Schottky/Trap/__init__.pyx":68
  * 
  *     @energy_v_ev.setter
  *     def energy_v_ev(self, double energy_v_ev):             # <<<<<<<<<<<<<<
@@ -2209,7 +2291,7 @@ static int __pyx_pw_8Schottky_4Trap_4Trap_11energy_v_ev_3__set__(PyObject *__pyx
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
   assert(__pyx_arg_energy_v_ev); {
-    __pyx_v_energy_v_ev = __pyx_PyFloat_AsDouble(__pyx_arg_energy_v_ev); if (unlikely((__pyx_v_energy_v_ev == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 66, __pyx_L3_error)
+    __pyx_v_energy_v_ev = __pyx_PyFloat_AsDouble(__pyx_arg_energy_v_ev); if (unlikely((__pyx_v_energy_v_ev == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 68, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -2229,7 +2311,7 @@ static int __pyx_pf_8Schottky_4Trap_4Trap_11energy_v_ev_2__set__(struct __pyx_ob
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__set__", 0);
 
-  /* "Schottky/Trap/__init__.pyx":67
+  /* "Schottky/Trap/__init__.pyx":69
  *     @energy_v_ev.setter
  *     def energy_v_ev(self, double energy_v_ev):
  *         self.__energy_v = energy_v_ev * constant.__q             # <<<<<<<<<<<<<<
@@ -2238,7 +2320,7 @@ static int __pyx_pf_8Schottky_4Trap_4Trap_11energy_v_ev_2__set__(struct __pyx_ob
  */
   __pyx_v_self->__pyx___energy_v = (__pyx_v_energy_v_ev * __pyx_v_8Schottky_9Constants_constant->__pyx___q);
 
-  /* "Schottky/Trap/__init__.pyx":66
+  /* "Schottky/Trap/__init__.pyx":68
  * 
  *     @energy_v_ev.setter
  *     def energy_v_ev(self, double energy_v_ev):             # <<<<<<<<<<<<<<
@@ -2252,7 +2334,7 @@ static int __pyx_pf_8Schottky_4Trap_4Trap_11energy_v_ev_2__set__(struct __pyx_ob
   return __pyx_r;
 }
 
-/* "Schottky/Trap/__init__.pyx":70
+/* "Schottky/Trap/__init__.pyx":72
  * 
  *     @property
  *     def e_cs0(self):             # <<<<<<<<<<<<<<
@@ -2279,7 +2361,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_5e_cs0___get__(struct __pyx_obj_
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "Schottky/Trap/__init__.pyx":71
+  /* "Schottky/Trap/__init__.pyx":73
  *     @property
  *     def e_cs0(self):
  *         return self.__e_cs0             # <<<<<<<<<<<<<<
@@ -2287,13 +2369,13 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_5e_cs0___get__(struct __pyx_obj_
  *     @e_cs0.setter
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_e_cs0_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 71, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_e_cs0_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 73, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "Schottky/Trap/__init__.pyx":70
+  /* "Schottky/Trap/__init__.pyx":72
  * 
  *     @property
  *     def e_cs0(self):             # <<<<<<<<<<<<<<
@@ -2312,7 +2394,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_5e_cs0___get__(struct __pyx_obj_
   return __pyx_r;
 }
 
-/* "Schottky/Trap/__init__.pyx":74
+/* "Schottky/Trap/__init__.pyx":76
  * 
  *     @e_cs0.setter
  *     def e_cs0(self, double e_cs0):             # <<<<<<<<<<<<<<
@@ -2328,7 +2410,7 @@ static int __pyx_pw_8Schottky_4Trap_4Trap_5e_cs0_3__set__(PyObject *__pyx_v_self
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
   assert(__pyx_arg_e_cs0); {
-    __pyx_v_e_cs0 = __pyx_PyFloat_AsDouble(__pyx_arg_e_cs0); if (unlikely((__pyx_v_e_cs0 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 74, __pyx_L3_error)
+    __pyx_v_e_cs0 = __pyx_PyFloat_AsDouble(__pyx_arg_e_cs0); if (unlikely((__pyx_v_e_cs0 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 76, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -2349,19 +2431,19 @@ static int __pyx_pf_8Schottky_4Trap_4Trap_5e_cs0_2__set__(struct __pyx_obj_8Scho
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("__set__", 0);
 
-  /* "Schottky/Trap/__init__.pyx":75
+  /* "Schottky/Trap/__init__.pyx":77
  *     @e_cs0.setter
  *     def e_cs0(self, double e_cs0):
  *         self.__e_cs0 = e_cs0             # <<<<<<<<<<<<<<
  * 
  *     @property
  */
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_e_cs0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 75, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_e_cs0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 77, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (__Pyx_PyObject_SetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_e_cs0_2, __pyx_t_1) < 0) __PYX_ERR(0, 75, __pyx_L1_error)
+  if (__Pyx_PyObject_SetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_e_cs0_2, __pyx_t_1) < 0) __PYX_ERR(0, 77, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "Schottky/Trap/__init__.pyx":74
+  /* "Schottky/Trap/__init__.pyx":76
  * 
  *     @e_cs0.setter
  *     def e_cs0(self, double e_cs0):             # <<<<<<<<<<<<<<
@@ -2381,7 +2463,7 @@ static int __pyx_pf_8Schottky_4Trap_4Trap_5e_cs0_2__set__(struct __pyx_obj_8Scho
   return __pyx_r;
 }
 
-/* "Schottky/Trap/__init__.pyx":78
+/* "Schottky/Trap/__init__.pyx":80
  * 
  *     @property
  *     def h_cs0(self):             # <<<<<<<<<<<<<<
@@ -2408,7 +2490,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_5h_cs0___get__(struct __pyx_obj_
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "Schottky/Trap/__init__.pyx":79
+  /* "Schottky/Trap/__init__.pyx":81
  *     @property
  *     def h_cs0(self):
  *         return self.__h_cs0             # <<<<<<<<<<<<<<
@@ -2416,13 +2498,13 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_5h_cs0___get__(struct __pyx_obj_
  *     @h_cs0.setter
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_h_cs0_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 79, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_h_cs0_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 81, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "Schottky/Trap/__init__.pyx":78
+  /* "Schottky/Trap/__init__.pyx":80
  * 
  *     @property
  *     def h_cs0(self):             # <<<<<<<<<<<<<<
@@ -2441,7 +2523,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_5h_cs0___get__(struct __pyx_obj_
   return __pyx_r;
 }
 
-/* "Schottky/Trap/__init__.pyx":82
+/* "Schottky/Trap/__init__.pyx":84
  * 
  *     @h_cs0.setter
  *     def h_cs0(self, double h_cs0):             # <<<<<<<<<<<<<<
@@ -2457,7 +2539,7 @@ static int __pyx_pw_8Schottky_4Trap_4Trap_5h_cs0_3__set__(PyObject *__pyx_v_self
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
   assert(__pyx_arg_h_cs0); {
-    __pyx_v_h_cs0 = __pyx_PyFloat_AsDouble(__pyx_arg_h_cs0); if (unlikely((__pyx_v_h_cs0 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 82, __pyx_L3_error)
+    __pyx_v_h_cs0 = __pyx_PyFloat_AsDouble(__pyx_arg_h_cs0); if (unlikely((__pyx_v_h_cs0 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 84, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -2478,19 +2560,19 @@ static int __pyx_pf_8Schottky_4Trap_4Trap_5h_cs0_2__set__(struct __pyx_obj_8Scho
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("__set__", 0);
 
-  /* "Schottky/Trap/__init__.pyx":83
+  /* "Schottky/Trap/__init__.pyx":85
  *     @h_cs0.setter
  *     def h_cs0(self, double h_cs0):
  *         self.__h_cs0 = h_cs0             # <<<<<<<<<<<<<<
  * 
  *     @property
  */
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_h_cs0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 83, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_h_cs0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 85, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (__Pyx_PyObject_SetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_h_cs0_2, __pyx_t_1) < 0) __PYX_ERR(0, 83, __pyx_L1_error)
+  if (__Pyx_PyObject_SetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_h_cs0_2, __pyx_t_1) < 0) __PYX_ERR(0, 85, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "Schottky/Trap/__init__.pyx":82
+  /* "Schottky/Trap/__init__.pyx":84
  * 
  *     @h_cs0.setter
  *     def h_cs0(self, double h_cs0):             # <<<<<<<<<<<<<<
@@ -2510,7 +2592,7 @@ static int __pyx_pf_8Schottky_4Trap_4Trap_5h_cs0_2__set__(struct __pyx_obj_8Scho
   return __pyx_r;
 }
 
-/* "Schottky/Trap/__init__.pyx":86
+/* "Schottky/Trap/__init__.pyx":88
  * 
  *     @property
  *     def e_cs_activation(self):             # <<<<<<<<<<<<<<
@@ -2537,7 +2619,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_15e_cs_activation___get__(struct
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "Schottky/Trap/__init__.pyx":87
+  /* "Schottky/Trap/__init__.pyx":89
  *     @property
  *     def e_cs_activation(self):
  *         return self.__e_cs_activation             # <<<<<<<<<<<<<<
@@ -2545,13 +2627,13 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_15e_cs_activation___get__(struct
  *     @e_cs_activation.setter
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->__pyx___e_cs_activation); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 87, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->__pyx___e_cs_activation); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 89, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "Schottky/Trap/__init__.pyx":86
+  /* "Schottky/Trap/__init__.pyx":88
  * 
  *     @property
  *     def e_cs_activation(self):             # <<<<<<<<<<<<<<
@@ -2570,7 +2652,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_15e_cs_activation___get__(struct
   return __pyx_r;
 }
 
-/* "Schottky/Trap/__init__.pyx":90
+/* "Schottky/Trap/__init__.pyx":92
  * 
  *     @e_cs_activation.setter
  *     def e_cs_activation(self, double e_cs_activation):             # <<<<<<<<<<<<<<
@@ -2586,7 +2668,7 @@ static int __pyx_pw_8Schottky_4Trap_4Trap_15e_cs_activation_3__set__(PyObject *_
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
   assert(__pyx_arg_e_cs_activation); {
-    __pyx_v_e_cs_activation = __pyx_PyFloat_AsDouble(__pyx_arg_e_cs_activation); if (unlikely((__pyx_v_e_cs_activation == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 90, __pyx_L3_error)
+    __pyx_v_e_cs_activation = __pyx_PyFloat_AsDouble(__pyx_arg_e_cs_activation); if (unlikely((__pyx_v_e_cs_activation == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 92, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -2606,7 +2688,7 @@ static int __pyx_pf_8Schottky_4Trap_4Trap_15e_cs_activation_2__set__(struct __py
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__set__", 0);
 
-  /* "Schottky/Trap/__init__.pyx":91
+  /* "Schottky/Trap/__init__.pyx":93
  *     @e_cs_activation.setter
  *     def e_cs_activation(self, double e_cs_activation):
  *         self.__e_cs_activation = e_cs_activation             # <<<<<<<<<<<<<<
@@ -2615,7 +2697,7 @@ static int __pyx_pf_8Schottky_4Trap_4Trap_15e_cs_activation_2__set__(struct __py
  */
   __pyx_v_self->__pyx___e_cs_activation = __pyx_v_e_cs_activation;
 
-  /* "Schottky/Trap/__init__.pyx":90
+  /* "Schottky/Trap/__init__.pyx":92
  * 
  *     @e_cs_activation.setter
  *     def e_cs_activation(self, double e_cs_activation):             # <<<<<<<<<<<<<<
@@ -2629,7 +2711,7 @@ static int __pyx_pf_8Schottky_4Trap_4Trap_15e_cs_activation_2__set__(struct __py
   return __pyx_r;
 }
 
-/* "Schottky/Trap/__init__.pyx":94
+/* "Schottky/Trap/__init__.pyx":96
  * 
  *     @property
  *     def h_cs_activation(self):             # <<<<<<<<<<<<<<
@@ -2656,7 +2738,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_15h_cs_activation___get__(struct
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "Schottky/Trap/__init__.pyx":95
+  /* "Schottky/Trap/__init__.pyx":97
  *     @property
  *     def h_cs_activation(self):
  *         return self.__h_cs_activation             # <<<<<<<<<<<<<<
@@ -2664,13 +2746,13 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_15h_cs_activation___get__(struct
  *     @h_cs_activation.setter
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->__pyx___h_cs_activation); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 95, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->__pyx___h_cs_activation); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 97, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "Schottky/Trap/__init__.pyx":94
+  /* "Schottky/Trap/__init__.pyx":96
  * 
  *     @property
  *     def h_cs_activation(self):             # <<<<<<<<<<<<<<
@@ -2689,7 +2771,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_15h_cs_activation___get__(struct
   return __pyx_r;
 }
 
-/* "Schottky/Trap/__init__.pyx":98
+/* "Schottky/Trap/__init__.pyx":100
  * 
  *     @h_cs_activation.setter
  *     def h_cs_activation(self, double h_cs_activation):             # <<<<<<<<<<<<<<
@@ -2705,7 +2787,7 @@ static int __pyx_pw_8Schottky_4Trap_4Trap_15h_cs_activation_3__set__(PyObject *_
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
   assert(__pyx_arg_h_cs_activation); {
-    __pyx_v_h_cs_activation = __pyx_PyFloat_AsDouble(__pyx_arg_h_cs_activation); if (unlikely((__pyx_v_h_cs_activation == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 98, __pyx_L3_error)
+    __pyx_v_h_cs_activation = __pyx_PyFloat_AsDouble(__pyx_arg_h_cs_activation); if (unlikely((__pyx_v_h_cs_activation == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 100, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -2725,7 +2807,7 @@ static int __pyx_pf_8Schottky_4Trap_4Trap_15h_cs_activation_2__set__(struct __py
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__set__", 0);
 
-  /* "Schottky/Trap/__init__.pyx":99
+  /* "Schottky/Trap/__init__.pyx":101
  *     @h_cs_activation.setter
  *     def h_cs_activation(self, double h_cs_activation):
  *         self.__h_cs_activation = h_cs_activation             # <<<<<<<<<<<<<<
@@ -2734,7 +2816,7 @@ static int __pyx_pf_8Schottky_4Trap_4Trap_15h_cs_activation_2__set__(struct __py
  */
   __pyx_v_self->__pyx___h_cs_activation = __pyx_v_h_cs_activation;
 
-  /* "Schottky/Trap/__init__.pyx":98
+  /* "Schottky/Trap/__init__.pyx":100
  * 
  *     @h_cs_activation.setter
  *     def h_cs_activation(self, double h_cs_activation):             # <<<<<<<<<<<<<<
@@ -2748,7 +2830,7 @@ static int __pyx_pf_8Schottky_4Trap_4Trap_15h_cs_activation_2__set__(struct __py
   return __pyx_r;
 }
 
-/* "Schottky/Trap/__init__.pyx":102
+/* "Schottky/Trap/__init__.pyx":104
  * 
  *     @property
  *     def e_cs_activation_ev(self):             # <<<<<<<<<<<<<<
@@ -2775,7 +2857,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_18e_cs_activation_ev___get__(str
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "Schottky/Trap/__init__.pyx":103
+  /* "Schottky/Trap/__init__.pyx":105
  *     @property
  *     def e_cs_activation_ev(self):
  *         return self.__e_cs_activation / constant.__q             # <<<<<<<<<<<<<<
@@ -2785,15 +2867,15 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_18e_cs_activation_ev___get__(str
   __Pyx_XDECREF(__pyx_r);
   if (unlikely(__pyx_v_8Schottky_9Constants_constant->__pyx___q == 0)) {
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-    __PYX_ERR(0, 103, __pyx_L1_error)
+    __PYX_ERR(0, 105, __pyx_L1_error)
   }
-  __pyx_t_1 = PyFloat_FromDouble((__pyx_v_self->__pyx___e_cs_activation / __pyx_v_8Schottky_9Constants_constant->__pyx___q)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 103, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble((__pyx_v_self->__pyx___e_cs_activation / __pyx_v_8Schottky_9Constants_constant->__pyx___q)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 105, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "Schottky/Trap/__init__.pyx":102
+  /* "Schottky/Trap/__init__.pyx":104
  * 
  *     @property
  *     def e_cs_activation_ev(self):             # <<<<<<<<<<<<<<
@@ -2812,7 +2894,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_18e_cs_activation_ev___get__(str
   return __pyx_r;
 }
 
-/* "Schottky/Trap/__init__.pyx":106
+/* "Schottky/Trap/__init__.pyx":108
  * 
  *     @e_cs_activation_ev.setter
  *     def e_cs_activation_ev(self, double e_cs_activation_ev):             # <<<<<<<<<<<<<<
@@ -2828,7 +2910,7 @@ static int __pyx_pw_8Schottky_4Trap_4Trap_18e_cs_activation_ev_3__set__(PyObject
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
   assert(__pyx_arg_e_cs_activation_ev); {
-    __pyx_v_e_cs_activation_ev = __pyx_PyFloat_AsDouble(__pyx_arg_e_cs_activation_ev); if (unlikely((__pyx_v_e_cs_activation_ev == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 106, __pyx_L3_error)
+    __pyx_v_e_cs_activation_ev = __pyx_PyFloat_AsDouble(__pyx_arg_e_cs_activation_ev); if (unlikely((__pyx_v_e_cs_activation_ev == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 108, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -2848,7 +2930,7 @@ static int __pyx_pf_8Schottky_4Trap_4Trap_18e_cs_activation_ev_2__set__(struct _
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__set__", 0);
 
-  /* "Schottky/Trap/__init__.pyx":107
+  /* "Schottky/Trap/__init__.pyx":109
  *     @e_cs_activation_ev.setter
  *     def e_cs_activation_ev(self, double e_cs_activation_ev):
  *         self.__e_cs_activation = e_cs_activation_ev * constant.__q             # <<<<<<<<<<<<<<
@@ -2857,7 +2939,7 @@ static int __pyx_pf_8Schottky_4Trap_4Trap_18e_cs_activation_ev_2__set__(struct _
  */
   __pyx_v_self->__pyx___e_cs_activation = (__pyx_v_e_cs_activation_ev * __pyx_v_8Schottky_9Constants_constant->__pyx___q);
 
-  /* "Schottky/Trap/__init__.pyx":106
+  /* "Schottky/Trap/__init__.pyx":108
  * 
  *     @e_cs_activation_ev.setter
  *     def e_cs_activation_ev(self, double e_cs_activation_ev):             # <<<<<<<<<<<<<<
@@ -2871,7 +2953,7 @@ static int __pyx_pf_8Schottky_4Trap_4Trap_18e_cs_activation_ev_2__set__(struct _
   return __pyx_r;
 }
 
-/* "Schottky/Trap/__init__.pyx":110
+/* "Schottky/Trap/__init__.pyx":112
  * 
  *     @property
  *     def h_cs_activation_ev(self):             # <<<<<<<<<<<<<<
@@ -2898,7 +2980,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_18h_cs_activation_ev___get__(str
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "Schottky/Trap/__init__.pyx":111
+  /* "Schottky/Trap/__init__.pyx":113
  *     @property
  *     def h_cs_activation_ev(self):
  *         return self.__h_cs_activation / constant.__q             # <<<<<<<<<<<<<<
@@ -2908,15 +2990,15 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_18h_cs_activation_ev___get__(str
   __Pyx_XDECREF(__pyx_r);
   if (unlikely(__pyx_v_8Schottky_9Constants_constant->__pyx___q == 0)) {
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-    __PYX_ERR(0, 111, __pyx_L1_error)
+    __PYX_ERR(0, 113, __pyx_L1_error)
   }
-  __pyx_t_1 = PyFloat_FromDouble((__pyx_v_self->__pyx___h_cs_activation / __pyx_v_8Schottky_9Constants_constant->__pyx___q)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 111, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble((__pyx_v_self->__pyx___h_cs_activation / __pyx_v_8Schottky_9Constants_constant->__pyx___q)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 113, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "Schottky/Trap/__init__.pyx":110
+  /* "Schottky/Trap/__init__.pyx":112
  * 
  *     @property
  *     def h_cs_activation_ev(self):             # <<<<<<<<<<<<<<
@@ -2935,7 +3017,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_18h_cs_activation_ev___get__(str
   return __pyx_r;
 }
 
-/* "Schottky/Trap/__init__.pyx":114
+/* "Schottky/Trap/__init__.pyx":116
  * 
  *     @h_cs_activation_ev.setter
  *     def h_cs_activation_ev(self, double h_cs_activation_ev):             # <<<<<<<<<<<<<<
@@ -2951,7 +3033,7 @@ static int __pyx_pw_8Schottky_4Trap_4Trap_18h_cs_activation_ev_3__set__(PyObject
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
   assert(__pyx_arg_h_cs_activation_ev); {
-    __pyx_v_h_cs_activation_ev = __pyx_PyFloat_AsDouble(__pyx_arg_h_cs_activation_ev); if (unlikely((__pyx_v_h_cs_activation_ev == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 114, __pyx_L3_error)
+    __pyx_v_h_cs_activation_ev = __pyx_PyFloat_AsDouble(__pyx_arg_h_cs_activation_ev); if (unlikely((__pyx_v_h_cs_activation_ev == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 116, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -2971,7 +3053,7 @@ static int __pyx_pf_8Schottky_4Trap_4Trap_18h_cs_activation_ev_2__set__(struct _
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__set__", 0);
 
-  /* "Schottky/Trap/__init__.pyx":115
+  /* "Schottky/Trap/__init__.pyx":117
  *     @h_cs_activation_ev.setter
  *     def h_cs_activation_ev(self, double h_cs_activation_ev):
  *         self.__h_cs_activation = h_cs_activation_ev * constant.__q             # <<<<<<<<<<<<<<
@@ -2980,7 +3062,7 @@ static int __pyx_pf_8Schottky_4Trap_4Trap_18h_cs_activation_ev_2__set__(struct _
  */
   __pyx_v_self->__pyx___h_cs_activation = (__pyx_v_h_cs_activation_ev * __pyx_v_8Schottky_9Constants_constant->__pyx___q);
 
-  /* "Schottky/Trap/__init__.pyx":114
+  /* "Schottky/Trap/__init__.pyx":116
  * 
  *     @h_cs_activation_ev.setter
  *     def h_cs_activation_ev(self, double h_cs_activation_ev):             # <<<<<<<<<<<<<<
@@ -2994,7 +3076,7 @@ static int __pyx_pf_8Schottky_4Trap_4Trap_18h_cs_activation_ev_2__set__(struct _
   return __pyx_r;
 }
 
-/* "Schottky/Trap/__init__.pyx":117
+/* "Schottky/Trap/__init__.pyx":119
  *         self.__h_cs_activation = h_cs_activation_ev * constant.__q
  * 
  *     cpdef double e_cs(self, double temperature):             # <<<<<<<<<<<<<<
@@ -3024,10 +3106,10 @@ static double __pyx_f_8Schottky_4Trap_4Trap_e_cs(struct __pyx_obj_8Schottky_4Tra
     else {
       PY_UINT64_T type_dict_guard = (likely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict)) ? __PYX_GET_DICT_VERSION(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict) : 0;
       #endif
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_e_cs); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 117, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_e_cs); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 119, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)(void*)__pyx_pw_8Schottky_4Trap_4Trap_3e_cs)) {
-        __pyx_t_3 = PyFloat_FromDouble(__pyx_v_temperature); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 117, __pyx_L1_error)
+        __pyx_t_3 = PyFloat_FromDouble(__pyx_v_temperature); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 119, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_3);
         __Pyx_INCREF(__pyx_t_1);
         __pyx_t_4 = __pyx_t_1; __pyx_t_5 = NULL;
@@ -3043,10 +3125,10 @@ static double __pyx_f_8Schottky_4Trap_4Trap_e_cs(struct __pyx_obj_8Schottky_4Tra
         __pyx_t_2 = (__pyx_t_5) ? __Pyx_PyObject_Call2Args(__pyx_t_4, __pyx_t_5, __pyx_t_3) : __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_3);
         __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
         __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 117, __pyx_L1_error)
+        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 119, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __pyx_t_6 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_6 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 117, __pyx_L1_error)
+        __pyx_t_6 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_6 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 119, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
         __pyx_r = __pyx_t_6;
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -3065,33 +3147,33 @@ static double __pyx_f_8Schottky_4Trap_4Trap_e_cs(struct __pyx_obj_8Schottky_4Tra
     #endif
   }
 
-  /* "Schottky/Trap/__init__.pyx":118
+  /* "Schottky/Trap/__init__.pyx":120
  * 
  *     cpdef double e_cs(self, double temperature):
  *         return self.__e_cs0 * exp(-self.__e_cs_activation / (constant.__k * temperature))             # <<<<<<<<<<<<<<
  * 
  *     cpdef double h_cs(self, double temperature):
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_e_cs0_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 118, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_e_cs0_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 120, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_6 = (-__pyx_v_self->__pyx___e_cs_activation);
   __pyx_t_7 = (__pyx_v_8Schottky_9Constants_constant->__pyx___k * __pyx_v_temperature);
   if (unlikely(__pyx_t_7 == 0)) {
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-    __PYX_ERR(0, 118, __pyx_L1_error)
+    __PYX_ERR(0, 120, __pyx_L1_error)
   }
-  __pyx_t_2 = PyFloat_FromDouble(exp((__pyx_t_6 / __pyx_t_7))); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 118, __pyx_L1_error)
+  __pyx_t_2 = PyFloat_FromDouble(exp((__pyx_t_6 / __pyx_t_7))); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 120, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_4 = PyNumber_Multiply(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 118, __pyx_L1_error)
+  __pyx_t_4 = PyNumber_Multiply(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 120, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_7 = __pyx_PyFloat_AsDouble(__pyx_t_4); if (unlikely((__pyx_t_7 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 118, __pyx_L1_error)
+  __pyx_t_7 = __pyx_PyFloat_AsDouble(__pyx_t_4); if (unlikely((__pyx_t_7 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 120, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __pyx_r = __pyx_t_7;
   goto __pyx_L0;
 
-  /* "Schottky/Trap/__init__.pyx":117
+  /* "Schottky/Trap/__init__.pyx":119
  *         self.__h_cs_activation = h_cs_activation_ev * constant.__q
  * 
  *     cpdef double e_cs(self, double temperature):             # <<<<<<<<<<<<<<
@@ -3121,7 +3203,7 @@ static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_3e_cs(PyObject *__pyx_v_self, Py
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("e_cs (wrapper)", 0);
   assert(__pyx_arg_temperature); {
-    __pyx_v_temperature = __pyx_PyFloat_AsDouble(__pyx_arg_temperature); if (unlikely((__pyx_v_temperature == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 117, __pyx_L3_error)
+    __pyx_v_temperature = __pyx_PyFloat_AsDouble(__pyx_arg_temperature); if (unlikely((__pyx_v_temperature == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 119, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -3142,7 +3224,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_2e_cs(struct __pyx_obj_8Schottky
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("e_cs", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_8Schottky_4Trap_4Trap_e_cs(__pyx_v_self, __pyx_v_temperature, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 117, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_8Schottky_4Trap_4Trap_e_cs(__pyx_v_self, __pyx_v_temperature, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 119, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3159,7 +3241,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_2e_cs(struct __pyx_obj_8Schottky
   return __pyx_r;
 }
 
-/* "Schottky/Trap/__init__.pyx":120
+/* "Schottky/Trap/__init__.pyx":122
  *         return self.__e_cs0 * exp(-self.__e_cs_activation / (constant.__k * temperature))
  * 
  *     cpdef double h_cs(self, double temperature):             # <<<<<<<<<<<<<<
@@ -3189,10 +3271,10 @@ static double __pyx_f_8Schottky_4Trap_4Trap_h_cs(struct __pyx_obj_8Schottky_4Tra
     else {
       PY_UINT64_T type_dict_guard = (likely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict)) ? __PYX_GET_DICT_VERSION(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict) : 0;
       #endif
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_h_cs); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 120, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_h_cs); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 122, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)(void*)__pyx_pw_8Schottky_4Trap_4Trap_5h_cs)) {
-        __pyx_t_3 = PyFloat_FromDouble(__pyx_v_temperature); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 120, __pyx_L1_error)
+        __pyx_t_3 = PyFloat_FromDouble(__pyx_v_temperature); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 122, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_3);
         __Pyx_INCREF(__pyx_t_1);
         __pyx_t_4 = __pyx_t_1; __pyx_t_5 = NULL;
@@ -3208,10 +3290,10 @@ static double __pyx_f_8Schottky_4Trap_4Trap_h_cs(struct __pyx_obj_8Schottky_4Tra
         __pyx_t_2 = (__pyx_t_5) ? __Pyx_PyObject_Call2Args(__pyx_t_4, __pyx_t_5, __pyx_t_3) : __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_3);
         __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
         __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 120, __pyx_L1_error)
+        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 122, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __pyx_t_6 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_6 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 120, __pyx_L1_error)
+        __pyx_t_6 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_6 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 122, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
         __pyx_r = __pyx_t_6;
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -3230,33 +3312,33 @@ static double __pyx_f_8Schottky_4Trap_4Trap_h_cs(struct __pyx_obj_8Schottky_4Tra
     #endif
   }
 
-  /* "Schottky/Trap/__init__.pyx":121
+  /* "Schottky/Trap/__init__.pyx":123
  * 
  *     cpdef double h_cs(self, double temperature):
  *         return self.__h_cs0 * exp(-self.__h_cs_activation / (constant.__k * temperature))             # <<<<<<<<<<<<<<
  * 
  *     cpdef double e_c(self, double temperature, double v_e):
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_h_cs0_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 121, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_h_cs0_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 123, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_6 = (-__pyx_v_self->__pyx___h_cs_activation);
   __pyx_t_7 = (__pyx_v_8Schottky_9Constants_constant->__pyx___k * __pyx_v_temperature);
   if (unlikely(__pyx_t_7 == 0)) {
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-    __PYX_ERR(0, 121, __pyx_L1_error)
+    __PYX_ERR(0, 123, __pyx_L1_error)
   }
-  __pyx_t_2 = PyFloat_FromDouble(exp((__pyx_t_6 / __pyx_t_7))); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 121, __pyx_L1_error)
+  __pyx_t_2 = PyFloat_FromDouble(exp((__pyx_t_6 / __pyx_t_7))); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 123, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_4 = PyNumber_Multiply(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 121, __pyx_L1_error)
+  __pyx_t_4 = PyNumber_Multiply(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 123, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_7 = __pyx_PyFloat_AsDouble(__pyx_t_4); if (unlikely((__pyx_t_7 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 121, __pyx_L1_error)
+  __pyx_t_7 = __pyx_PyFloat_AsDouble(__pyx_t_4); if (unlikely((__pyx_t_7 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 123, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __pyx_r = __pyx_t_7;
   goto __pyx_L0;
 
-  /* "Schottky/Trap/__init__.pyx":120
+  /* "Schottky/Trap/__init__.pyx":122
  *         return self.__e_cs0 * exp(-self.__e_cs_activation / (constant.__k * temperature))
  * 
  *     cpdef double h_cs(self, double temperature):             # <<<<<<<<<<<<<<
@@ -3286,7 +3368,7 @@ static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_5h_cs(PyObject *__pyx_v_self, Py
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("h_cs (wrapper)", 0);
   assert(__pyx_arg_temperature); {
-    __pyx_v_temperature = __pyx_PyFloat_AsDouble(__pyx_arg_temperature); if (unlikely((__pyx_v_temperature == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 120, __pyx_L3_error)
+    __pyx_v_temperature = __pyx_PyFloat_AsDouble(__pyx_arg_temperature); if (unlikely((__pyx_v_temperature == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 122, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -3307,7 +3389,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_4h_cs(struct __pyx_obj_8Schottky
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("h_cs", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_8Schottky_4Trap_4Trap_h_cs(__pyx_v_self, __pyx_v_temperature, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 120, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_8Schottky_4Trap_4Trap_h_cs(__pyx_v_self, __pyx_v_temperature, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 122, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3324,7 +3406,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_4h_cs(struct __pyx_obj_8Schottky
   return __pyx_r;
 }
 
-/* "Schottky/Trap/__init__.pyx":123
+/* "Schottky/Trap/__init__.pyx":125
  *         return self.__h_cs0 * exp(-self.__h_cs_activation / (constant.__k * temperature))
  * 
  *     cpdef double e_c(self, double temperature, double v_e):             # <<<<<<<<<<<<<<
@@ -3356,12 +3438,12 @@ static double __pyx_f_8Schottky_4Trap_4Trap_e_c(struct __pyx_obj_8Schottky_4Trap
     else {
       PY_UINT64_T type_dict_guard = (likely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict)) ? __PYX_GET_DICT_VERSION(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict) : 0;
       #endif
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_e_c); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 123, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_e_c); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 125, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)(void*)__pyx_pw_8Schottky_4Trap_4Trap_7e_c)) {
-        __pyx_t_3 = PyFloat_FromDouble(__pyx_v_temperature); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 123, __pyx_L1_error)
+        __pyx_t_3 = PyFloat_FromDouble(__pyx_v_temperature); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 125, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_3);
-        __pyx_t_4 = PyFloat_FromDouble(__pyx_v_v_e); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 123, __pyx_L1_error)
+        __pyx_t_4 = PyFloat_FromDouble(__pyx_v_v_e); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 125, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         __Pyx_INCREF(__pyx_t_1);
         __pyx_t_5 = __pyx_t_1; __pyx_t_6 = NULL;
@@ -3379,7 +3461,7 @@ static double __pyx_f_8Schottky_4Trap_4Trap_e_c(struct __pyx_obj_8Schottky_4Trap
         #if CYTHON_FAST_PYCALL
         if (PyFunction_Check(__pyx_t_5)) {
           PyObject *__pyx_temp[3] = {__pyx_t_6, __pyx_t_3, __pyx_t_4};
-          __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_7, 2+__pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 123, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_7, 2+__pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 125, __pyx_L1_error)
           __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -3389,7 +3471,7 @@ static double __pyx_f_8Schottky_4Trap_4Trap_e_c(struct __pyx_obj_8Schottky_4Trap
         #if CYTHON_FAST_PYCCALL
         if (__Pyx_PyFastCFunction_Check(__pyx_t_5)) {
           PyObject *__pyx_temp[3] = {__pyx_t_6, __pyx_t_3, __pyx_t_4};
-          __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_7, 2+__pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 123, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_7, 2+__pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 125, __pyx_L1_error)
           __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -3397,7 +3479,7 @@ static double __pyx_f_8Schottky_4Trap_4Trap_e_c(struct __pyx_obj_8Schottky_4Trap
         } else
         #endif
         {
-          __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 123, __pyx_L1_error)
+          __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 125, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_8);
           if (__pyx_t_6) {
             __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_6); __pyx_t_6 = NULL;
@@ -3408,12 +3490,12 @@ static double __pyx_f_8Schottky_4Trap_4Trap_e_c(struct __pyx_obj_8Schottky_4Trap
           PyTuple_SET_ITEM(__pyx_t_8, 1+__pyx_t_7, __pyx_t_4);
           __pyx_t_3 = 0;
           __pyx_t_4 = 0;
-          __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 123, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 125, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
         }
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-        __pyx_t_9 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_9 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 123, __pyx_L1_error)
+        __pyx_t_9 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_9 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 125, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
         __pyx_r = __pyx_t_9;
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -3432,7 +3514,7 @@ static double __pyx_f_8Schottky_4Trap_4Trap_e_c(struct __pyx_obj_8Schottky_4Trap
     #endif
   }
 
-  /* "Schottky/Trap/__init__.pyx":124
+  /* "Schottky/Trap/__init__.pyx":126
  * 
  *     cpdef double e_c(self, double temperature, double v_e):
  *         return self.e_cs(temperature) * v_e             # <<<<<<<<<<<<<<
@@ -3442,7 +3524,7 @@ static double __pyx_f_8Schottky_4Trap_4Trap_e_c(struct __pyx_obj_8Schottky_4Trap
   __pyx_r = (((struct __pyx_vtabstruct_8Schottky_4Trap_Trap *)__pyx_v_self->__pyx_vtab)->e_cs(__pyx_v_self, __pyx_v_temperature, 0) * __pyx_v_v_e);
   goto __pyx_L0;
 
-  /* "Schottky/Trap/__init__.pyx":123
+  /* "Schottky/Trap/__init__.pyx":125
  *         return self.__h_cs0 * exp(-self.__h_cs_activation / (constant.__k * temperature))
  * 
  *     cpdef double e_c(self, double temperature, double v_e):             # <<<<<<<<<<<<<<
@@ -3497,11 +3579,11 @@ static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_7e_c(PyObject *__pyx_v_self, PyO
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_v_e)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("e_c", 1, 2, 2, 1); __PYX_ERR(0, 123, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("e_c", 1, 2, 2, 1); __PYX_ERR(0, 125, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "e_c") < 0)) __PYX_ERR(0, 123, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "e_c") < 0)) __PYX_ERR(0, 125, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -3509,12 +3591,12 @@ static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_7e_c(PyObject *__pyx_v_self, PyO
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
     }
-    __pyx_v_temperature = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_temperature == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 123, __pyx_L3_error)
-    __pyx_v_v_e = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_v_e == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 123, __pyx_L3_error)
+    __pyx_v_temperature = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_temperature == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 125, __pyx_L3_error)
+    __pyx_v_v_e = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_v_e == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 125, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("e_c", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 123, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("e_c", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 125, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("Schottky.Trap.Trap.e_c", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -3533,7 +3615,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_6e_c(struct __pyx_obj_8Schottky_
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("e_c", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_8Schottky_4Trap_4Trap_e_c(__pyx_v_self, __pyx_v_temperature, __pyx_v_v_e, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 123, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_8Schottky_4Trap_4Trap_e_c(__pyx_v_self, __pyx_v_temperature, __pyx_v_v_e, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 125, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3550,7 +3632,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_6e_c(struct __pyx_obj_8Schottky_
   return __pyx_r;
 }
 
-/* "Schottky/Trap/__init__.pyx":126
+/* "Schottky/Trap/__init__.pyx":128
  *         return self.e_cs(temperature) * v_e
  * 
  *     cpdef double h_c(self, double temperature, double v_h):             # <<<<<<<<<<<<<<
@@ -3582,12 +3664,12 @@ static double __pyx_f_8Schottky_4Trap_4Trap_h_c(struct __pyx_obj_8Schottky_4Trap
     else {
       PY_UINT64_T type_dict_guard = (likely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict)) ? __PYX_GET_DICT_VERSION(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict) : 0;
       #endif
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_h_c); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 126, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_h_c); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 128, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)(void*)__pyx_pw_8Schottky_4Trap_4Trap_9h_c)) {
-        __pyx_t_3 = PyFloat_FromDouble(__pyx_v_temperature); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 126, __pyx_L1_error)
+        __pyx_t_3 = PyFloat_FromDouble(__pyx_v_temperature); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 128, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_3);
-        __pyx_t_4 = PyFloat_FromDouble(__pyx_v_v_h); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 126, __pyx_L1_error)
+        __pyx_t_4 = PyFloat_FromDouble(__pyx_v_v_h); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 128, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         __Pyx_INCREF(__pyx_t_1);
         __pyx_t_5 = __pyx_t_1; __pyx_t_6 = NULL;
@@ -3605,7 +3687,7 @@ static double __pyx_f_8Schottky_4Trap_4Trap_h_c(struct __pyx_obj_8Schottky_4Trap
         #if CYTHON_FAST_PYCALL
         if (PyFunction_Check(__pyx_t_5)) {
           PyObject *__pyx_temp[3] = {__pyx_t_6, __pyx_t_3, __pyx_t_4};
-          __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_7, 2+__pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 126, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_7, 2+__pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 128, __pyx_L1_error)
           __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -3615,7 +3697,7 @@ static double __pyx_f_8Schottky_4Trap_4Trap_h_c(struct __pyx_obj_8Schottky_4Trap
         #if CYTHON_FAST_PYCCALL
         if (__Pyx_PyFastCFunction_Check(__pyx_t_5)) {
           PyObject *__pyx_temp[3] = {__pyx_t_6, __pyx_t_3, __pyx_t_4};
-          __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_7, 2+__pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 126, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_7, 2+__pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 128, __pyx_L1_error)
           __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -3623,7 +3705,7 @@ static double __pyx_f_8Schottky_4Trap_4Trap_h_c(struct __pyx_obj_8Schottky_4Trap
         } else
         #endif
         {
-          __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 126, __pyx_L1_error)
+          __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 128, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_8);
           if (__pyx_t_6) {
             __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_6); __pyx_t_6 = NULL;
@@ -3634,12 +3716,12 @@ static double __pyx_f_8Schottky_4Trap_4Trap_h_c(struct __pyx_obj_8Schottky_4Trap
           PyTuple_SET_ITEM(__pyx_t_8, 1+__pyx_t_7, __pyx_t_4);
           __pyx_t_3 = 0;
           __pyx_t_4 = 0;
-          __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 126, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 128, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
         }
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-        __pyx_t_9 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_9 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 126, __pyx_L1_error)
+        __pyx_t_9 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_9 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 128, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
         __pyx_r = __pyx_t_9;
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -3658,7 +3740,7 @@ static double __pyx_f_8Schottky_4Trap_4Trap_h_c(struct __pyx_obj_8Schottky_4Trap
     #endif
   }
 
-  /* "Schottky/Trap/__init__.pyx":127
+  /* "Schottky/Trap/__init__.pyx":129
  * 
  *     cpdef double h_c(self, double temperature, double v_h):
  *         return self.h_cs(temperature) * v_h             # <<<<<<<<<<<<<<
@@ -3668,7 +3750,7 @@ static double __pyx_f_8Schottky_4Trap_4Trap_h_c(struct __pyx_obj_8Schottky_4Trap
   __pyx_r = (((struct __pyx_vtabstruct_8Schottky_4Trap_Trap *)__pyx_v_self->__pyx_vtab)->h_cs(__pyx_v_self, __pyx_v_temperature, 0) * __pyx_v_v_h);
   goto __pyx_L0;
 
-  /* "Schottky/Trap/__init__.pyx":126
+  /* "Schottky/Trap/__init__.pyx":128
  *         return self.e_cs(temperature) * v_e
  * 
  *     cpdef double h_c(self, double temperature, double v_h):             # <<<<<<<<<<<<<<
@@ -3723,11 +3805,11 @@ static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_9h_c(PyObject *__pyx_v_self, PyO
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_v_h)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("h_c", 1, 2, 2, 1); __PYX_ERR(0, 126, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("h_c", 1, 2, 2, 1); __PYX_ERR(0, 128, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "h_c") < 0)) __PYX_ERR(0, 126, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "h_c") < 0)) __PYX_ERR(0, 128, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -3735,12 +3817,12 @@ static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_9h_c(PyObject *__pyx_v_self, PyO
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
     }
-    __pyx_v_temperature = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_temperature == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 126, __pyx_L3_error)
-    __pyx_v_v_h = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_v_h == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 126, __pyx_L3_error)
+    __pyx_v_temperature = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_temperature == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 128, __pyx_L3_error)
+    __pyx_v_v_h = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_v_h == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 128, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("h_c", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 126, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("h_c", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 128, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("Schottky.Trap.Trap.h_c", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -3759,7 +3841,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_8h_c(struct __pyx_obj_8Schottky_
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("h_c", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_8Schottky_4Trap_4Trap_h_c(__pyx_v_self, __pyx_v_temperature, __pyx_v_v_h, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 126, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_8Schottky_4Trap_4Trap_h_c(__pyx_v_self, __pyx_v_temperature, __pyx_v_v_h, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 128, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3776,11 +3858,11 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_8h_c(struct __pyx_obj_8Schottky_
   return __pyx_r;
 }
 
-/* "Schottky/Trap/__init__.pyx":129
+/* "Schottky/Trap/__init__.pyx":131
  *         return self.h_cs(temperature) * v_h
  * 
  *     cpdef double e_cr(self, double temperature, double v_e, double n_e):             # <<<<<<<<<<<<<<
- *         return self.e_c(temperature, v_e) * n_e * (1 - self.__f)
+ *         return self.e_c(temperature, v_e) * n_e
  * 
  */
 
@@ -3809,14 +3891,14 @@ static double __pyx_f_8Schottky_4Trap_4Trap_e_cr(struct __pyx_obj_8Schottky_4Tra
     else {
       PY_UINT64_T type_dict_guard = (likely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict)) ? __PYX_GET_DICT_VERSION(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict) : 0;
       #endif
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_e_cr); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 129, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_e_cr); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 131, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)(void*)__pyx_pw_8Schottky_4Trap_4Trap_11e_cr)) {
-        __pyx_t_3 = PyFloat_FromDouble(__pyx_v_temperature); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 129, __pyx_L1_error)
+        __pyx_t_3 = PyFloat_FromDouble(__pyx_v_temperature); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 131, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_3);
-        __pyx_t_4 = PyFloat_FromDouble(__pyx_v_v_e); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 129, __pyx_L1_error)
+        __pyx_t_4 = PyFloat_FromDouble(__pyx_v_v_e); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 131, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
-        __pyx_t_5 = PyFloat_FromDouble(__pyx_v_n_e); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 129, __pyx_L1_error)
+        __pyx_t_5 = PyFloat_FromDouble(__pyx_v_n_e); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 131, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
         __Pyx_INCREF(__pyx_t_1);
         __pyx_t_6 = __pyx_t_1; __pyx_t_7 = NULL;
@@ -3834,7 +3916,7 @@ static double __pyx_f_8Schottky_4Trap_4Trap_e_cr(struct __pyx_obj_8Schottky_4Tra
         #if CYTHON_FAST_PYCALL
         if (PyFunction_Check(__pyx_t_6)) {
           PyObject *__pyx_temp[4] = {__pyx_t_7, __pyx_t_3, __pyx_t_4, __pyx_t_5};
-          __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_6, __pyx_temp+1-__pyx_t_8, 3+__pyx_t_8); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 129, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_6, __pyx_temp+1-__pyx_t_8, 3+__pyx_t_8); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 131, __pyx_L1_error)
           __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -3845,7 +3927,7 @@ static double __pyx_f_8Schottky_4Trap_4Trap_e_cr(struct __pyx_obj_8Schottky_4Tra
         #if CYTHON_FAST_PYCCALL
         if (__Pyx_PyFastCFunction_Check(__pyx_t_6)) {
           PyObject *__pyx_temp[4] = {__pyx_t_7, __pyx_t_3, __pyx_t_4, __pyx_t_5};
-          __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_6, __pyx_temp+1-__pyx_t_8, 3+__pyx_t_8); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 129, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_6, __pyx_temp+1-__pyx_t_8, 3+__pyx_t_8); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 131, __pyx_L1_error)
           __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -3854,7 +3936,7 @@ static double __pyx_f_8Schottky_4Trap_4Trap_e_cr(struct __pyx_obj_8Schottky_4Tra
         } else
         #endif
         {
-          __pyx_t_9 = PyTuple_New(3+__pyx_t_8); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 129, __pyx_L1_error)
+          __pyx_t_9 = PyTuple_New(3+__pyx_t_8); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 131, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_9);
           if (__pyx_t_7) {
             __Pyx_GIVEREF(__pyx_t_7); PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_7); __pyx_t_7 = NULL;
@@ -3868,12 +3950,12 @@ static double __pyx_f_8Schottky_4Trap_4Trap_e_cr(struct __pyx_obj_8Schottky_4Tra
           __pyx_t_3 = 0;
           __pyx_t_4 = 0;
           __pyx_t_5 = 0;
-          __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_9, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 129, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_9, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 131, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
         }
         __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-        __pyx_t_10 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_10 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 129, __pyx_L1_error)
+        __pyx_t_10 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_10 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 131, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
         __pyx_r = __pyx_t_10;
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -3892,21 +3974,21 @@ static double __pyx_f_8Schottky_4Trap_4Trap_e_cr(struct __pyx_obj_8Schottky_4Tra
     #endif
   }
 
-  /* "Schottky/Trap/__init__.pyx":130
+  /* "Schottky/Trap/__init__.pyx":132
  * 
  *     cpdef double e_cr(self, double temperature, double v_e, double n_e):
- *         return self.e_c(temperature, v_e) * n_e * (1 - self.__f)             # <<<<<<<<<<<<<<
+ *         return self.e_c(temperature, v_e) * n_e             # <<<<<<<<<<<<<<
  * 
  *     cpdef double h_cr(self, double temperature, double v_h, double n_h):
  */
-  __pyx_r = ((((struct __pyx_vtabstruct_8Schottky_4Trap_Trap *)__pyx_v_self->__pyx_vtab)->e_c(__pyx_v_self, __pyx_v_temperature, __pyx_v_v_e, 0) * __pyx_v_n_e) * (1.0 - __pyx_v_self->__pyx___f));
+  __pyx_r = (((struct __pyx_vtabstruct_8Schottky_4Trap_Trap *)__pyx_v_self->__pyx_vtab)->e_c(__pyx_v_self, __pyx_v_temperature, __pyx_v_v_e, 0) * __pyx_v_n_e);
   goto __pyx_L0;
 
-  /* "Schottky/Trap/__init__.pyx":129
+  /* "Schottky/Trap/__init__.pyx":131
  *         return self.h_cs(temperature) * v_h
  * 
  *     cpdef double e_cr(self, double temperature, double v_e, double n_e):             # <<<<<<<<<<<<<<
- *         return self.e_c(temperature, v_e) * n_e * (1 - self.__f)
+ *         return self.e_c(temperature, v_e) * n_e
  * 
  */
 
@@ -3961,17 +4043,17 @@ static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_11e_cr(PyObject *__pyx_v_self, P
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_v_e)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("e_cr", 1, 3, 3, 1); __PYX_ERR(0, 129, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("e_cr", 1, 3, 3, 1); __PYX_ERR(0, 131, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_n_e)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("e_cr", 1, 3, 3, 2); __PYX_ERR(0, 129, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("e_cr", 1, 3, 3, 2); __PYX_ERR(0, 131, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "e_cr") < 0)) __PYX_ERR(0, 129, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "e_cr") < 0)) __PYX_ERR(0, 131, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
       goto __pyx_L5_argtuple_error;
@@ -3980,13 +4062,13 @@ static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_11e_cr(PyObject *__pyx_v_self, P
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
       values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
     }
-    __pyx_v_temperature = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_temperature == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 129, __pyx_L3_error)
-    __pyx_v_v_e = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_v_e == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 129, __pyx_L3_error)
-    __pyx_v_n_e = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_n_e == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 129, __pyx_L3_error)
+    __pyx_v_temperature = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_temperature == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 131, __pyx_L3_error)
+    __pyx_v_v_e = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_v_e == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 131, __pyx_L3_error)
+    __pyx_v_n_e = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_n_e == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 131, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("e_cr", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 129, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("e_cr", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 131, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("Schottky.Trap.Trap.e_cr", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -4005,7 +4087,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_10e_cr(struct __pyx_obj_8Schottk
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("e_cr", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_8Schottky_4Trap_4Trap_e_cr(__pyx_v_self, __pyx_v_temperature, __pyx_v_v_e, __pyx_v_n_e, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 129, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_8Schottky_4Trap_4Trap_e_cr(__pyx_v_self, __pyx_v_temperature, __pyx_v_v_e, __pyx_v_n_e, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 131, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -4022,11 +4104,11 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_10e_cr(struct __pyx_obj_8Schottk
   return __pyx_r;
 }
 
-/* "Schottky/Trap/__init__.pyx":132
- *         return self.e_c(temperature, v_e) * n_e * (1 - self.__f)
+/* "Schottky/Trap/__init__.pyx":134
+ *         return self.e_c(temperature, v_e) * n_e
  * 
  *     cpdef double h_cr(self, double temperature, double v_h, double n_h):             # <<<<<<<<<<<<<<
- *         return self.h_c(temperature, v_h) * n_h * self.__f
+ *         return self.h_c(temperature, v_h) * n_h
  * 
  */
 
@@ -4055,14 +4137,14 @@ static double __pyx_f_8Schottky_4Trap_4Trap_h_cr(struct __pyx_obj_8Schottky_4Tra
     else {
       PY_UINT64_T type_dict_guard = (likely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict)) ? __PYX_GET_DICT_VERSION(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict) : 0;
       #endif
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_h_cr); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 132, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_h_cr); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 134, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)(void*)__pyx_pw_8Schottky_4Trap_4Trap_13h_cr)) {
-        __pyx_t_3 = PyFloat_FromDouble(__pyx_v_temperature); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 132, __pyx_L1_error)
+        __pyx_t_3 = PyFloat_FromDouble(__pyx_v_temperature); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 134, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_3);
-        __pyx_t_4 = PyFloat_FromDouble(__pyx_v_v_h); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 132, __pyx_L1_error)
+        __pyx_t_4 = PyFloat_FromDouble(__pyx_v_v_h); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 134, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
-        __pyx_t_5 = PyFloat_FromDouble(__pyx_v_n_h); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 132, __pyx_L1_error)
+        __pyx_t_5 = PyFloat_FromDouble(__pyx_v_n_h); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 134, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
         __Pyx_INCREF(__pyx_t_1);
         __pyx_t_6 = __pyx_t_1; __pyx_t_7 = NULL;
@@ -4080,7 +4162,7 @@ static double __pyx_f_8Schottky_4Trap_4Trap_h_cr(struct __pyx_obj_8Schottky_4Tra
         #if CYTHON_FAST_PYCALL
         if (PyFunction_Check(__pyx_t_6)) {
           PyObject *__pyx_temp[4] = {__pyx_t_7, __pyx_t_3, __pyx_t_4, __pyx_t_5};
-          __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_6, __pyx_temp+1-__pyx_t_8, 3+__pyx_t_8); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 132, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_6, __pyx_temp+1-__pyx_t_8, 3+__pyx_t_8); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 134, __pyx_L1_error)
           __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -4091,7 +4173,7 @@ static double __pyx_f_8Schottky_4Trap_4Trap_h_cr(struct __pyx_obj_8Schottky_4Tra
         #if CYTHON_FAST_PYCCALL
         if (__Pyx_PyFastCFunction_Check(__pyx_t_6)) {
           PyObject *__pyx_temp[4] = {__pyx_t_7, __pyx_t_3, __pyx_t_4, __pyx_t_5};
-          __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_6, __pyx_temp+1-__pyx_t_8, 3+__pyx_t_8); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 132, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_6, __pyx_temp+1-__pyx_t_8, 3+__pyx_t_8); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 134, __pyx_L1_error)
           __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -4100,7 +4182,7 @@ static double __pyx_f_8Schottky_4Trap_4Trap_h_cr(struct __pyx_obj_8Schottky_4Tra
         } else
         #endif
         {
-          __pyx_t_9 = PyTuple_New(3+__pyx_t_8); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 132, __pyx_L1_error)
+          __pyx_t_9 = PyTuple_New(3+__pyx_t_8); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 134, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_9);
           if (__pyx_t_7) {
             __Pyx_GIVEREF(__pyx_t_7); PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_7); __pyx_t_7 = NULL;
@@ -4114,12 +4196,12 @@ static double __pyx_f_8Schottky_4Trap_4Trap_h_cr(struct __pyx_obj_8Schottky_4Tra
           __pyx_t_3 = 0;
           __pyx_t_4 = 0;
           __pyx_t_5 = 0;
-          __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_9, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 132, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_9, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 134, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
         }
         __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-        __pyx_t_10 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_10 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 132, __pyx_L1_error)
+        __pyx_t_10 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_10 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 134, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
         __pyx_r = __pyx_t_10;
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -4138,21 +4220,21 @@ static double __pyx_f_8Schottky_4Trap_4Trap_h_cr(struct __pyx_obj_8Schottky_4Tra
     #endif
   }
 
-  /* "Schottky/Trap/__init__.pyx":133
+  /* "Schottky/Trap/__init__.pyx":135
  * 
  *     cpdef double h_cr(self, double temperature, double v_h, double n_h):
- *         return self.h_c(temperature, v_h) * n_h * self.__f             # <<<<<<<<<<<<<<
+ *         return self.h_c(temperature, v_h) * n_h             # <<<<<<<<<<<<<<
  * 
- *     @property
+ *     cpdef double e_er(self, double temperature, double v_e, double n_c):
  */
-  __pyx_r = ((((struct __pyx_vtabstruct_8Schottky_4Trap_Trap *)__pyx_v_self->__pyx_vtab)->h_c(__pyx_v_self, __pyx_v_temperature, __pyx_v_v_h, 0) * __pyx_v_n_h) * __pyx_v_self->__pyx___f);
+  __pyx_r = (((struct __pyx_vtabstruct_8Schottky_4Trap_Trap *)__pyx_v_self->__pyx_vtab)->h_c(__pyx_v_self, __pyx_v_temperature, __pyx_v_v_h, 0) * __pyx_v_n_h);
   goto __pyx_L0;
 
-  /* "Schottky/Trap/__init__.pyx":132
- *         return self.e_c(temperature, v_e) * n_e * (1 - self.__f)
+  /* "Schottky/Trap/__init__.pyx":134
+ *         return self.e_c(temperature, v_e) * n_e
  * 
  *     cpdef double h_cr(self, double temperature, double v_h, double n_h):             # <<<<<<<<<<<<<<
- *         return self.h_c(temperature, v_h) * n_h * self.__f
+ *         return self.h_c(temperature, v_h) * n_h
  * 
  */
 
@@ -4207,17 +4289,17 @@ static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_13h_cr(PyObject *__pyx_v_self, P
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_v_h)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("h_cr", 1, 3, 3, 1); __PYX_ERR(0, 132, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("h_cr", 1, 3, 3, 1); __PYX_ERR(0, 134, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_n_h)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("h_cr", 1, 3, 3, 2); __PYX_ERR(0, 132, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("h_cr", 1, 3, 3, 2); __PYX_ERR(0, 134, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "h_cr") < 0)) __PYX_ERR(0, 132, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "h_cr") < 0)) __PYX_ERR(0, 134, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
       goto __pyx_L5_argtuple_error;
@@ -4226,13 +4308,13 @@ static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_13h_cr(PyObject *__pyx_v_self, P
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
       values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
     }
-    __pyx_v_temperature = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_temperature == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 132, __pyx_L3_error)
-    __pyx_v_v_h = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_v_h == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 132, __pyx_L3_error)
-    __pyx_v_n_h = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_n_h == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 132, __pyx_L3_error)
+    __pyx_v_temperature = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_temperature == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 134, __pyx_L3_error)
+    __pyx_v_v_h = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_v_h == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 134, __pyx_L3_error)
+    __pyx_v_n_h = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_n_h == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 134, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("h_cr", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 132, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("h_cr", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 134, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("Schottky.Trap.Trap.h_cr", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -4251,7 +4333,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_12h_cr(struct __pyx_obj_8Schottk
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("h_cr", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_8Schottky_4Trap_4Trap_h_cr(__pyx_v_self, __pyx_v_temperature, __pyx_v_v_h, __pyx_v_n_h, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 132, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_8Schottky_4Trap_4Trap_h_cr(__pyx_v_self, __pyx_v_temperature, __pyx_v_v_h, __pyx_v_n_h, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 134, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -4268,7 +4350,1738 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_12h_cr(struct __pyx_obj_8Schottk
   return __pyx_r;
 }
 
-/* "Schottky/Trap/__init__.pyx":136
+/* "Schottky/Trap/__init__.pyx":137
+ *         return self.h_c(temperature, v_h) * n_h
+ * 
+ *     cpdef double e_er(self, double temperature, double v_e, double n_c):             # <<<<<<<<<<<<<<
+ *         cdef:
+ *             double cr, exp_f, g
+ */
+
+static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_15e_er(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static double __pyx_f_8Schottky_4Trap_4Trap_e_er(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_temperature, double __pyx_v_v_e, double __pyx_v_n_c, int __pyx_skip_dispatch) {
+  double __pyx_v_exp_f;
+  double __pyx_v_g;
+  double __pyx_v_e_c;
+  double __pyx_r;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  PyObject *__pyx_t_5 = NULL;
+  PyObject *__pyx_t_6 = NULL;
+  PyObject *__pyx_t_7 = NULL;
+  int __pyx_t_8;
+  PyObject *__pyx_t_9 = NULL;
+  double __pyx_t_10;
+  double __pyx_t_11;
+  __Pyx_RefNannySetupContext("e_er", 0);
+  /* Check if called by wrapper */
+  if (unlikely(__pyx_skip_dispatch)) ;
+  /* Check if overridden in Python */
+  else if (unlikely((Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0) || (Py_TYPE(((PyObject *)__pyx_v_self))->tp_flags & (Py_TPFLAGS_IS_ABSTRACT | Py_TPFLAGS_HEAPTYPE)))) {
+    #if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_PYTYPE_LOOKUP
+    static PY_UINT64_T tp_dict_version = 0, obj_dict_version = 0;
+    if (likely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict && tp_dict_version == __PYX_GET_DICT_VERSION(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict) && (!Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset || obj_dict_version == __PYX_GET_DICT_VERSION(_PyObject_GetDictPtr(((PyObject *)__pyx_v_self))))));
+    else {
+      PY_UINT64_T type_dict_guard = (likely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict)) ? __PYX_GET_DICT_VERSION(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict) : 0;
+      #endif
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_e_er); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 137, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)(void*)__pyx_pw_8Schottky_4Trap_4Trap_15e_er)) {
+        __pyx_t_3 = PyFloat_FromDouble(__pyx_v_temperature); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 137, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_3);
+        __pyx_t_4 = PyFloat_FromDouble(__pyx_v_v_e); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 137, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_4);
+        __pyx_t_5 = PyFloat_FromDouble(__pyx_v_n_c); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 137, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_5);
+        __Pyx_INCREF(__pyx_t_1);
+        __pyx_t_6 = __pyx_t_1; __pyx_t_7 = NULL;
+        __pyx_t_8 = 0;
+        if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_6))) {
+          __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_6);
+          if (likely(__pyx_t_7)) {
+            PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_6);
+            __Pyx_INCREF(__pyx_t_7);
+            __Pyx_INCREF(function);
+            __Pyx_DECREF_SET(__pyx_t_6, function);
+            __pyx_t_8 = 1;
+          }
+        }
+        #if CYTHON_FAST_PYCALL
+        if (PyFunction_Check(__pyx_t_6)) {
+          PyObject *__pyx_temp[4] = {__pyx_t_7, __pyx_t_3, __pyx_t_4, __pyx_t_5};
+          __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_6, __pyx_temp+1-__pyx_t_8, 3+__pyx_t_8); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 137, __pyx_L1_error)
+          __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+          __Pyx_GOTREF(__pyx_t_2);
+          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+          __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+          __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+        } else
+        #endif
+        #if CYTHON_FAST_PYCCALL
+        if (__Pyx_PyFastCFunction_Check(__pyx_t_6)) {
+          PyObject *__pyx_temp[4] = {__pyx_t_7, __pyx_t_3, __pyx_t_4, __pyx_t_5};
+          __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_6, __pyx_temp+1-__pyx_t_8, 3+__pyx_t_8); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 137, __pyx_L1_error)
+          __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+          __Pyx_GOTREF(__pyx_t_2);
+          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+          __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+          __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+        } else
+        #endif
+        {
+          __pyx_t_9 = PyTuple_New(3+__pyx_t_8); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 137, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_9);
+          if (__pyx_t_7) {
+            __Pyx_GIVEREF(__pyx_t_7); PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_7); __pyx_t_7 = NULL;
+          }
+          __Pyx_GIVEREF(__pyx_t_3);
+          PyTuple_SET_ITEM(__pyx_t_9, 0+__pyx_t_8, __pyx_t_3);
+          __Pyx_GIVEREF(__pyx_t_4);
+          PyTuple_SET_ITEM(__pyx_t_9, 1+__pyx_t_8, __pyx_t_4);
+          __Pyx_GIVEREF(__pyx_t_5);
+          PyTuple_SET_ITEM(__pyx_t_9, 2+__pyx_t_8, __pyx_t_5);
+          __pyx_t_3 = 0;
+          __pyx_t_4 = 0;
+          __pyx_t_5 = 0;
+          __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_9, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 137, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_2);
+          __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+        }
+        __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+        __pyx_t_10 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_10 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 137, __pyx_L1_error)
+        __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+        __pyx_r = __pyx_t_10;
+        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+        goto __pyx_L0;
+      }
+      #if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_PYTYPE_LOOKUP
+      tp_dict_version = likely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict) ? __PYX_GET_DICT_VERSION(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict) : 0;
+      obj_dict_version = likely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset) ? __PYX_GET_DICT_VERSION(_PyObject_GetDictPtr(((PyObject *)__pyx_v_self))) : 0;
+      if (unlikely(type_dict_guard != tp_dict_version)) {
+        tp_dict_version = obj_dict_version = 0;
+      }
+      #endif
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      #if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_PYTYPE_LOOKUP
+    }
+    #endif
+  }
+
+  /* "Schottky/Trap/__init__.pyx":140
+ *         cdef:
+ *             double cr, exp_f, g
+ *         e_c = self.e_c(temperature, v_e)             # <<<<<<<<<<<<<<
+ *         g = self.__g[0] / self.__g[1]
+ *         exp_f = n_c * exp(-self.__energy_c /(constant.__k * temperature))
+ */
+  __pyx_v_e_c = ((struct __pyx_vtabstruct_8Schottky_4Trap_Trap *)__pyx_v_self->__pyx_vtab)->e_c(__pyx_v_self, __pyx_v_temperature, __pyx_v_v_e, 0);
+
+  /* "Schottky/Trap/__init__.pyx":141
+ *             double cr, exp_f, g
+ *         e_c = self.e_c(temperature, v_e)
+ *         g = self.__g[0] / self.__g[1]             # <<<<<<<<<<<<<<
+ *         exp_f = n_c * exp(-self.__energy_c /(constant.__k * temperature))
+ *         return e_c * g * exp_f
+ */
+  if (unlikely(__pyx_v_self->__pyx___g == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+    __PYX_ERR(0, 141, __pyx_L1_error)
+  }
+  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_self->__pyx___g, __pyx_int_0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 141, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (unlikely(__pyx_v_self->__pyx___g == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+    __PYX_ERR(0, 141, __pyx_L1_error)
+  }
+  __pyx_t_2 = __Pyx_PyDict_GetItem(__pyx_v_self->__pyx___g, __pyx_int_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 141, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_6 = __Pyx_PyNumber_Divide(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 141, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_6);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_10 = __pyx_PyFloat_AsDouble(__pyx_t_6); if (unlikely((__pyx_t_10 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 141, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+  __pyx_v_g = __pyx_t_10;
+
+  /* "Schottky/Trap/__init__.pyx":142
+ *         e_c = self.e_c(temperature, v_e)
+ *         g = self.__g[0] / self.__g[1]
+ *         exp_f = n_c * exp(-self.__energy_c /(constant.__k * temperature))             # <<<<<<<<<<<<<<
+ *         return e_c * g * exp_f
+ * 
+ */
+  __pyx_t_10 = (-__pyx_v_self->__pyx___energy_c);
+  __pyx_t_11 = (__pyx_v_8Schottky_9Constants_constant->__pyx___k * __pyx_v_temperature);
+  if (unlikely(__pyx_t_11 == 0)) {
+    PyErr_SetString(PyExc_ZeroDivisionError, "float division");
+    __PYX_ERR(0, 142, __pyx_L1_error)
+  }
+  __pyx_v_exp_f = (__pyx_v_n_c * exp((__pyx_t_10 / __pyx_t_11)));
+
+  /* "Schottky/Trap/__init__.pyx":143
+ *         g = self.__g[0] / self.__g[1]
+ *         exp_f = n_c * exp(-self.__energy_c /(constant.__k * temperature))
+ *         return e_c * g * exp_f             # <<<<<<<<<<<<<<
+ * 
+ *     cpdef double h_er(self, double temperature, double v_h, double n_v):
+ */
+  __pyx_r = ((__pyx_v_e_c * __pyx_v_g) * __pyx_v_exp_f);
+  goto __pyx_L0;
+
+  /* "Schottky/Trap/__init__.pyx":137
+ *         return self.h_c(temperature, v_h) * n_h
+ * 
+ *     cpdef double e_er(self, double temperature, double v_e, double n_c):             # <<<<<<<<<<<<<<
+ *         cdef:
+ *             double cr, exp_f, g
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_XDECREF(__pyx_t_6);
+  __Pyx_XDECREF(__pyx_t_7);
+  __Pyx_XDECREF(__pyx_t_9);
+  __Pyx_WriteUnraisable("Schottky.Trap.Trap.e_er", __pyx_clineno, __pyx_lineno, __pyx_filename, 1, 0);
+  __pyx_r = 0;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* Python wrapper */
+static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_15e_er(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_15e_er(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  double __pyx_v_temperature;
+  double __pyx_v_v_e;
+  double __pyx_v_n_c;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("e_er (wrapper)", 0);
+  {
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_temperature,&__pyx_n_s_v_e,&__pyx_n_s_n_c,0};
+    PyObject* values[3] = {0,0,0};
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
+      switch (pos_args) {
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        CYTHON_FALLTHROUGH;
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        CYTHON_FALLTHROUGH;
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        CYTHON_FALLTHROUGH;
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = PyDict_Size(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (likely((values[0] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_temperature)) != 0)) kw_args--;
+        else goto __pyx_L5_argtuple_error;
+        CYTHON_FALLTHROUGH;
+        case  1:
+        if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_v_e)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("e_er", 1, 3, 3, 1); __PYX_ERR(0, 137, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  2:
+        if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_n_c)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("e_er", 1, 3, 3, 2); __PYX_ERR(0, 137, __pyx_L3_error)
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "e_er") < 0)) __PYX_ERR(0, 137, __pyx_L3_error)
+      }
+    } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+      values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+      values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+    }
+    __pyx_v_temperature = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_temperature == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 137, __pyx_L3_error)
+    __pyx_v_v_e = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_v_e == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 137, __pyx_L3_error)
+    __pyx_v_n_c = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_n_c == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 137, __pyx_L3_error)
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("e_er", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 137, __pyx_L3_error)
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("Schottky.Trap.Trap.e_er", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_8Schottky_4Trap_4Trap_14e_er(((struct __pyx_obj_8Schottky_4Trap_Trap *)__pyx_v_self), __pyx_v_temperature, __pyx_v_v_e, __pyx_v_n_c);
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_14e_er(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_temperature, double __pyx_v_v_e, double __pyx_v_n_c) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("e_er", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_8Schottky_4Trap_4Trap_e_er(__pyx_v_self, __pyx_v_temperature, __pyx_v_v_e, __pyx_v_n_c, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 137, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("Schottky.Trap.Trap.e_er", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "Schottky/Trap/__init__.pyx":145
+ *         return e_c * g * exp_f
+ * 
+ *     cpdef double h_er(self, double temperature, double v_h, double n_v):             # <<<<<<<<<<<<<<
+ *         cdef:
+ *             double cr, exp_f, g
+ */
+
+static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_17h_er(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static double __pyx_f_8Schottky_4Trap_4Trap_h_er(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_temperature, double __pyx_v_v_h, double __pyx_v_n_v, int __pyx_skip_dispatch) {
+  double __pyx_v_exp_f;
+  double __pyx_v_g;
+  double __pyx_v_h_c;
+  double __pyx_r;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  PyObject *__pyx_t_5 = NULL;
+  PyObject *__pyx_t_6 = NULL;
+  PyObject *__pyx_t_7 = NULL;
+  int __pyx_t_8;
+  PyObject *__pyx_t_9 = NULL;
+  double __pyx_t_10;
+  double __pyx_t_11;
+  __Pyx_RefNannySetupContext("h_er", 0);
+  /* Check if called by wrapper */
+  if (unlikely(__pyx_skip_dispatch)) ;
+  /* Check if overridden in Python */
+  else if (unlikely((Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0) || (Py_TYPE(((PyObject *)__pyx_v_self))->tp_flags & (Py_TPFLAGS_IS_ABSTRACT | Py_TPFLAGS_HEAPTYPE)))) {
+    #if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_PYTYPE_LOOKUP
+    static PY_UINT64_T tp_dict_version = 0, obj_dict_version = 0;
+    if (likely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict && tp_dict_version == __PYX_GET_DICT_VERSION(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict) && (!Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset || obj_dict_version == __PYX_GET_DICT_VERSION(_PyObject_GetDictPtr(((PyObject *)__pyx_v_self))))));
+    else {
+      PY_UINT64_T type_dict_guard = (likely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict)) ? __PYX_GET_DICT_VERSION(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict) : 0;
+      #endif
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_h_er); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 145, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)(void*)__pyx_pw_8Schottky_4Trap_4Trap_17h_er)) {
+        __pyx_t_3 = PyFloat_FromDouble(__pyx_v_temperature); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 145, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_3);
+        __pyx_t_4 = PyFloat_FromDouble(__pyx_v_v_h); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 145, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_4);
+        __pyx_t_5 = PyFloat_FromDouble(__pyx_v_n_v); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 145, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_5);
+        __Pyx_INCREF(__pyx_t_1);
+        __pyx_t_6 = __pyx_t_1; __pyx_t_7 = NULL;
+        __pyx_t_8 = 0;
+        if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_6))) {
+          __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_6);
+          if (likely(__pyx_t_7)) {
+            PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_6);
+            __Pyx_INCREF(__pyx_t_7);
+            __Pyx_INCREF(function);
+            __Pyx_DECREF_SET(__pyx_t_6, function);
+            __pyx_t_8 = 1;
+          }
+        }
+        #if CYTHON_FAST_PYCALL
+        if (PyFunction_Check(__pyx_t_6)) {
+          PyObject *__pyx_temp[4] = {__pyx_t_7, __pyx_t_3, __pyx_t_4, __pyx_t_5};
+          __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_6, __pyx_temp+1-__pyx_t_8, 3+__pyx_t_8); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 145, __pyx_L1_error)
+          __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+          __Pyx_GOTREF(__pyx_t_2);
+          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+          __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+          __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+        } else
+        #endif
+        #if CYTHON_FAST_PYCCALL
+        if (__Pyx_PyFastCFunction_Check(__pyx_t_6)) {
+          PyObject *__pyx_temp[4] = {__pyx_t_7, __pyx_t_3, __pyx_t_4, __pyx_t_5};
+          __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_6, __pyx_temp+1-__pyx_t_8, 3+__pyx_t_8); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 145, __pyx_L1_error)
+          __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+          __Pyx_GOTREF(__pyx_t_2);
+          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+          __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+          __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+        } else
+        #endif
+        {
+          __pyx_t_9 = PyTuple_New(3+__pyx_t_8); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 145, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_9);
+          if (__pyx_t_7) {
+            __Pyx_GIVEREF(__pyx_t_7); PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_7); __pyx_t_7 = NULL;
+          }
+          __Pyx_GIVEREF(__pyx_t_3);
+          PyTuple_SET_ITEM(__pyx_t_9, 0+__pyx_t_8, __pyx_t_3);
+          __Pyx_GIVEREF(__pyx_t_4);
+          PyTuple_SET_ITEM(__pyx_t_9, 1+__pyx_t_8, __pyx_t_4);
+          __Pyx_GIVEREF(__pyx_t_5);
+          PyTuple_SET_ITEM(__pyx_t_9, 2+__pyx_t_8, __pyx_t_5);
+          __pyx_t_3 = 0;
+          __pyx_t_4 = 0;
+          __pyx_t_5 = 0;
+          __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_9, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 145, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_2);
+          __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+        }
+        __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+        __pyx_t_10 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_10 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 145, __pyx_L1_error)
+        __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+        __pyx_r = __pyx_t_10;
+        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+        goto __pyx_L0;
+      }
+      #if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_PYTYPE_LOOKUP
+      tp_dict_version = likely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict) ? __PYX_GET_DICT_VERSION(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict) : 0;
+      obj_dict_version = likely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset) ? __PYX_GET_DICT_VERSION(_PyObject_GetDictPtr(((PyObject *)__pyx_v_self))) : 0;
+      if (unlikely(type_dict_guard != tp_dict_version)) {
+        tp_dict_version = obj_dict_version = 0;
+      }
+      #endif
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      #if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_PYTYPE_LOOKUP
+    }
+    #endif
+  }
+
+  /* "Schottky/Trap/__init__.pyx":148
+ *         cdef:
+ *             double cr, exp_f, g
+ *         h_c = self.h_c(temperature, v_h)             # <<<<<<<<<<<<<<
+ *         g = self.__g[1] / self.__g[0]
+ *         exp_f = n_v * exp(-self.__energy_v /(constant.__k * temperature))
+ */
+  __pyx_v_h_c = ((struct __pyx_vtabstruct_8Schottky_4Trap_Trap *)__pyx_v_self->__pyx_vtab)->h_c(__pyx_v_self, __pyx_v_temperature, __pyx_v_v_h, 0);
+
+  /* "Schottky/Trap/__init__.pyx":149
+ *             double cr, exp_f, g
+ *         h_c = self.h_c(temperature, v_h)
+ *         g = self.__g[1] / self.__g[0]             # <<<<<<<<<<<<<<
+ *         exp_f = n_v * exp(-self.__energy_v /(constant.__k * temperature))
+ *         return h_c * g * exp_f
+ */
+  if (unlikely(__pyx_v_self->__pyx___g == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+    __PYX_ERR(0, 149, __pyx_L1_error)
+  }
+  __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_self->__pyx___g, __pyx_int_1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 149, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (unlikely(__pyx_v_self->__pyx___g == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+    __PYX_ERR(0, 149, __pyx_L1_error)
+  }
+  __pyx_t_2 = __Pyx_PyDict_GetItem(__pyx_v_self->__pyx___g, __pyx_int_0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 149, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_6 = __Pyx_PyNumber_Divide(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 149, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_6);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_10 = __pyx_PyFloat_AsDouble(__pyx_t_6); if (unlikely((__pyx_t_10 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 149, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+  __pyx_v_g = __pyx_t_10;
+
+  /* "Schottky/Trap/__init__.pyx":150
+ *         h_c = self.h_c(temperature, v_h)
+ *         g = self.__g[1] / self.__g[0]
+ *         exp_f = n_v * exp(-self.__energy_v /(constant.__k * temperature))             # <<<<<<<<<<<<<<
+ *         return h_c * g * exp_f
+ * 
+ */
+  __pyx_t_10 = (-__pyx_v_self->__pyx___energy_v);
+  __pyx_t_11 = (__pyx_v_8Schottky_9Constants_constant->__pyx___k * __pyx_v_temperature);
+  if (unlikely(__pyx_t_11 == 0)) {
+    PyErr_SetString(PyExc_ZeroDivisionError, "float division");
+    __PYX_ERR(0, 150, __pyx_L1_error)
+  }
+  __pyx_v_exp_f = (__pyx_v_n_v * exp((__pyx_t_10 / __pyx_t_11)));
+
+  /* "Schottky/Trap/__init__.pyx":151
+ *         g = self.__g[1] / self.__g[0]
+ *         exp_f = n_v * exp(-self.__energy_v /(constant.__k * temperature))
+ *         return h_c * g * exp_f             # <<<<<<<<<<<<<<
+ * 
+ *     cpdef f_eq(self, double temperature,
+ */
+  __pyx_r = ((__pyx_v_h_c * __pyx_v_g) * __pyx_v_exp_f);
+  goto __pyx_L0;
+
+  /* "Schottky/Trap/__init__.pyx":145
+ *         return e_c * g * exp_f
+ * 
+ *     cpdef double h_er(self, double temperature, double v_h, double n_v):             # <<<<<<<<<<<<<<
+ *         cdef:
+ *             double cr, exp_f, g
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_XDECREF(__pyx_t_6);
+  __Pyx_XDECREF(__pyx_t_7);
+  __Pyx_XDECREF(__pyx_t_9);
+  __Pyx_WriteUnraisable("Schottky.Trap.Trap.h_er", __pyx_clineno, __pyx_lineno, __pyx_filename, 1, 0);
+  __pyx_r = 0;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* Python wrapper */
+static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_17h_er(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_17h_er(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  double __pyx_v_temperature;
+  double __pyx_v_v_h;
+  double __pyx_v_n_v;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("h_er (wrapper)", 0);
+  {
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_temperature,&__pyx_n_s_v_h,&__pyx_n_s_n_v,0};
+    PyObject* values[3] = {0,0,0};
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
+      switch (pos_args) {
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        CYTHON_FALLTHROUGH;
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        CYTHON_FALLTHROUGH;
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        CYTHON_FALLTHROUGH;
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = PyDict_Size(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (likely((values[0] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_temperature)) != 0)) kw_args--;
+        else goto __pyx_L5_argtuple_error;
+        CYTHON_FALLTHROUGH;
+        case  1:
+        if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_v_h)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("h_er", 1, 3, 3, 1); __PYX_ERR(0, 145, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  2:
+        if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_n_v)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("h_er", 1, 3, 3, 2); __PYX_ERR(0, 145, __pyx_L3_error)
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "h_er") < 0)) __PYX_ERR(0, 145, __pyx_L3_error)
+      }
+    } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+      values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+      values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+    }
+    __pyx_v_temperature = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_temperature == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 145, __pyx_L3_error)
+    __pyx_v_v_h = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_v_h == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 145, __pyx_L3_error)
+    __pyx_v_n_v = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_n_v == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 145, __pyx_L3_error)
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("h_er", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 145, __pyx_L3_error)
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("Schottky.Trap.Trap.h_er", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_8Schottky_4Trap_4Trap_16h_er(((struct __pyx_obj_8Schottky_4Trap_Trap *)__pyx_v_self), __pyx_v_temperature, __pyx_v_v_h, __pyx_v_n_v);
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_16h_er(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_temperature, double __pyx_v_v_h, double __pyx_v_n_v) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("h_er", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_8Schottky_4Trap_4Trap_h_er(__pyx_v_self, __pyx_v_temperature, __pyx_v_v_h, __pyx_v_n_v, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 145, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("Schottky.Trap.Trap.h_er", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "Schottky/Trap/__init__.pyx":153
+ *         return h_c * g * exp_f
+ * 
+ *     cpdef f_eq(self, double temperature,             # <<<<<<<<<<<<<<
+ *                double v_e, double n_e, double n_c,
+ *                double v_h, double n_h, double n_v):
+ */
+
+static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_19f_eq(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_f_8Schottky_4Trap_4Trap_f_eq(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_temperature, double __pyx_v_v_e, double __pyx_v_n_e, double __pyx_v_n_c, double __pyx_v_v_h, double __pyx_v_n_h, double __pyx_v_n_v, int __pyx_skip_dispatch) {
+  double __pyx_v_e_c;
+  double __pyx_v_e_e;
+  double __pyx_v_h_c;
+  double __pyx_v_h_e;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  PyObject *__pyx_t_5 = NULL;
+  PyObject *__pyx_t_6 = NULL;
+  PyObject *__pyx_t_7 = NULL;
+  PyObject *__pyx_t_8 = NULL;
+  PyObject *__pyx_t_9 = NULL;
+  PyObject *__pyx_t_10 = NULL;
+  PyObject *__pyx_t_11 = NULL;
+  int __pyx_t_12;
+  PyObject *__pyx_t_13 = NULL;
+  int __pyx_t_14;
+  double __pyx_t_15;
+  __Pyx_RefNannySetupContext("f_eq", 0);
+  /* Check if called by wrapper */
+  if (unlikely(__pyx_skip_dispatch)) ;
+  /* Check if overridden in Python */
+  else if (unlikely((Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0) || (Py_TYPE(((PyObject *)__pyx_v_self))->tp_flags & (Py_TPFLAGS_IS_ABSTRACT | Py_TPFLAGS_HEAPTYPE)))) {
+    #if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_PYTYPE_LOOKUP
+    static PY_UINT64_T tp_dict_version = 0, obj_dict_version = 0;
+    if (likely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict && tp_dict_version == __PYX_GET_DICT_VERSION(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict) && (!Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset || obj_dict_version == __PYX_GET_DICT_VERSION(_PyObject_GetDictPtr(((PyObject *)__pyx_v_self))))));
+    else {
+      PY_UINT64_T type_dict_guard = (likely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict)) ? __PYX_GET_DICT_VERSION(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict) : 0;
+      #endif
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_f_eq); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 153, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)(void*)__pyx_pw_8Schottky_4Trap_4Trap_19f_eq)) {
+        __Pyx_XDECREF(__pyx_r);
+        __pyx_t_3 = PyFloat_FromDouble(__pyx_v_temperature); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 153, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_3);
+        __pyx_t_4 = PyFloat_FromDouble(__pyx_v_v_e); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 153, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_4);
+        __pyx_t_5 = PyFloat_FromDouble(__pyx_v_n_e); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 153, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_5);
+        __pyx_t_6 = PyFloat_FromDouble(__pyx_v_n_c); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 153, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_6);
+        __pyx_t_7 = PyFloat_FromDouble(__pyx_v_v_h); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 153, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_7);
+        __pyx_t_8 = PyFloat_FromDouble(__pyx_v_n_h); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 153, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_8);
+        __pyx_t_9 = PyFloat_FromDouble(__pyx_v_n_v); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 153, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_9);
+        __Pyx_INCREF(__pyx_t_1);
+        __pyx_t_10 = __pyx_t_1; __pyx_t_11 = NULL;
+        __pyx_t_12 = 0;
+        if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_10))) {
+          __pyx_t_11 = PyMethod_GET_SELF(__pyx_t_10);
+          if (likely(__pyx_t_11)) {
+            PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_10);
+            __Pyx_INCREF(__pyx_t_11);
+            __Pyx_INCREF(function);
+            __Pyx_DECREF_SET(__pyx_t_10, function);
+            __pyx_t_12 = 1;
+          }
+        }
+        #if CYTHON_FAST_PYCALL
+        if (PyFunction_Check(__pyx_t_10)) {
+          PyObject *__pyx_temp[8] = {__pyx_t_11, __pyx_t_3, __pyx_t_4, __pyx_t_5, __pyx_t_6, __pyx_t_7, __pyx_t_8, __pyx_t_9};
+          __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_10, __pyx_temp+1-__pyx_t_12, 7+__pyx_t_12); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 153, __pyx_L1_error)
+          __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+          __Pyx_GOTREF(__pyx_t_2);
+          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+          __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+          __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+          __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+          __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+          __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+          __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+        } else
+        #endif
+        #if CYTHON_FAST_PYCCALL
+        if (__Pyx_PyFastCFunction_Check(__pyx_t_10)) {
+          PyObject *__pyx_temp[8] = {__pyx_t_11, __pyx_t_3, __pyx_t_4, __pyx_t_5, __pyx_t_6, __pyx_t_7, __pyx_t_8, __pyx_t_9};
+          __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_10, __pyx_temp+1-__pyx_t_12, 7+__pyx_t_12); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 153, __pyx_L1_error)
+          __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+          __Pyx_GOTREF(__pyx_t_2);
+          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+          __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+          __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+          __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+          __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+          __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+          __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+        } else
+        #endif
+        {
+          __pyx_t_13 = PyTuple_New(7+__pyx_t_12); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 153, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_13);
+          if (__pyx_t_11) {
+            __Pyx_GIVEREF(__pyx_t_11); PyTuple_SET_ITEM(__pyx_t_13, 0, __pyx_t_11); __pyx_t_11 = NULL;
+          }
+          __Pyx_GIVEREF(__pyx_t_3);
+          PyTuple_SET_ITEM(__pyx_t_13, 0+__pyx_t_12, __pyx_t_3);
+          __Pyx_GIVEREF(__pyx_t_4);
+          PyTuple_SET_ITEM(__pyx_t_13, 1+__pyx_t_12, __pyx_t_4);
+          __Pyx_GIVEREF(__pyx_t_5);
+          PyTuple_SET_ITEM(__pyx_t_13, 2+__pyx_t_12, __pyx_t_5);
+          __Pyx_GIVEREF(__pyx_t_6);
+          PyTuple_SET_ITEM(__pyx_t_13, 3+__pyx_t_12, __pyx_t_6);
+          __Pyx_GIVEREF(__pyx_t_7);
+          PyTuple_SET_ITEM(__pyx_t_13, 4+__pyx_t_12, __pyx_t_7);
+          __Pyx_GIVEREF(__pyx_t_8);
+          PyTuple_SET_ITEM(__pyx_t_13, 5+__pyx_t_12, __pyx_t_8);
+          __Pyx_GIVEREF(__pyx_t_9);
+          PyTuple_SET_ITEM(__pyx_t_13, 6+__pyx_t_12, __pyx_t_9);
+          __pyx_t_3 = 0;
+          __pyx_t_4 = 0;
+          __pyx_t_5 = 0;
+          __pyx_t_6 = 0;
+          __pyx_t_7 = 0;
+          __pyx_t_8 = 0;
+          __pyx_t_9 = 0;
+          __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_t_13, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 153, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_2);
+          __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+        }
+        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+        __pyx_r = __pyx_t_2;
+        __pyx_t_2 = 0;
+        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+        goto __pyx_L0;
+      }
+      #if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_PYTYPE_LOOKUP
+      tp_dict_version = likely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict) ? __PYX_GET_DICT_VERSION(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict) : 0;
+      obj_dict_version = likely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset) ? __PYX_GET_DICT_VERSION(_PyObject_GetDictPtr(((PyObject *)__pyx_v_self))) : 0;
+      if (unlikely(type_dict_guard != tp_dict_version)) {
+        tp_dict_version = obj_dict_version = 0;
+      }
+      #endif
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      #if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_PYTYPE_LOOKUP
+    }
+    #endif
+  }
+
+  /* "Schottky/Trap/__init__.pyx":158
+ *         cdef:
+ *             double e_c, e_e, h_c, h_e
+ *         e_c = self.e_cr(temperature, v_e, n_e)             # <<<<<<<<<<<<<<
+ *         e_e = self.e_er(temperature, v_e, n_c)
+ *         h_c = self.h_cr(temperature, v_h, n_h)
+ */
+  __pyx_v_e_c = ((struct __pyx_vtabstruct_8Schottky_4Trap_Trap *)__pyx_v_self->__pyx_vtab)->e_cr(__pyx_v_self, __pyx_v_temperature, __pyx_v_v_e, __pyx_v_n_e, 0);
+
+  /* "Schottky/Trap/__init__.pyx":159
+ *             double e_c, e_e, h_c, h_e
+ *         e_c = self.e_cr(temperature, v_e, n_e)
+ *         e_e = self.e_er(temperature, v_e, n_c)             # <<<<<<<<<<<<<<
+ *         h_c = self.h_cr(temperature, v_h, n_h)
+ *         h_e = self.h_er(temperature, v_h, n_v)
+ */
+  __pyx_v_e_e = ((struct __pyx_vtabstruct_8Schottky_4Trap_Trap *)__pyx_v_self->__pyx_vtab)->e_er(__pyx_v_self, __pyx_v_temperature, __pyx_v_v_e, __pyx_v_n_c, 0);
+
+  /* "Schottky/Trap/__init__.pyx":160
+ *         e_c = self.e_cr(temperature, v_e, n_e)
+ *         e_e = self.e_er(temperature, v_e, n_c)
+ *         h_c = self.h_cr(temperature, v_h, n_h)             # <<<<<<<<<<<<<<
+ *         h_e = self.h_er(temperature, v_h, n_v)
+ *         if e_c + e_e > h_c + h_e:
+ */
+  __pyx_v_h_c = ((struct __pyx_vtabstruct_8Schottky_4Trap_Trap *)__pyx_v_self->__pyx_vtab)->h_cr(__pyx_v_self, __pyx_v_temperature, __pyx_v_v_h, __pyx_v_n_h, 0);
+
+  /* "Schottky/Trap/__init__.pyx":161
+ *         e_e = self.e_er(temperature, v_e, n_c)
+ *         h_c = self.h_cr(temperature, v_h, n_h)
+ *         h_e = self.h_er(temperature, v_h, n_v)             # <<<<<<<<<<<<<<
+ *         if e_c + e_e > h_c + h_e:
+ *             return e_c / (e_c + e_e)
+ */
+  __pyx_v_h_e = ((struct __pyx_vtabstruct_8Schottky_4Trap_Trap *)__pyx_v_self->__pyx_vtab)->h_er(__pyx_v_self, __pyx_v_temperature, __pyx_v_v_h, __pyx_v_n_v, 0);
+
+  /* "Schottky/Trap/__init__.pyx":162
+ *         h_c = self.h_cr(temperature, v_h, n_h)
+ *         h_e = self.h_er(temperature, v_h, n_v)
+ *         if e_c + e_e > h_c + h_e:             # <<<<<<<<<<<<<<
+ *             return e_c / (e_c + e_e)
+ *         else:
+ */
+  __pyx_t_14 = (((__pyx_v_e_c + __pyx_v_e_e) > (__pyx_v_h_c + __pyx_v_h_e)) != 0);
+  if (__pyx_t_14) {
+
+    /* "Schottky/Trap/__init__.pyx":163
+ *         h_e = self.h_er(temperature, v_h, n_v)
+ *         if e_c + e_e > h_c + h_e:
+ *             return e_c / (e_c + e_e)             # <<<<<<<<<<<<<<
+ *         else:
+ *             return h_e / (h_c + h_e)
+ */
+    __Pyx_XDECREF(__pyx_r);
+    __pyx_t_15 = (__pyx_v_e_c + __pyx_v_e_e);
+    if (unlikely(__pyx_t_15 == 0)) {
+      PyErr_SetString(PyExc_ZeroDivisionError, "float division");
+      __PYX_ERR(0, 163, __pyx_L1_error)
+    }
+    __pyx_t_1 = PyFloat_FromDouble((__pyx_v_e_c / __pyx_t_15)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 163, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_r = __pyx_t_1;
+    __pyx_t_1 = 0;
+    goto __pyx_L0;
+
+    /* "Schottky/Trap/__init__.pyx":162
+ *         h_c = self.h_cr(temperature, v_h, n_h)
+ *         h_e = self.h_er(temperature, v_h, n_v)
+ *         if e_c + e_e > h_c + h_e:             # <<<<<<<<<<<<<<
+ *             return e_c / (e_c + e_e)
+ *         else:
+ */
+  }
+
+  /* "Schottky/Trap/__init__.pyx":165
+ *             return e_c / (e_c + e_e)
+ *         else:
+ *             return h_e / (h_c + h_e)             # <<<<<<<<<<<<<<
+ * 
+ *     cpdef df_dt(self, double temperature,
+ */
+  /*else*/ {
+    __Pyx_XDECREF(__pyx_r);
+    __pyx_t_15 = (__pyx_v_h_c + __pyx_v_h_e);
+    if (unlikely(__pyx_t_15 == 0)) {
+      PyErr_SetString(PyExc_ZeroDivisionError, "float division");
+      __PYX_ERR(0, 165, __pyx_L1_error)
+    }
+    __pyx_t_1 = PyFloat_FromDouble((__pyx_v_h_e / __pyx_t_15)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 165, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_r = __pyx_t_1;
+    __pyx_t_1 = 0;
+    goto __pyx_L0;
+  }
+
+  /* "Schottky/Trap/__init__.pyx":153
+ *         return h_c * g * exp_f
+ * 
+ *     cpdef f_eq(self, double temperature,             # <<<<<<<<<<<<<<
+ *                double v_e, double n_e, double n_c,
+ *                double v_h, double n_h, double n_v):
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_XDECREF(__pyx_t_6);
+  __Pyx_XDECREF(__pyx_t_7);
+  __Pyx_XDECREF(__pyx_t_8);
+  __Pyx_XDECREF(__pyx_t_9);
+  __Pyx_XDECREF(__pyx_t_10);
+  __Pyx_XDECREF(__pyx_t_11);
+  __Pyx_XDECREF(__pyx_t_13);
+  __Pyx_AddTraceback("Schottky.Trap.Trap.f_eq", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = 0;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* Python wrapper */
+static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_19f_eq(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_19f_eq(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  double __pyx_v_temperature;
+  double __pyx_v_v_e;
+  double __pyx_v_n_e;
+  double __pyx_v_n_c;
+  double __pyx_v_v_h;
+  double __pyx_v_n_h;
+  double __pyx_v_n_v;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("f_eq (wrapper)", 0);
+  {
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_temperature,&__pyx_n_s_v_e,&__pyx_n_s_n_e,&__pyx_n_s_n_c,&__pyx_n_s_v_h,&__pyx_n_s_n_h,&__pyx_n_s_n_v,0};
+    PyObject* values[7] = {0,0,0,0,0,0,0};
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
+      switch (pos_args) {
+        case  7: values[6] = PyTuple_GET_ITEM(__pyx_args, 6);
+        CYTHON_FALLTHROUGH;
+        case  6: values[5] = PyTuple_GET_ITEM(__pyx_args, 5);
+        CYTHON_FALLTHROUGH;
+        case  5: values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
+        CYTHON_FALLTHROUGH;
+        case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
+        CYTHON_FALLTHROUGH;
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        CYTHON_FALLTHROUGH;
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        CYTHON_FALLTHROUGH;
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        CYTHON_FALLTHROUGH;
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = PyDict_Size(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (likely((values[0] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_temperature)) != 0)) kw_args--;
+        else goto __pyx_L5_argtuple_error;
+        CYTHON_FALLTHROUGH;
+        case  1:
+        if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_v_e)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("f_eq", 1, 7, 7, 1); __PYX_ERR(0, 153, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  2:
+        if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_n_e)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("f_eq", 1, 7, 7, 2); __PYX_ERR(0, 153, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  3:
+        if (likely((values[3] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_n_c)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("f_eq", 1, 7, 7, 3); __PYX_ERR(0, 153, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  4:
+        if (likely((values[4] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_v_h)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("f_eq", 1, 7, 7, 4); __PYX_ERR(0, 153, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  5:
+        if (likely((values[5] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_n_h)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("f_eq", 1, 7, 7, 5); __PYX_ERR(0, 153, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  6:
+        if (likely((values[6] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_n_v)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("f_eq", 1, 7, 7, 6); __PYX_ERR(0, 153, __pyx_L3_error)
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "f_eq") < 0)) __PYX_ERR(0, 153, __pyx_L3_error)
+      }
+    } else if (PyTuple_GET_SIZE(__pyx_args) != 7) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+      values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+      values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+      values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
+      values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
+      values[5] = PyTuple_GET_ITEM(__pyx_args, 5);
+      values[6] = PyTuple_GET_ITEM(__pyx_args, 6);
+    }
+    __pyx_v_temperature = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_temperature == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 153, __pyx_L3_error)
+    __pyx_v_v_e = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_v_e == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 154, __pyx_L3_error)
+    __pyx_v_n_e = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_n_e == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 154, __pyx_L3_error)
+    __pyx_v_n_c = __pyx_PyFloat_AsDouble(values[3]); if (unlikely((__pyx_v_n_c == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 154, __pyx_L3_error)
+    __pyx_v_v_h = __pyx_PyFloat_AsDouble(values[4]); if (unlikely((__pyx_v_v_h == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 155, __pyx_L3_error)
+    __pyx_v_n_h = __pyx_PyFloat_AsDouble(values[5]); if (unlikely((__pyx_v_n_h == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 155, __pyx_L3_error)
+    __pyx_v_n_v = __pyx_PyFloat_AsDouble(values[6]); if (unlikely((__pyx_v_n_v == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 155, __pyx_L3_error)
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("f_eq", 1, 7, 7, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 153, __pyx_L3_error)
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("Schottky.Trap.Trap.f_eq", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_8Schottky_4Trap_4Trap_18f_eq(((struct __pyx_obj_8Schottky_4Trap_Trap *)__pyx_v_self), __pyx_v_temperature, __pyx_v_v_e, __pyx_v_n_e, __pyx_v_n_c, __pyx_v_v_h, __pyx_v_n_h, __pyx_v_n_v);
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_18f_eq(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_temperature, double __pyx_v_v_e, double __pyx_v_n_e, double __pyx_v_n_c, double __pyx_v_v_h, double __pyx_v_n_h, double __pyx_v_n_v) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("f_eq", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __pyx_f_8Schottky_4Trap_4Trap_f_eq(__pyx_v_self, __pyx_v_temperature, __pyx_v_v_e, __pyx_v_n_e, __pyx_v_n_c, __pyx_v_v_h, __pyx_v_n_h, __pyx_v_n_v, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 153, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("Schottky.Trap.Trap.f_eq", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "Schottky/Trap/__init__.pyx":167
+ *             return h_e / (h_c + h_e)
+ * 
+ *     cpdef df_dt(self, double temperature,             # <<<<<<<<<<<<<<
+ *                 double v_e, double n_e, double n_c,
+ *                 double v_h, double n_h, double n_v):
+ */
+
+static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_21df_dt(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_f_8Schottky_4Trap_4Trap_df_dt(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_temperature, double __pyx_v_v_e, double __pyx_v_n_e, double __pyx_v_n_c, double __pyx_v_v_h, double __pyx_v_n_h, double __pyx_v_n_v, int __pyx_skip_dispatch) {
+  double __pyx_v_gain;
+  double __pyx_v_loss;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  PyObject *__pyx_t_5 = NULL;
+  PyObject *__pyx_t_6 = NULL;
+  PyObject *__pyx_t_7 = NULL;
+  PyObject *__pyx_t_8 = NULL;
+  PyObject *__pyx_t_9 = NULL;
+  PyObject *__pyx_t_10 = NULL;
+  PyObject *__pyx_t_11 = NULL;
+  int __pyx_t_12;
+  PyObject *__pyx_t_13 = NULL;
+  __Pyx_RefNannySetupContext("df_dt", 0);
+  /* Check if called by wrapper */
+  if (unlikely(__pyx_skip_dispatch)) ;
+  /* Check if overridden in Python */
+  else if (unlikely((Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0) || (Py_TYPE(((PyObject *)__pyx_v_self))->tp_flags & (Py_TPFLAGS_IS_ABSTRACT | Py_TPFLAGS_HEAPTYPE)))) {
+    #if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_PYTYPE_LOOKUP
+    static PY_UINT64_T tp_dict_version = 0, obj_dict_version = 0;
+    if (likely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict && tp_dict_version == __PYX_GET_DICT_VERSION(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict) && (!Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset || obj_dict_version == __PYX_GET_DICT_VERSION(_PyObject_GetDictPtr(((PyObject *)__pyx_v_self))))));
+    else {
+      PY_UINT64_T type_dict_guard = (likely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict)) ? __PYX_GET_DICT_VERSION(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict) : 0;
+      #endif
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_df_dt); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 167, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)(void*)__pyx_pw_8Schottky_4Trap_4Trap_21df_dt)) {
+        __Pyx_XDECREF(__pyx_r);
+        __pyx_t_3 = PyFloat_FromDouble(__pyx_v_temperature); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 167, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_3);
+        __pyx_t_4 = PyFloat_FromDouble(__pyx_v_v_e); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 167, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_4);
+        __pyx_t_5 = PyFloat_FromDouble(__pyx_v_n_e); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 167, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_5);
+        __pyx_t_6 = PyFloat_FromDouble(__pyx_v_n_c); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 167, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_6);
+        __pyx_t_7 = PyFloat_FromDouble(__pyx_v_v_h); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 167, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_7);
+        __pyx_t_8 = PyFloat_FromDouble(__pyx_v_n_h); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 167, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_8);
+        __pyx_t_9 = PyFloat_FromDouble(__pyx_v_n_v); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 167, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_9);
+        __Pyx_INCREF(__pyx_t_1);
+        __pyx_t_10 = __pyx_t_1; __pyx_t_11 = NULL;
+        __pyx_t_12 = 0;
+        if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_10))) {
+          __pyx_t_11 = PyMethod_GET_SELF(__pyx_t_10);
+          if (likely(__pyx_t_11)) {
+            PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_10);
+            __Pyx_INCREF(__pyx_t_11);
+            __Pyx_INCREF(function);
+            __Pyx_DECREF_SET(__pyx_t_10, function);
+            __pyx_t_12 = 1;
+          }
+        }
+        #if CYTHON_FAST_PYCALL
+        if (PyFunction_Check(__pyx_t_10)) {
+          PyObject *__pyx_temp[8] = {__pyx_t_11, __pyx_t_3, __pyx_t_4, __pyx_t_5, __pyx_t_6, __pyx_t_7, __pyx_t_8, __pyx_t_9};
+          __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_10, __pyx_temp+1-__pyx_t_12, 7+__pyx_t_12); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 167, __pyx_L1_error)
+          __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+          __Pyx_GOTREF(__pyx_t_2);
+          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+          __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+          __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+          __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+          __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+          __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+          __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+        } else
+        #endif
+        #if CYTHON_FAST_PYCCALL
+        if (__Pyx_PyFastCFunction_Check(__pyx_t_10)) {
+          PyObject *__pyx_temp[8] = {__pyx_t_11, __pyx_t_3, __pyx_t_4, __pyx_t_5, __pyx_t_6, __pyx_t_7, __pyx_t_8, __pyx_t_9};
+          __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_10, __pyx_temp+1-__pyx_t_12, 7+__pyx_t_12); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 167, __pyx_L1_error)
+          __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+          __Pyx_GOTREF(__pyx_t_2);
+          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+          __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+          __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+          __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+          __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+          __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+          __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+        } else
+        #endif
+        {
+          __pyx_t_13 = PyTuple_New(7+__pyx_t_12); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 167, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_13);
+          if (__pyx_t_11) {
+            __Pyx_GIVEREF(__pyx_t_11); PyTuple_SET_ITEM(__pyx_t_13, 0, __pyx_t_11); __pyx_t_11 = NULL;
+          }
+          __Pyx_GIVEREF(__pyx_t_3);
+          PyTuple_SET_ITEM(__pyx_t_13, 0+__pyx_t_12, __pyx_t_3);
+          __Pyx_GIVEREF(__pyx_t_4);
+          PyTuple_SET_ITEM(__pyx_t_13, 1+__pyx_t_12, __pyx_t_4);
+          __Pyx_GIVEREF(__pyx_t_5);
+          PyTuple_SET_ITEM(__pyx_t_13, 2+__pyx_t_12, __pyx_t_5);
+          __Pyx_GIVEREF(__pyx_t_6);
+          PyTuple_SET_ITEM(__pyx_t_13, 3+__pyx_t_12, __pyx_t_6);
+          __Pyx_GIVEREF(__pyx_t_7);
+          PyTuple_SET_ITEM(__pyx_t_13, 4+__pyx_t_12, __pyx_t_7);
+          __Pyx_GIVEREF(__pyx_t_8);
+          PyTuple_SET_ITEM(__pyx_t_13, 5+__pyx_t_12, __pyx_t_8);
+          __Pyx_GIVEREF(__pyx_t_9);
+          PyTuple_SET_ITEM(__pyx_t_13, 6+__pyx_t_12, __pyx_t_9);
+          __pyx_t_3 = 0;
+          __pyx_t_4 = 0;
+          __pyx_t_5 = 0;
+          __pyx_t_6 = 0;
+          __pyx_t_7 = 0;
+          __pyx_t_8 = 0;
+          __pyx_t_9 = 0;
+          __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_t_13, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 167, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_2);
+          __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+        }
+        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+        __pyx_r = __pyx_t_2;
+        __pyx_t_2 = 0;
+        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+        goto __pyx_L0;
+      }
+      #if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_PYTYPE_LOOKUP
+      tp_dict_version = likely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict) ? __PYX_GET_DICT_VERSION(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dict) : 0;
+      obj_dict_version = likely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset) ? __PYX_GET_DICT_VERSION(_PyObject_GetDictPtr(((PyObject *)__pyx_v_self))) : 0;
+      if (unlikely(type_dict_guard != tp_dict_version)) {
+        tp_dict_version = obj_dict_version = 0;
+      }
+      #endif
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      #if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_PYTYPE_LOOKUP
+    }
+    #endif
+  }
+
+  /* "Schottky/Trap/__init__.pyx":172
+ *         cdef:
+ *             double gain, loss
+ *         gain = (self.e_cr(temperature, v_e, n_e) + self.h_er(temperature, v_h, n_v)) * (1 - self.__f)             # <<<<<<<<<<<<<<
+ *         loss = (self.e_er(temperature, v_e, n_c) + self.h_cr(temperature, v_h, n_h)) * self.__f
+ *         return gain - loss
+ */
+  __pyx_v_gain = ((((struct __pyx_vtabstruct_8Schottky_4Trap_Trap *)__pyx_v_self->__pyx_vtab)->e_cr(__pyx_v_self, __pyx_v_temperature, __pyx_v_v_e, __pyx_v_n_e, 0) + ((struct __pyx_vtabstruct_8Schottky_4Trap_Trap *)__pyx_v_self->__pyx_vtab)->h_er(__pyx_v_self, __pyx_v_temperature, __pyx_v_v_h, __pyx_v_n_v, 0)) * (1.0 - __pyx_v_self->__pyx___f));
+
+  /* "Schottky/Trap/__init__.pyx":173
+ *             double gain, loss
+ *         gain = (self.e_cr(temperature, v_e, n_e) + self.h_er(temperature, v_h, n_v)) * (1 - self.__f)
+ *         loss = (self.e_er(temperature, v_e, n_c) + self.h_cr(temperature, v_h, n_h)) * self.__f             # <<<<<<<<<<<<<<
+ *         return gain - loss
+ * 
+ */
+  __pyx_v_loss = ((((struct __pyx_vtabstruct_8Schottky_4Trap_Trap *)__pyx_v_self->__pyx_vtab)->e_er(__pyx_v_self, __pyx_v_temperature, __pyx_v_v_e, __pyx_v_n_c, 0) + ((struct __pyx_vtabstruct_8Schottky_4Trap_Trap *)__pyx_v_self->__pyx_vtab)->h_cr(__pyx_v_self, __pyx_v_temperature, __pyx_v_v_h, __pyx_v_n_h, 0)) * __pyx_v_self->__pyx___f);
+
+  /* "Schottky/Trap/__init__.pyx":174
+ *         gain = (self.e_cr(temperature, v_e, n_e) + self.h_er(temperature, v_h, n_v)) * (1 - self.__f)
+ *         loss = (self.e_er(temperature, v_e, n_c) + self.h_cr(temperature, v_h, n_h)) * self.__f
+ *         return gain - loss             # <<<<<<<<<<<<<<
+ * 
+ *     cdef double __coerce_f(self, double f):
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = PyFloat_FromDouble((__pyx_v_gain - __pyx_v_loss)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 174, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* "Schottky/Trap/__init__.pyx":167
+ *             return h_e / (h_c + h_e)
+ * 
+ *     cpdef df_dt(self, double temperature,             # <<<<<<<<<<<<<<
+ *                 double v_e, double n_e, double n_c,
+ *                 double v_h, double n_h, double n_v):
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_XDECREF(__pyx_t_6);
+  __Pyx_XDECREF(__pyx_t_7);
+  __Pyx_XDECREF(__pyx_t_8);
+  __Pyx_XDECREF(__pyx_t_9);
+  __Pyx_XDECREF(__pyx_t_10);
+  __Pyx_XDECREF(__pyx_t_11);
+  __Pyx_XDECREF(__pyx_t_13);
+  __Pyx_AddTraceback("Schottky.Trap.Trap.df_dt", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = 0;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* Python wrapper */
+static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_21df_dt(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_21df_dt(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  double __pyx_v_temperature;
+  double __pyx_v_v_e;
+  double __pyx_v_n_e;
+  double __pyx_v_n_c;
+  double __pyx_v_v_h;
+  double __pyx_v_n_h;
+  double __pyx_v_n_v;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("df_dt (wrapper)", 0);
+  {
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_temperature,&__pyx_n_s_v_e,&__pyx_n_s_n_e,&__pyx_n_s_n_c,&__pyx_n_s_v_h,&__pyx_n_s_n_h,&__pyx_n_s_n_v,0};
+    PyObject* values[7] = {0,0,0,0,0,0,0};
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
+      switch (pos_args) {
+        case  7: values[6] = PyTuple_GET_ITEM(__pyx_args, 6);
+        CYTHON_FALLTHROUGH;
+        case  6: values[5] = PyTuple_GET_ITEM(__pyx_args, 5);
+        CYTHON_FALLTHROUGH;
+        case  5: values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
+        CYTHON_FALLTHROUGH;
+        case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
+        CYTHON_FALLTHROUGH;
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        CYTHON_FALLTHROUGH;
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        CYTHON_FALLTHROUGH;
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        CYTHON_FALLTHROUGH;
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = PyDict_Size(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (likely((values[0] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_temperature)) != 0)) kw_args--;
+        else goto __pyx_L5_argtuple_error;
+        CYTHON_FALLTHROUGH;
+        case  1:
+        if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_v_e)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("df_dt", 1, 7, 7, 1); __PYX_ERR(0, 167, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  2:
+        if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_n_e)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("df_dt", 1, 7, 7, 2); __PYX_ERR(0, 167, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  3:
+        if (likely((values[3] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_n_c)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("df_dt", 1, 7, 7, 3); __PYX_ERR(0, 167, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  4:
+        if (likely((values[4] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_v_h)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("df_dt", 1, 7, 7, 4); __PYX_ERR(0, 167, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  5:
+        if (likely((values[5] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_n_h)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("df_dt", 1, 7, 7, 5); __PYX_ERR(0, 167, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  6:
+        if (likely((values[6] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_n_v)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("df_dt", 1, 7, 7, 6); __PYX_ERR(0, 167, __pyx_L3_error)
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "df_dt") < 0)) __PYX_ERR(0, 167, __pyx_L3_error)
+      }
+    } else if (PyTuple_GET_SIZE(__pyx_args) != 7) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+      values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+      values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+      values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
+      values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
+      values[5] = PyTuple_GET_ITEM(__pyx_args, 5);
+      values[6] = PyTuple_GET_ITEM(__pyx_args, 6);
+    }
+    __pyx_v_temperature = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_temperature == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 167, __pyx_L3_error)
+    __pyx_v_v_e = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_v_e == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 168, __pyx_L3_error)
+    __pyx_v_n_e = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_n_e == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 168, __pyx_L3_error)
+    __pyx_v_n_c = __pyx_PyFloat_AsDouble(values[3]); if (unlikely((__pyx_v_n_c == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 168, __pyx_L3_error)
+    __pyx_v_v_h = __pyx_PyFloat_AsDouble(values[4]); if (unlikely((__pyx_v_v_h == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 169, __pyx_L3_error)
+    __pyx_v_n_h = __pyx_PyFloat_AsDouble(values[5]); if (unlikely((__pyx_v_n_h == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 169, __pyx_L3_error)
+    __pyx_v_n_v = __pyx_PyFloat_AsDouble(values[6]); if (unlikely((__pyx_v_n_v == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 169, __pyx_L3_error)
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("df_dt", 1, 7, 7, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 167, __pyx_L3_error)
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("Schottky.Trap.Trap.df_dt", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_8Schottky_4Trap_4Trap_20df_dt(((struct __pyx_obj_8Schottky_4Trap_Trap *)__pyx_v_self), __pyx_v_temperature, __pyx_v_v_e, __pyx_v_n_e, __pyx_v_n_c, __pyx_v_v_h, __pyx_v_n_h, __pyx_v_n_v);
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_20df_dt(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_temperature, double __pyx_v_v_e, double __pyx_v_n_e, double __pyx_v_n_c, double __pyx_v_v_h, double __pyx_v_n_h, double __pyx_v_n_v) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("df_dt", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __pyx_f_8Schottky_4Trap_4Trap_df_dt(__pyx_v_self, __pyx_v_temperature, __pyx_v_v_e, __pyx_v_n_e, __pyx_v_n_c, __pyx_v_v_h, __pyx_v_n_h, __pyx_v_n_v, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 167, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("Schottky.Trap.Trap.df_dt", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "Schottky/Trap/__init__.pyx":176
+ *         return gain - loss
+ * 
+ *     cdef double __coerce_f(self, double f):             # <<<<<<<<<<<<<<
+ *         if f > 1.0:
+ *             return 1.0
+ */
+
+static double __pyx_f_8Schottky_4Trap_4Trap___coerce_f(CYTHON_UNUSED struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_f) {
+  double __pyx_r;
+  __Pyx_RefNannyDeclarations
+  int __pyx_t_1;
+  __Pyx_RefNannySetupContext("__coerce_f", 0);
+
+  /* "Schottky/Trap/__init__.pyx":177
+ * 
+ *     cdef double __coerce_f(self, double f):
+ *         if f > 1.0:             # <<<<<<<<<<<<<<
+ *             return 1.0
+ *         elif f < 0.0:
+ */
+  __pyx_t_1 = ((__pyx_v_f > 1.0) != 0);
+  if (__pyx_t_1) {
+
+    /* "Schottky/Trap/__init__.pyx":178
+ *     cdef double __coerce_f(self, double f):
+ *         if f > 1.0:
+ *             return 1.0             # <<<<<<<<<<<<<<
+ *         elif f < 0.0:
+ *             return 0.0
+ */
+    __pyx_r = 1.0;
+    goto __pyx_L0;
+
+    /* "Schottky/Trap/__init__.pyx":177
+ * 
+ *     cdef double __coerce_f(self, double f):
+ *         if f > 1.0:             # <<<<<<<<<<<<<<
+ *             return 1.0
+ *         elif f < 0.0:
+ */
+  }
+
+  /* "Schottky/Trap/__init__.pyx":179
+ *         if f > 1.0:
+ *             return 1.0
+ *         elif f < 0.0:             # <<<<<<<<<<<<<<
+ *             return 0.0
+ *         else:
+ */
+  __pyx_t_1 = ((__pyx_v_f < 0.0) != 0);
+  if (__pyx_t_1) {
+
+    /* "Schottky/Trap/__init__.pyx":180
+ *             return 1.0
+ *         elif f < 0.0:
+ *             return 0.0             # <<<<<<<<<<<<<<
+ *         else:
+ *             return f
+ */
+    __pyx_r = 0.0;
+    goto __pyx_L0;
+
+    /* "Schottky/Trap/__init__.pyx":179
+ *         if f > 1.0:
+ *             return 1.0
+ *         elif f < 0.0:             # <<<<<<<<<<<<<<
+ *             return 0.0
+ *         else:
+ */
+  }
+
+  /* "Schottky/Trap/__init__.pyx":182
+ *             return 0.0
+ *         else:
+ *             return f             # <<<<<<<<<<<<<<
+ * 
+ *     @property
+ */
+  /*else*/ {
+    __pyx_r = __pyx_v_f;
+    goto __pyx_L0;
+  }
+
+  /* "Schottky/Trap/__init__.pyx":176
+ *         return gain - loss
+ * 
+ *     cdef double __coerce_f(self, double f):             # <<<<<<<<<<<<<<
+ *         if f > 1.0:
+ *             return 1.0
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "Schottky/Trap/__init__.pyx":185
+ * 
+ *     @property
+ *     def charge_state(self):             # <<<<<<<<<<<<<<
+ *         return self.__charge_state
+ * 
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_12charge_state_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_12charge_state_1__get__(PyObject *__pyx_v_self) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_8Schottky_4Trap_4Trap_12charge_state___get__(((struct __pyx_obj_8Schottky_4Trap_Trap *)__pyx_v_self));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_12charge_state___get__(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__get__", 0);
+
+  /* "Schottky/Trap/__init__.pyx":186
+ *     @property
+ *     def charge_state(self):
+ *         return self.__charge_state             # <<<<<<<<<<<<<<
+ * 
+ *     @charge_state.setter
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __Pyx_INCREF(__pyx_v_self->__pyx___charge_state);
+  __pyx_r = __pyx_v_self->__pyx___charge_state;
+  goto __pyx_L0;
+
+  /* "Schottky/Trap/__init__.pyx":185
+ * 
+ *     @property
+ *     def charge_state(self):             # <<<<<<<<<<<<<<
+ *         return self.__charge_state
+ * 
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "Schottky/Trap/__init__.pyx":189
+ * 
+ *     @charge_state.setter
+ *     def charge_state(self, charge_state):             # <<<<<<<<<<<<<<
+ *         self.__charge_state[0] = charge_state[0]
+ *         self.__charge_state[1] = charge_state[1]
+ */
+
+/* Python wrapper */
+static int __pyx_pw_8Schottky_4Trap_4Trap_12charge_state_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_charge_state); /*proto*/
+static int __pyx_pw_8Schottky_4Trap_4Trap_12charge_state_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_charge_state) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_8Schottky_4Trap_4Trap_12charge_state_2__set__(((struct __pyx_obj_8Schottky_4Trap_Trap *)__pyx_v_self), ((PyObject *)__pyx_v_charge_state));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static int __pyx_pf_8Schottky_4Trap_4Trap_12charge_state_2__set__(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, PyObject *__pyx_v_charge_state) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("__set__", 0);
+
+  /* "Schottky/Trap/__init__.pyx":190
+ *     @charge_state.setter
+ *     def charge_state(self, charge_state):
+ *         self.__charge_state[0] = charge_state[0]             # <<<<<<<<<<<<<<
+ *         self.__charge_state[1] = charge_state[1]
+ * 
+ */
+  __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_charge_state, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 190, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (unlikely(__pyx_v_self->__pyx___charge_state == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+    __PYX_ERR(0, 190, __pyx_L1_error)
+  }
+  if (unlikely(PyDict_SetItem(__pyx_v_self->__pyx___charge_state, __pyx_int_0, __pyx_t_1) < 0)) __PYX_ERR(0, 190, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "Schottky/Trap/__init__.pyx":191
+ *     def charge_state(self, charge_state):
+ *         self.__charge_state[0] = charge_state[0]
+ *         self.__charge_state[1] = charge_state[1]             # <<<<<<<<<<<<<<
+ * 
+ *     @property
+ */
+  __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_charge_state, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 191, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (unlikely(__pyx_v_self->__pyx___charge_state == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+    __PYX_ERR(0, 191, __pyx_L1_error)
+  }
+  if (unlikely(PyDict_SetItem(__pyx_v_self->__pyx___charge_state, __pyx_int_1, __pyx_t_1) < 0)) __PYX_ERR(0, 191, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "Schottky/Trap/__init__.pyx":189
+ * 
+ *     @charge_state.setter
+ *     def charge_state(self, charge_state):             # <<<<<<<<<<<<<<
+ *         self.__charge_state[0] = charge_state[0]
+ *         self.__charge_state[1] = charge_state[1]
+ */
+
+  /* function exit code */
+  __pyx_r = 0;
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("Schottky.Trap.Trap.charge_state.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = -1;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "Schottky/Trap/__init__.pyx":194
+ * 
+ *     @property
+ *     def g(self):             # <<<<<<<<<<<<<<
+ *         return self.__g
+ * 
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_1g_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_1g_1__get__(PyObject *__pyx_v_self) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_8Schottky_4Trap_4Trap_1g___get__(((struct __pyx_obj_8Schottky_4Trap_Trap *)__pyx_v_self));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_1g___get__(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__get__", 0);
+
+  /* "Schottky/Trap/__init__.pyx":195
+ *     @property
+ *     def g(self):
+ *         return self.__g             # <<<<<<<<<<<<<<
+ * 
+ *     @g.setter
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __Pyx_INCREF(__pyx_v_self->__pyx___g);
+  __pyx_r = __pyx_v_self->__pyx___g;
+  goto __pyx_L0;
+
+  /* "Schottky/Trap/__init__.pyx":194
+ * 
+ *     @property
+ *     def g(self):             # <<<<<<<<<<<<<<
+ *         return self.__g
+ * 
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "Schottky/Trap/__init__.pyx":198
+ * 
+ *     @g.setter
+ *     def g(self, g):             # <<<<<<<<<<<<<<
+ *         self.__g[0] = g[0]
+ *         self.__g[1] = g[1]
+ */
+
+/* Python wrapper */
+static int __pyx_pw_8Schottky_4Trap_4Trap_1g_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_g); /*proto*/
+static int __pyx_pw_8Schottky_4Trap_4Trap_1g_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_g) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_8Schottky_4Trap_4Trap_1g_2__set__(((struct __pyx_obj_8Schottky_4Trap_Trap *)__pyx_v_self), ((PyObject *)__pyx_v_g));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static int __pyx_pf_8Schottky_4Trap_4Trap_1g_2__set__(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, PyObject *__pyx_v_g) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("__set__", 0);
+
+  /* "Schottky/Trap/__init__.pyx":199
+ *     @g.setter
+ *     def g(self, g):
+ *         self.__g[0] = g[0]             # <<<<<<<<<<<<<<
+ *         self.__g[1] = g[1]
+ * 
+ */
+  __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_g, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 199, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (unlikely(__pyx_v_self->__pyx___g == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+    __PYX_ERR(0, 199, __pyx_L1_error)
+  }
+  if (unlikely(PyDict_SetItem(__pyx_v_self->__pyx___g, __pyx_int_0, __pyx_t_1) < 0)) __PYX_ERR(0, 199, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "Schottky/Trap/__init__.pyx":200
+ *     def g(self, g):
+ *         self.__g[0] = g[0]
+ *         self.__g[1] = g[1]             # <<<<<<<<<<<<<<
+ * 
+ *     @property
+ */
+  __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_g, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 200, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (unlikely(__pyx_v_self->__pyx___g == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+    __PYX_ERR(0, 200, __pyx_L1_error)
+  }
+  if (unlikely(PyDict_SetItem(__pyx_v_self->__pyx___g, __pyx_int_1, __pyx_t_1) < 0)) __PYX_ERR(0, 200, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "Schottky/Trap/__init__.pyx":198
+ * 
+ *     @g.setter
+ *     def g(self, g):             # <<<<<<<<<<<<<<
+ *         self.__g[0] = g[0]
+ *         self.__g[1] = g[1]
+ */
+
+  /* function exit code */
+  __pyx_r = 0;
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("Schottky.Trap.Trap.g.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = -1;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "Schottky/Trap/__init__.pyx":203
  * 
  *     @property
  *     def f(self):             # <<<<<<<<<<<<<<
@@ -4295,21 +6108,21 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_1f___get__(struct __pyx_obj_8Sch
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "Schottky/Trap/__init__.pyx":137
+  /* "Schottky/Trap/__init__.pyx":204
  *     @property
  *     def f(self):
  *         return self.__f             # <<<<<<<<<<<<<<
  * 
- *     def __str__(self):
+ *     @f.setter
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->__pyx___f); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 137, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->__pyx___f); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 204, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "Schottky/Trap/__init__.pyx":136
+  /* "Schottky/Trap/__init__.pyx":203
  * 
  *     @property
  *     def f(self):             # <<<<<<<<<<<<<<
@@ -4328,8 +6141,67 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_1f___get__(struct __pyx_obj_8Sch
   return __pyx_r;
 }
 
-/* "Schottky/Trap/__init__.pyx":139
- *         return self.__f
+/* "Schottky/Trap/__init__.pyx":207
+ * 
+ *     @f.setter
+ *     def f(self, double f):             # <<<<<<<<<<<<<<
+ *         self.__f = self.__coerce_f(f)
+ * 
+ */
+
+/* Python wrapper */
+static int __pyx_pw_8Schottky_4Trap_4Trap_1f_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_arg_f); /*proto*/
+static int __pyx_pw_8Schottky_4Trap_4Trap_1f_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_arg_f) {
+  double __pyx_v_f;
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
+  assert(__pyx_arg_f); {
+    __pyx_v_f = __pyx_PyFloat_AsDouble(__pyx_arg_f); if (unlikely((__pyx_v_f == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 207, __pyx_L3_error)
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("Schottky.Trap.Trap.f.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return -1;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_8Schottky_4Trap_4Trap_1f_2__set__(((struct __pyx_obj_8Schottky_4Trap_Trap *)__pyx_v_self), ((double)__pyx_v_f));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static int __pyx_pf_8Schottky_4Trap_4Trap_1f_2__set__(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_f) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__set__", 0);
+
+  /* "Schottky/Trap/__init__.pyx":208
+ *     @f.setter
+ *     def f(self, double f):
+ *         self.__f = self.__coerce_f(f)             # <<<<<<<<<<<<<<
+ * 
+ *     def __str__(self):
+ */
+  __pyx_v_self->__pyx___f = ((struct __pyx_vtabstruct_8Schottky_4Trap_Trap *)__pyx_v_self->__pyx_vtab)->__pyx___coerce_f(__pyx_v_self, __pyx_v_f);
+
+  /* "Schottky/Trap/__init__.pyx":207
+ * 
+ *     @f.setter
+ *     def f(self, double f):             # <<<<<<<<<<<<<<
+ *         self.__f = self.__coerce_f(f)
+ * 
+ */
+
+  /* function exit code */
+  __pyx_r = 0;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "Schottky/Trap/__init__.pyx":210
+ *         self.__f = self.__coerce_f(f)
  * 
  *     def __str__(self):             # <<<<<<<<<<<<<<
  *         return 'Trap: %s\nEc-Et: %2.2f eV (%2.2g J)\nEt-Ev: %2.2f eV (%2.2g J)' % (self.label,
@@ -4337,19 +6209,19 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_1f___get__(struct __pyx_obj_8Sch
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_15__str__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_15__str__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_23__str__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_23__str__(PyObject *__pyx_v_self) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__str__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_8Schottky_4Trap_4Trap_14__str__(((struct __pyx_obj_8Schottky_4Trap_Trap *)__pyx_v_self));
+  __pyx_r = __pyx_pf_8Schottky_4Trap_4Trap_22__str__(((struct __pyx_obj_8Schottky_4Trap_Trap *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_14__str__(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self) {
+static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_22__str__(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -4360,7 +6232,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_14__str__(struct __pyx_obj_8Scho
   PyObject *__pyx_t_6 = NULL;
   __Pyx_RefNannySetupContext("__str__", 0);
 
-  /* "Schottky/Trap/__init__.pyx":140
+  /* "Schottky/Trap/__init__.pyx":211
  * 
  *     def __str__(self):
  *         return 'Trap: %s\nEc-Et: %2.2f eV (%2.2g J)\nEt-Ev: %2.2f eV (%2.2g J)' % (self.label,             # <<<<<<<<<<<<<<
@@ -4368,54 +6240,54 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_14__str__(struct __pyx_obj_8Scho
  *                                                                                    self.energy_c,
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_label); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 140, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_label); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 211, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
 
-  /* "Schottky/Trap/__init__.pyx":141
+  /* "Schottky/Trap/__init__.pyx":212
  *     def __str__(self):
  *         return 'Trap: %s\nEc-Et: %2.2f eV (%2.2g J)\nEt-Ev: %2.2f eV (%2.2g J)' % (self.label,
  *                                                                                    self.energy_c_ev,             # <<<<<<<<<<<<<<
  *                                                                                    self.energy_c,
  *                                                                                    self.energy_v_ev,
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_energy_c_ev); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 141, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_energy_c_ev); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 212, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
 
-  /* "Schottky/Trap/__init__.pyx":142
+  /* "Schottky/Trap/__init__.pyx":213
  *         return 'Trap: %s\nEc-Et: %2.2f eV (%2.2g J)\nEt-Ev: %2.2f eV (%2.2g J)' % (self.label,
  *                                                                                    self.energy_c_ev,
  *                                                                                    self.energy_c,             # <<<<<<<<<<<<<<
  *                                                                                    self.energy_v_ev,
  *                                                                                    self.energy_v)
  */
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_energy_c); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 142, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_energy_c); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 213, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
 
-  /* "Schottky/Trap/__init__.pyx":143
+  /* "Schottky/Trap/__init__.pyx":214
  *                                                                                    self.energy_c_ev,
  *                                                                                    self.energy_c,
  *                                                                                    self.energy_v_ev,             # <<<<<<<<<<<<<<
  *                                                                                    self.energy_v)
  */
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_energy_v_ev); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 143, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_energy_v_ev); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 214, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
 
-  /* "Schottky/Trap/__init__.pyx":144
+  /* "Schottky/Trap/__init__.pyx":215
  *                                                                                    self.energy_c,
  *                                                                                    self.energy_v_ev,
  *                                                                                    self.energy_v)             # <<<<<<<<<<<<<<
  */
-  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_energy_v); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 144, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_energy_v); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 215, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
 
-  /* "Schottky/Trap/__init__.pyx":140
+  /* "Schottky/Trap/__init__.pyx":211
  * 
  *     def __str__(self):
  *         return 'Trap: %s\nEc-Et: %2.2f eV (%2.2g J)\nEt-Ev: %2.2f eV (%2.2g J)' % (self.label,             # <<<<<<<<<<<<<<
  *                                                                                    self.energy_c_ev,
  *                                                                                    self.energy_c,
  */
-  __pyx_t_6 = PyTuple_New(5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 140, __pyx_L1_error)
+  __pyx_t_6 = PyTuple_New(5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 211, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_GIVEREF(__pyx_t_1);
   PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_1);
@@ -4432,15 +6304,15 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_14__str__(struct __pyx_obj_8Scho
   __pyx_t_3 = 0;
   __pyx_t_4 = 0;
   __pyx_t_5 = 0;
-  __pyx_t_5 = PyUnicode_Format(__pyx_kp_u_Trap_s_Ec_Et_2_2f_eV_2_2g_J_Et_E, __pyx_t_6); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 140, __pyx_L1_error)
+  __pyx_t_5 = PyUnicode_Format(__pyx_kp_u_Trap_s_Ec_Et_2_2f_eV_2_2g_J_Et_E, __pyx_t_6); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 211, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   __pyx_r = __pyx_t_5;
   __pyx_t_5 = 0;
   goto __pyx_L0;
 
-  /* "Schottky/Trap/__init__.pyx":139
- *         return self.__f
+  /* "Schottky/Trap/__init__.pyx":210
+ *         self.__f = self.__coerce_f(f)
  * 
  *     def __str__(self):             # <<<<<<<<<<<<<<
  *         return 'Trap: %s\nEc-Et: %2.2f eV (%2.2g J)\nEt-Ev: %2.2f eV (%2.2g J)' % (self.label,
@@ -4470,19 +6342,19 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_14__str__(struct __pyx_obj_8Scho
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_17__reduce_cython__(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_17__reduce_cython__(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_25__reduce_cython__(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_25__reduce_cython__(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__reduce_cython__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_8Schottky_4Trap_4Trap_16__reduce_cython__(((struct __pyx_obj_8Schottky_4Trap_Trap *)__pyx_v_self));
+  __pyx_r = __pyx_pf_8Schottky_4Trap_4Trap_24__reduce_cython__(((struct __pyx_obj_8Schottky_4Trap_Trap *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_16__reduce_cython__(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self) {
+static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_24__reduce_cython__(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self) {
   PyObject *__pyx_v_state = 0;
   PyObject *__pyx_v__dict = 0;
   int __pyx_v_use_setstate;
@@ -4498,12 +6370,13 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_16__reduce_cython__(struct __pyx
   PyObject *__pyx_t_8 = NULL;
   int __pyx_t_9;
   int __pyx_t_10;
+  int __pyx_t_11;
   __Pyx_RefNannySetupContext("__reduce_cython__", 0);
 
   /* "(tree fragment)":5
  *     cdef object _dict
  *     cdef bint use_setstate
- *     state = (self.__e_cs, self.__e_cs_activation, self.__energy_c, self.__energy_v, self.__f, self.__h_cs, self.__h_cs_activation, self.__label)             # <<<<<<<<<<<<<<
+ *     state = (self.__charge_state, self.__e_cs, self.__e_cs_activation, self.__energy_c, self.__energy_v, self.__f, self.__g, self.__h_cs, self.__h_cs_activation, self.__label)             # <<<<<<<<<<<<<<
  *     _dict = getattr(self, '__dict__', None)
  *     if _dict is not None:
  */
@@ -4521,25 +6394,31 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_16__reduce_cython__(struct __pyx
   __Pyx_GOTREF(__pyx_t_6);
   __pyx_t_7 = PyFloat_FromDouble(__pyx_v_self->__pyx___h_cs_activation); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 5, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  __pyx_t_8 = PyTuple_New(8); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 5, __pyx_L1_error)
+  __pyx_t_8 = PyTuple_New(10); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 5, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
+  __Pyx_INCREF(__pyx_v_self->__pyx___charge_state);
+  __Pyx_GIVEREF(__pyx_v_self->__pyx___charge_state);
+  PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_v_self->__pyx___charge_state);
   __Pyx_GIVEREF(__pyx_t_1);
-  PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_1);
+  PyTuple_SET_ITEM(__pyx_t_8, 1, __pyx_t_1);
   __Pyx_GIVEREF(__pyx_t_2);
-  PyTuple_SET_ITEM(__pyx_t_8, 1, __pyx_t_2);
+  PyTuple_SET_ITEM(__pyx_t_8, 2, __pyx_t_2);
   __Pyx_GIVEREF(__pyx_t_3);
-  PyTuple_SET_ITEM(__pyx_t_8, 2, __pyx_t_3);
+  PyTuple_SET_ITEM(__pyx_t_8, 3, __pyx_t_3);
   __Pyx_GIVEREF(__pyx_t_4);
-  PyTuple_SET_ITEM(__pyx_t_8, 3, __pyx_t_4);
+  PyTuple_SET_ITEM(__pyx_t_8, 4, __pyx_t_4);
   __Pyx_GIVEREF(__pyx_t_5);
-  PyTuple_SET_ITEM(__pyx_t_8, 4, __pyx_t_5);
+  PyTuple_SET_ITEM(__pyx_t_8, 5, __pyx_t_5);
+  __Pyx_INCREF(__pyx_v_self->__pyx___g);
+  __Pyx_GIVEREF(__pyx_v_self->__pyx___g);
+  PyTuple_SET_ITEM(__pyx_t_8, 6, __pyx_v_self->__pyx___g);
   __Pyx_GIVEREF(__pyx_t_6);
-  PyTuple_SET_ITEM(__pyx_t_8, 5, __pyx_t_6);
+  PyTuple_SET_ITEM(__pyx_t_8, 7, __pyx_t_6);
   __Pyx_GIVEREF(__pyx_t_7);
-  PyTuple_SET_ITEM(__pyx_t_8, 6, __pyx_t_7);
+  PyTuple_SET_ITEM(__pyx_t_8, 8, __pyx_t_7);
   __Pyx_INCREF(__pyx_v_self->__pyx___label);
   __Pyx_GIVEREF(__pyx_v_self->__pyx___label);
-  PyTuple_SET_ITEM(__pyx_t_8, 7, __pyx_v_self->__pyx___label);
+  PyTuple_SET_ITEM(__pyx_t_8, 9, __pyx_v_self->__pyx___label);
   __pyx_t_1 = 0;
   __pyx_t_2 = 0;
   __pyx_t_3 = 0;
@@ -4552,7 +6431,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_16__reduce_cython__(struct __pyx
 
   /* "(tree fragment)":6
  *     cdef bint use_setstate
- *     state = (self.__e_cs, self.__e_cs_activation, self.__energy_c, self.__energy_v, self.__f, self.__h_cs, self.__h_cs_activation, self.__label)
+ *     state = (self.__charge_state, self.__e_cs, self.__e_cs_activation, self.__energy_c, self.__energy_v, self.__f, self.__g, self.__h_cs, self.__h_cs_activation, self.__label)
  *     _dict = getattr(self, '__dict__', None)             # <<<<<<<<<<<<<<
  *     if _dict is not None:
  *         state += (_dict,)
@@ -4563,7 +6442,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_16__reduce_cython__(struct __pyx
   __pyx_t_8 = 0;
 
   /* "(tree fragment)":7
- *     state = (self.__e_cs, self.__e_cs_activation, self.__energy_c, self.__energy_v, self.__f, self.__h_cs, self.__h_cs_activation, self.__label)
+ *     state = (self.__charge_state, self.__e_cs, self.__e_cs_activation, self.__energy_c, self.__energy_v, self.__f, self.__g, self.__h_cs, self.__h_cs_activation, self.__label)
  *     _dict = getattr(self, '__dict__', None)
  *     if _dict is not None:             # <<<<<<<<<<<<<<
  *         state += (_dict,)
@@ -4596,12 +6475,12 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_16__reduce_cython__(struct __pyx
  *         state += (_dict,)
  *         use_setstate = True             # <<<<<<<<<<<<<<
  *     else:
- *         use_setstate = self.__label is not None
+ *         use_setstate = self.__charge_state is not None or self.__g is not None or self.__label is not None
  */
     __pyx_v_use_setstate = 1;
 
     /* "(tree fragment)":7
- *     state = (self.__e_cs, self.__e_cs_activation, self.__energy_c, self.__energy_v, self.__f, self.__h_cs, self.__h_cs_activation, self.__label)
+ *     state = (self.__charge_state, self.__e_cs, self.__e_cs_activation, self.__energy_c, self.__energy_v, self.__f, self.__g, self.__h_cs, self.__h_cs_activation, self.__label)
  *     _dict = getattr(self, '__dict__', None)
  *     if _dict is not None:             # <<<<<<<<<<<<<<
  *         state += (_dict,)
@@ -4613,32 +6492,49 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_16__reduce_cython__(struct __pyx
   /* "(tree fragment)":11
  *         use_setstate = True
  *     else:
- *         use_setstate = self.__label is not None             # <<<<<<<<<<<<<<
+ *         use_setstate = self.__charge_state is not None or self.__g is not None or self.__label is not None             # <<<<<<<<<<<<<<
  *     if use_setstate:
- *         return __pyx_unpickle_Trap, (type(self), 0xf11b600, None), state
+ *         return __pyx_unpickle_Trap, (type(self), 0xb97128a, None), state
  */
   /*else*/ {
-    __pyx_t_10 = (__pyx_v_self->__pyx___label != ((PyObject*)Py_None));
+    __pyx_t_9 = (__pyx_v_self->__pyx___charge_state != ((PyObject*)Py_None));
+    __pyx_t_11 = (__pyx_t_9 != 0);
+    if (!__pyx_t_11) {
+    } else {
+      __pyx_t_10 = __pyx_t_11;
+      goto __pyx_L4_bool_binop_done;
+    }
+    __pyx_t_11 = (__pyx_v_self->__pyx___g != ((PyObject*)Py_None));
+    __pyx_t_9 = (__pyx_t_11 != 0);
+    if (!__pyx_t_9) {
+    } else {
+      __pyx_t_10 = __pyx_t_9;
+      goto __pyx_L4_bool_binop_done;
+    }
+    __pyx_t_9 = (__pyx_v_self->__pyx___label != ((PyObject*)Py_None));
+    __pyx_t_11 = (__pyx_t_9 != 0);
+    __pyx_t_10 = __pyx_t_11;
+    __pyx_L4_bool_binop_done:;
     __pyx_v_use_setstate = __pyx_t_10;
   }
   __pyx_L3:;
 
   /* "(tree fragment)":12
  *     else:
- *         use_setstate = self.__label is not None
+ *         use_setstate = self.__charge_state is not None or self.__g is not None or self.__label is not None
  *     if use_setstate:             # <<<<<<<<<<<<<<
- *         return __pyx_unpickle_Trap, (type(self), 0xf11b600, None), state
+ *         return __pyx_unpickle_Trap, (type(self), 0xb97128a, None), state
  *     else:
  */
   __pyx_t_10 = (__pyx_v_use_setstate != 0);
   if (__pyx_t_10) {
 
     /* "(tree fragment)":13
- *         use_setstate = self.__label is not None
+ *         use_setstate = self.__charge_state is not None or self.__g is not None or self.__label is not None
  *     if use_setstate:
- *         return __pyx_unpickle_Trap, (type(self), 0xf11b600, None), state             # <<<<<<<<<<<<<<
+ *         return __pyx_unpickle_Trap, (type(self), 0xb97128a, None), state             # <<<<<<<<<<<<<<
  *     else:
- *         return __pyx_unpickle_Trap, (type(self), 0xf11b600, state)
+ *         return __pyx_unpickle_Trap, (type(self), 0xb97128a, state)
  */
     __Pyx_XDECREF(__pyx_r);
     __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_pyx_unpickle_Trap); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 13, __pyx_L1_error)
@@ -4648,9 +6544,9 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_16__reduce_cython__(struct __pyx
     __Pyx_INCREF(((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self))));
     __Pyx_GIVEREF(((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self))));
     PyTuple_SET_ITEM(__pyx_t_8, 0, ((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self))));
-    __Pyx_INCREF(__pyx_int_252818944);
-    __Pyx_GIVEREF(__pyx_int_252818944);
-    PyTuple_SET_ITEM(__pyx_t_8, 1, __pyx_int_252818944);
+    __Pyx_INCREF(__pyx_int_194450058);
+    __Pyx_GIVEREF(__pyx_int_194450058);
+    PyTuple_SET_ITEM(__pyx_t_8, 1, __pyx_int_194450058);
     __Pyx_INCREF(Py_None);
     __Pyx_GIVEREF(Py_None);
     PyTuple_SET_ITEM(__pyx_t_8, 2, Py_None);
@@ -4671,17 +6567,17 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_16__reduce_cython__(struct __pyx
 
     /* "(tree fragment)":12
  *     else:
- *         use_setstate = self.__label is not None
+ *         use_setstate = self.__charge_state is not None or self.__g is not None or self.__label is not None
  *     if use_setstate:             # <<<<<<<<<<<<<<
- *         return __pyx_unpickle_Trap, (type(self), 0xf11b600, None), state
+ *         return __pyx_unpickle_Trap, (type(self), 0xb97128a, None), state
  *     else:
  */
   }
 
   /* "(tree fragment)":15
- *         return __pyx_unpickle_Trap, (type(self), 0xf11b600, None), state
+ *         return __pyx_unpickle_Trap, (type(self), 0xb97128a, None), state
  *     else:
- *         return __pyx_unpickle_Trap, (type(self), 0xf11b600, state)             # <<<<<<<<<<<<<<
+ *         return __pyx_unpickle_Trap, (type(self), 0xb97128a, state)             # <<<<<<<<<<<<<<
  * def __setstate_cython__(self, __pyx_state):
  *     __pyx_unpickle_Trap__set_state(self, __pyx_state)
  */
@@ -4694,9 +6590,9 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_16__reduce_cython__(struct __pyx
     __Pyx_INCREF(((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self))));
     __Pyx_GIVEREF(((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self))));
     PyTuple_SET_ITEM(__pyx_t_8, 0, ((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self))));
-    __Pyx_INCREF(__pyx_int_252818944);
-    __Pyx_GIVEREF(__pyx_int_252818944);
-    PyTuple_SET_ITEM(__pyx_t_8, 1, __pyx_int_252818944);
+    __Pyx_INCREF(__pyx_int_194450058);
+    __Pyx_GIVEREF(__pyx_int_194450058);
+    PyTuple_SET_ITEM(__pyx_t_8, 1, __pyx_int_194450058);
     __Pyx_INCREF(__pyx_v_state);
     __Pyx_GIVEREF(__pyx_v_state);
     PyTuple_SET_ITEM(__pyx_t_8, 2, __pyx_v_state);
@@ -4741,32 +6637,32 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_16__reduce_cython__(struct __pyx
 
 /* "(tree fragment)":16
  *     else:
- *         return __pyx_unpickle_Trap, (type(self), 0xf11b600, state)
+ *         return __pyx_unpickle_Trap, (type(self), 0xb97128a, state)
  * def __setstate_cython__(self, __pyx_state):             # <<<<<<<<<<<<<<
  *     __pyx_unpickle_Trap__set_state(self, __pyx_state)
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_19__setstate_cython__(PyObject *__pyx_v_self, PyObject *__pyx_v___pyx_state); /*proto*/
-static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_19__setstate_cython__(PyObject *__pyx_v_self, PyObject *__pyx_v___pyx_state) {
+static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_27__setstate_cython__(PyObject *__pyx_v_self, PyObject *__pyx_v___pyx_state); /*proto*/
+static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_27__setstate_cython__(PyObject *__pyx_v_self, PyObject *__pyx_v___pyx_state) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__setstate_cython__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_8Schottky_4Trap_4Trap_18__setstate_cython__(((struct __pyx_obj_8Schottky_4Trap_Trap *)__pyx_v_self), ((PyObject *)__pyx_v___pyx_state));
+  __pyx_r = __pyx_pf_8Schottky_4Trap_4Trap_26__setstate_cython__(((struct __pyx_obj_8Schottky_4Trap_Trap *)__pyx_v_self), ((PyObject *)__pyx_v___pyx_state));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_18__setstate_cython__(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, PyObject *__pyx_v___pyx_state) {
+static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_26__setstate_cython__(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, PyObject *__pyx_v___pyx_state) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("__setstate_cython__", 0);
 
   /* "(tree fragment)":17
- *         return __pyx_unpickle_Trap, (type(self), 0xf11b600, state)
+ *         return __pyx_unpickle_Trap, (type(self), 0xb97128a, state)
  * def __setstate_cython__(self, __pyx_state):
  *     __pyx_unpickle_Trap__set_state(self, __pyx_state)             # <<<<<<<<<<<<<<
  */
@@ -4777,7 +6673,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_18__setstate_cython__(struct __p
 
   /* "(tree fragment)":16
  *     else:
- *         return __pyx_unpickle_Trap, (type(self), 0xf11b600, state)
+ *         return __pyx_unpickle_Trap, (type(self), 0xb97128a, state)
  * def __setstate_cython__(self, __pyx_state):             # <<<<<<<<<<<<<<
  *     __pyx_unpickle_Trap__set_state(self, __pyx_state)
  */
@@ -4890,18 +6786,18 @@ static PyObject *__pyx_pf_8Schottky_4Trap___pyx_unpickle_Trap(CYTHON_UNUSED PyOb
   /* "(tree fragment)":4
  *     cdef object __pyx_PickleError
  *     cdef object __pyx_result
- *     if __pyx_checksum != 0xf11b600:             # <<<<<<<<<<<<<<
+ *     if __pyx_checksum != 0xb97128a:             # <<<<<<<<<<<<<<
  *         from pickle import PickleError as __pyx_PickleError
- *         raise __pyx_PickleError("Incompatible checksums (%s vs 0xf11b600 = (__e_cs, __e_cs_activation, __energy_c, __energy_v, __f, __h_cs, __h_cs_activation, __label))" % __pyx_checksum)
+ *         raise __pyx_PickleError("Incompatible checksums (%s vs 0xb97128a = (__charge_state, __e_cs, __e_cs_activation, __energy_c, __energy_v, __f, __g, __h_cs, __h_cs_activation, __label))" % __pyx_checksum)
  */
-  __pyx_t_1 = ((__pyx_v___pyx_checksum != 0xf11b600) != 0);
+  __pyx_t_1 = ((__pyx_v___pyx_checksum != 0xb97128a) != 0);
   if (__pyx_t_1) {
 
     /* "(tree fragment)":5
  *     cdef object __pyx_result
- *     if __pyx_checksum != 0xf11b600:
+ *     if __pyx_checksum != 0xb97128a:
  *         from pickle import PickleError as __pyx_PickleError             # <<<<<<<<<<<<<<
- *         raise __pyx_PickleError("Incompatible checksums (%s vs 0xf11b600 = (__e_cs, __e_cs_activation, __energy_c, __energy_v, __f, __h_cs, __h_cs_activation, __label))" % __pyx_checksum)
+ *         raise __pyx_PickleError("Incompatible checksums (%s vs 0xb97128a = (__charge_state, __e_cs, __e_cs_activation, __energy_c, __energy_v, __f, __g, __h_cs, __h_cs_activation, __label))" % __pyx_checksum)
  *     __pyx_result = Trap.__new__(__pyx_type)
  */
     __pyx_t_2 = PyList_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 5, __pyx_L1_error)
@@ -4920,15 +6816,15 @@ static PyObject *__pyx_pf_8Schottky_4Trap___pyx_unpickle_Trap(CYTHON_UNUSED PyOb
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
     /* "(tree fragment)":6
- *     if __pyx_checksum != 0xf11b600:
+ *     if __pyx_checksum != 0xb97128a:
  *         from pickle import PickleError as __pyx_PickleError
- *         raise __pyx_PickleError("Incompatible checksums (%s vs 0xf11b600 = (__e_cs, __e_cs_activation, __energy_c, __energy_v, __f, __h_cs, __h_cs_activation, __label))" % __pyx_checksum)             # <<<<<<<<<<<<<<
+ *         raise __pyx_PickleError("Incompatible checksums (%s vs 0xb97128a = (__charge_state, __e_cs, __e_cs_activation, __energy_c, __energy_v, __f, __g, __h_cs, __h_cs_activation, __label))" % __pyx_checksum)             # <<<<<<<<<<<<<<
  *     __pyx_result = Trap.__new__(__pyx_type)
  *     if __pyx_state is not None:
  */
     __pyx_t_2 = __Pyx_PyInt_From_long(__pyx_v___pyx_checksum); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 6, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_4 = __Pyx_PyString_Format(__pyx_kp_s_Incompatible_checksums_s_vs_0xf1, __pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 6, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyString_Format(__pyx_kp_s_Incompatible_checksums_s_vs_0xb9, __pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 6, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_INCREF(__pyx_v___pyx_PickleError);
@@ -4955,15 +6851,15 @@ static PyObject *__pyx_pf_8Schottky_4Trap___pyx_unpickle_Trap(CYTHON_UNUSED PyOb
     /* "(tree fragment)":4
  *     cdef object __pyx_PickleError
  *     cdef object __pyx_result
- *     if __pyx_checksum != 0xf11b600:             # <<<<<<<<<<<<<<
+ *     if __pyx_checksum != 0xb97128a:             # <<<<<<<<<<<<<<
  *         from pickle import PickleError as __pyx_PickleError
- *         raise __pyx_PickleError("Incompatible checksums (%s vs 0xf11b600 = (__e_cs, __e_cs_activation, __energy_c, __energy_v, __f, __h_cs, __h_cs_activation, __label))" % __pyx_checksum)
+ *         raise __pyx_PickleError("Incompatible checksums (%s vs 0xb97128a = (__charge_state, __e_cs, __e_cs_activation, __energy_c, __energy_v, __f, __g, __h_cs, __h_cs_activation, __label))" % __pyx_checksum)
  */
   }
 
   /* "(tree fragment)":7
  *         from pickle import PickleError as __pyx_PickleError
- *         raise __pyx_PickleError("Incompatible checksums (%s vs 0xf11b600 = (__e_cs, __e_cs_activation, __energy_c, __energy_v, __f, __h_cs, __h_cs_activation, __label))" % __pyx_checksum)
+ *         raise __pyx_PickleError("Incompatible checksums (%s vs 0xb97128a = (__charge_state, __e_cs, __e_cs_activation, __energy_c, __energy_v, __f, __g, __h_cs, __h_cs_activation, __label))" % __pyx_checksum)
  *     __pyx_result = Trap.__new__(__pyx_type)             # <<<<<<<<<<<<<<
  *     if __pyx_state is not None:
  *         __pyx_unpickle_Trap__set_state(<Trap> __pyx_result, __pyx_state)
@@ -4989,7 +6885,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap___pyx_unpickle_Trap(CYTHON_UNUSED PyOb
   __pyx_t_3 = 0;
 
   /* "(tree fragment)":8
- *         raise __pyx_PickleError("Incompatible checksums (%s vs 0xf11b600 = (__e_cs, __e_cs_activation, __energy_c, __energy_v, __f, __h_cs, __h_cs_activation, __label))" % __pyx_checksum)
+ *         raise __pyx_PickleError("Incompatible checksums (%s vs 0xb97128a = (__charge_state, __e_cs, __e_cs_activation, __energy_c, __energy_v, __f, __g, __h_cs, __h_cs_activation, __label))" % __pyx_checksum)
  *     __pyx_result = Trap.__new__(__pyx_type)
  *     if __pyx_state is not None:             # <<<<<<<<<<<<<<
  *         __pyx_unpickle_Trap__set_state(<Trap> __pyx_result, __pyx_state)
@@ -5012,7 +6908,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap___pyx_unpickle_Trap(CYTHON_UNUSED PyOb
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
     /* "(tree fragment)":8
- *         raise __pyx_PickleError("Incompatible checksums (%s vs 0xf11b600 = (__e_cs, __e_cs_activation, __energy_c, __energy_v, __f, __h_cs, __h_cs_activation, __label))" % __pyx_checksum)
+ *         raise __pyx_PickleError("Incompatible checksums (%s vs 0xb97128a = (__charge_state, __e_cs, __e_cs_activation, __energy_c, __energy_v, __f, __g, __h_cs, __h_cs_activation, __label))" % __pyx_checksum)
  *     __pyx_result = Trap.__new__(__pyx_type)
  *     if __pyx_state is not None:             # <<<<<<<<<<<<<<
  *         __pyx_unpickle_Trap__set_state(<Trap> __pyx_result, __pyx_state)
@@ -5025,7 +6921,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap___pyx_unpickle_Trap(CYTHON_UNUSED PyOb
  *         __pyx_unpickle_Trap__set_state(<Trap> __pyx_result, __pyx_state)
  *     return __pyx_result             # <<<<<<<<<<<<<<
  * cdef __pyx_unpickle_Trap__set_state(Trap __pyx_result, tuple __pyx_state):
- *     __pyx_result.__e_cs = __pyx_state[0]; __pyx_result.__e_cs_activation = __pyx_state[1]; __pyx_result.__energy_c = __pyx_state[2]; __pyx_result.__energy_v = __pyx_state[3]; __pyx_result.__f = __pyx_state[4]; __pyx_result.__h_cs = __pyx_state[5]; __pyx_result.__h_cs_activation = __pyx_state[6]; __pyx_result.__label = __pyx_state[7]
+ *     __pyx_result.__charge_state = __pyx_state[0]; __pyx_result.__e_cs = __pyx_state[1]; __pyx_result.__e_cs_activation = __pyx_state[2]; __pyx_result.__energy_c = __pyx_state[3]; __pyx_result.__energy_v = __pyx_state[4]; __pyx_result.__f = __pyx_state[5]; __pyx_result.__g = __pyx_state[6]; __pyx_result.__h_cs = __pyx_state[7]; __pyx_result.__h_cs_activation = __pyx_state[8]; __pyx_result.__label = __pyx_state[9]
  */
   __Pyx_XDECREF(__pyx_r);
   __Pyx_INCREF(__pyx_v___pyx_result);
@@ -5058,8 +6954,8 @@ static PyObject *__pyx_pf_8Schottky_4Trap___pyx_unpickle_Trap(CYTHON_UNUSED PyOb
  *         __pyx_unpickle_Trap__set_state(<Trap> __pyx_result, __pyx_state)
  *     return __pyx_result
  * cdef __pyx_unpickle_Trap__set_state(Trap __pyx_result, tuple __pyx_state):             # <<<<<<<<<<<<<<
- *     __pyx_result.__e_cs = __pyx_state[0]; __pyx_result.__e_cs_activation = __pyx_state[1]; __pyx_result.__energy_c = __pyx_state[2]; __pyx_result.__energy_v = __pyx_state[3]; __pyx_result.__f = __pyx_state[4]; __pyx_result.__h_cs = __pyx_state[5]; __pyx_result.__h_cs_activation = __pyx_state[6]; __pyx_result.__label = __pyx_state[7]
- *     if len(__pyx_state) > 8 and hasattr(__pyx_result, '__dict__'):
+ *     __pyx_result.__charge_state = __pyx_state[0]; __pyx_result.__e_cs = __pyx_state[1]; __pyx_result.__e_cs_activation = __pyx_state[2]; __pyx_result.__energy_c = __pyx_state[3]; __pyx_result.__energy_v = __pyx_state[4]; __pyx_result.__f = __pyx_state[5]; __pyx_result.__g = __pyx_state[6]; __pyx_result.__h_cs = __pyx_state[7]; __pyx_result.__h_cs_activation = __pyx_state[8]; __pyx_result.__label = __pyx_state[9]
+ *     if len(__pyx_state) > 10 and hasattr(__pyx_result, '__dict__'):
  */
 
 static PyObject *__pyx_f_8Schottky_4Trap___pyx_unpickle_Trap__set_state(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v___pyx_result, PyObject *__pyx_v___pyx_state) {
@@ -5079,9 +6975,9 @@ static PyObject *__pyx_f_8Schottky_4Trap___pyx_unpickle_Trap__set_state(struct _
   /* "(tree fragment)":12
  *     return __pyx_result
  * cdef __pyx_unpickle_Trap__set_state(Trap __pyx_result, tuple __pyx_state):
- *     __pyx_result.__e_cs = __pyx_state[0]; __pyx_result.__e_cs_activation = __pyx_state[1]; __pyx_result.__energy_c = __pyx_state[2]; __pyx_result.__energy_v = __pyx_state[3]; __pyx_result.__f = __pyx_state[4]; __pyx_result.__h_cs = __pyx_state[5]; __pyx_result.__h_cs_activation = __pyx_state[6]; __pyx_result.__label = __pyx_state[7]             # <<<<<<<<<<<<<<
- *     if len(__pyx_state) > 8 and hasattr(__pyx_result, '__dict__'):
- *         __pyx_result.__dict__.update(__pyx_state[8])
+ *     __pyx_result.__charge_state = __pyx_state[0]; __pyx_result.__e_cs = __pyx_state[1]; __pyx_result.__e_cs_activation = __pyx_state[2]; __pyx_result.__energy_c = __pyx_state[3]; __pyx_result.__energy_v = __pyx_state[4]; __pyx_result.__f = __pyx_state[5]; __pyx_result.__g = __pyx_state[6]; __pyx_result.__h_cs = __pyx_state[7]; __pyx_result.__h_cs_activation = __pyx_state[8]; __pyx_result.__label = __pyx_state[9]             # <<<<<<<<<<<<<<
+ *     if len(__pyx_state) > 10 and hasattr(__pyx_result, '__dict__'):
+ *         __pyx_result.__dict__.update(__pyx_state[10])
  */
   if (unlikely(__pyx_v___pyx_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
@@ -5089,9 +6985,12 @@ static PyObject *__pyx_f_8Schottky_4Trap___pyx_unpickle_Trap__set_state(struct _
   }
   __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 12, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(1, 12, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_v___pyx_result->__pyx___e_cs = __pyx_t_2;
+  if (!(likely(PyDict_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "dict", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(1, 12, __pyx_L1_error)
+  __Pyx_GIVEREF(__pyx_t_1);
+  __Pyx_GOTREF(__pyx_v___pyx_result->__pyx___charge_state);
+  __Pyx_DECREF(__pyx_v___pyx_result->__pyx___charge_state);
+  __pyx_v___pyx_result->__pyx___charge_state = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
   if (unlikely(__pyx_v___pyx_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
     __PYX_ERR(1, 12, __pyx_L1_error)
@@ -5100,7 +6999,7 @@ static PyObject *__pyx_f_8Schottky_4Trap___pyx_unpickle_Trap__set_state(struct _
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_2 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(1, 12, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_v___pyx_result->__pyx___e_cs_activation = __pyx_t_2;
+  __pyx_v___pyx_result->__pyx___e_cs = __pyx_t_2;
   if (unlikely(__pyx_v___pyx_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
     __PYX_ERR(1, 12, __pyx_L1_error)
@@ -5109,7 +7008,7 @@ static PyObject *__pyx_f_8Schottky_4Trap___pyx_unpickle_Trap__set_state(struct _
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_2 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(1, 12, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_v___pyx_result->__pyx___energy_c = __pyx_t_2;
+  __pyx_v___pyx_result->__pyx___e_cs_activation = __pyx_t_2;
   if (unlikely(__pyx_v___pyx_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
     __PYX_ERR(1, 12, __pyx_L1_error)
@@ -5118,7 +7017,7 @@ static PyObject *__pyx_f_8Schottky_4Trap___pyx_unpickle_Trap__set_state(struct _
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_2 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(1, 12, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_v___pyx_result->__pyx___energy_v = __pyx_t_2;
+  __pyx_v___pyx_result->__pyx___energy_c = __pyx_t_2;
   if (unlikely(__pyx_v___pyx_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
     __PYX_ERR(1, 12, __pyx_L1_error)
@@ -5127,7 +7026,7 @@ static PyObject *__pyx_f_8Schottky_4Trap___pyx_unpickle_Trap__set_state(struct _
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_2 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(1, 12, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_v___pyx_result->__pyx___f = __pyx_t_2;
+  __pyx_v___pyx_result->__pyx___energy_v = __pyx_t_2;
   if (unlikely(__pyx_v___pyx_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
     __PYX_ERR(1, 12, __pyx_L1_error)
@@ -5136,12 +7035,33 @@ static PyObject *__pyx_f_8Schottky_4Trap___pyx_unpickle_Trap__set_state(struct _
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_2 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(1, 12, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_v___pyx_result->__pyx___h_cs = __pyx_t_2;
+  __pyx_v___pyx_result->__pyx___f = __pyx_t_2;
   if (unlikely(__pyx_v___pyx_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
     __PYX_ERR(1, 12, __pyx_L1_error)
   }
   __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 6, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 12, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (!(likely(PyDict_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "dict", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(1, 12, __pyx_L1_error)
+  __Pyx_GIVEREF(__pyx_t_1);
+  __Pyx_GOTREF(__pyx_v___pyx_result->__pyx___g);
+  __Pyx_DECREF(__pyx_v___pyx_result->__pyx___g);
+  __pyx_v___pyx_result->__pyx___g = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
+  if (unlikely(__pyx_v___pyx_state == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+    __PYX_ERR(1, 12, __pyx_L1_error)
+  }
+  __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 7, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 12, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(1, 12, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_v___pyx_result->__pyx___h_cs = __pyx_t_2;
+  if (unlikely(__pyx_v___pyx_state == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+    __PYX_ERR(1, 12, __pyx_L1_error)
+  }
+  __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 8, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 12, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_2 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(1, 12, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -5150,7 +7070,7 @@ static PyObject *__pyx_f_8Schottky_4Trap___pyx_unpickle_Trap__set_state(struct _
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
     __PYX_ERR(1, 12, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 7, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 12, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 9, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 12, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   if (!(likely(PyUnicode_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "unicode", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(1, 12, __pyx_L1_error)
   __Pyx_GIVEREF(__pyx_t_1);
@@ -5161,16 +7081,16 @@ static PyObject *__pyx_f_8Schottky_4Trap___pyx_unpickle_Trap__set_state(struct _
 
   /* "(tree fragment)":13
  * cdef __pyx_unpickle_Trap__set_state(Trap __pyx_result, tuple __pyx_state):
- *     __pyx_result.__e_cs = __pyx_state[0]; __pyx_result.__e_cs_activation = __pyx_state[1]; __pyx_result.__energy_c = __pyx_state[2]; __pyx_result.__energy_v = __pyx_state[3]; __pyx_result.__f = __pyx_state[4]; __pyx_result.__h_cs = __pyx_state[5]; __pyx_result.__h_cs_activation = __pyx_state[6]; __pyx_result.__label = __pyx_state[7]
- *     if len(__pyx_state) > 8 and hasattr(__pyx_result, '__dict__'):             # <<<<<<<<<<<<<<
- *         __pyx_result.__dict__.update(__pyx_state[8])
+ *     __pyx_result.__charge_state = __pyx_state[0]; __pyx_result.__e_cs = __pyx_state[1]; __pyx_result.__e_cs_activation = __pyx_state[2]; __pyx_result.__energy_c = __pyx_state[3]; __pyx_result.__energy_v = __pyx_state[4]; __pyx_result.__f = __pyx_state[5]; __pyx_result.__g = __pyx_state[6]; __pyx_result.__h_cs = __pyx_state[7]; __pyx_result.__h_cs_activation = __pyx_state[8]; __pyx_result.__label = __pyx_state[9]
+ *     if len(__pyx_state) > 10 and hasattr(__pyx_result, '__dict__'):             # <<<<<<<<<<<<<<
+ *         __pyx_result.__dict__.update(__pyx_state[10])
  */
   if (unlikely(__pyx_v___pyx_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
     __PYX_ERR(1, 13, __pyx_L1_error)
   }
   __pyx_t_4 = PyTuple_GET_SIZE(__pyx_v___pyx_state); if (unlikely(__pyx_t_4 == ((Py_ssize_t)-1))) __PYX_ERR(1, 13, __pyx_L1_error)
-  __pyx_t_5 = ((__pyx_t_4 > 8) != 0);
+  __pyx_t_5 = ((__pyx_t_4 > 10) != 0);
   if (__pyx_t_5) {
   } else {
     __pyx_t_3 = __pyx_t_5;
@@ -5183,9 +7103,9 @@ static PyObject *__pyx_f_8Schottky_4Trap___pyx_unpickle_Trap__set_state(struct _
   if (__pyx_t_3) {
 
     /* "(tree fragment)":14
- *     __pyx_result.__e_cs = __pyx_state[0]; __pyx_result.__e_cs_activation = __pyx_state[1]; __pyx_result.__energy_c = __pyx_state[2]; __pyx_result.__energy_v = __pyx_state[3]; __pyx_result.__f = __pyx_state[4]; __pyx_result.__h_cs = __pyx_state[5]; __pyx_result.__h_cs_activation = __pyx_state[6]; __pyx_result.__label = __pyx_state[7]
- *     if len(__pyx_state) > 8 and hasattr(__pyx_result, '__dict__'):
- *         __pyx_result.__dict__.update(__pyx_state[8])             # <<<<<<<<<<<<<<
+ *     __pyx_result.__charge_state = __pyx_state[0]; __pyx_result.__e_cs = __pyx_state[1]; __pyx_result.__e_cs_activation = __pyx_state[2]; __pyx_result.__energy_c = __pyx_state[3]; __pyx_result.__energy_v = __pyx_state[4]; __pyx_result.__f = __pyx_state[5]; __pyx_result.__g = __pyx_state[6]; __pyx_result.__h_cs = __pyx_state[7]; __pyx_result.__h_cs_activation = __pyx_state[8]; __pyx_result.__label = __pyx_state[9]
+ *     if len(__pyx_state) > 10 and hasattr(__pyx_result, '__dict__'):
+ *         __pyx_result.__dict__.update(__pyx_state[10])             # <<<<<<<<<<<<<<
  */
     __pyx_t_7 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v___pyx_result), __pyx_n_s_dict); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 14, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
@@ -5196,7 +7116,7 @@ static PyObject *__pyx_f_8Schottky_4Trap___pyx_unpickle_Trap__set_state(struct _
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
       __PYX_ERR(1, 14, __pyx_L1_error)
     }
-    __pyx_t_7 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 8, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 14, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 10, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 14, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __pyx_t_9 = NULL;
     if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_8))) {
@@ -5218,9 +7138,9 @@ static PyObject *__pyx_f_8Schottky_4Trap___pyx_unpickle_Trap__set_state(struct _
 
     /* "(tree fragment)":13
  * cdef __pyx_unpickle_Trap__set_state(Trap __pyx_result, tuple __pyx_state):
- *     __pyx_result.__e_cs = __pyx_state[0]; __pyx_result.__e_cs_activation = __pyx_state[1]; __pyx_result.__energy_c = __pyx_state[2]; __pyx_result.__energy_v = __pyx_state[3]; __pyx_result.__f = __pyx_state[4]; __pyx_result.__h_cs = __pyx_state[5]; __pyx_result.__h_cs_activation = __pyx_state[6]; __pyx_result.__label = __pyx_state[7]
- *     if len(__pyx_state) > 8 and hasattr(__pyx_result, '__dict__'):             # <<<<<<<<<<<<<<
- *         __pyx_result.__dict__.update(__pyx_state[8])
+ *     __pyx_result.__charge_state = __pyx_state[0]; __pyx_result.__e_cs = __pyx_state[1]; __pyx_result.__e_cs_activation = __pyx_state[2]; __pyx_result.__energy_c = __pyx_state[3]; __pyx_result.__energy_v = __pyx_state[4]; __pyx_result.__f = __pyx_state[5]; __pyx_result.__g = __pyx_state[6]; __pyx_result.__h_cs = __pyx_state[7]; __pyx_result.__h_cs_activation = __pyx_state[8]; __pyx_result.__label = __pyx_state[9]
+ *     if len(__pyx_state) > 10 and hasattr(__pyx_result, '__dict__'):             # <<<<<<<<<<<<<<
+ *         __pyx_result.__dict__.update(__pyx_state[10])
  */
   }
 
@@ -5228,8 +7148,8 @@ static PyObject *__pyx_f_8Schottky_4Trap___pyx_unpickle_Trap__set_state(struct _
  *         __pyx_unpickle_Trap__set_state(<Trap> __pyx_result, __pyx_state)
  *     return __pyx_result
  * cdef __pyx_unpickle_Trap__set_state(Trap __pyx_result, tuple __pyx_state):             # <<<<<<<<<<<<<<
- *     __pyx_result.__e_cs = __pyx_state[0]; __pyx_result.__e_cs_activation = __pyx_state[1]; __pyx_result.__energy_c = __pyx_state[2]; __pyx_result.__energy_v = __pyx_state[3]; __pyx_result.__f = __pyx_state[4]; __pyx_result.__h_cs = __pyx_state[5]; __pyx_result.__h_cs_activation = __pyx_state[6]; __pyx_result.__label = __pyx_state[7]
- *     if len(__pyx_state) > 8 and hasattr(__pyx_result, '__dict__'):
+ *     __pyx_result.__charge_state = __pyx_state[0]; __pyx_result.__e_cs = __pyx_state[1]; __pyx_result.__e_cs_activation = __pyx_state[2]; __pyx_result.__energy_c = __pyx_state[3]; __pyx_result.__energy_v = __pyx_state[4]; __pyx_result.__f = __pyx_state[5]; __pyx_result.__g = __pyx_state[6]; __pyx_result.__h_cs = __pyx_state[7]; __pyx_result.__h_cs_activation = __pyx_state[8]; __pyx_result.__label = __pyx_state[9]
+ *     if len(__pyx_state) > 10 and hasattr(__pyx_result, '__dict__'):
  */
 
   /* function exit code */
@@ -5261,18 +7181,47 @@ static PyObject *__pyx_tp_new_8Schottky_4Trap_Trap(PyTypeObject *t, CYTHON_UNUSE
   p = ((struct __pyx_obj_8Schottky_4Trap_Trap *)o);
   p->__pyx_vtab = __pyx_vtabptr_8Schottky_4Trap_Trap;
   p->__pyx___label = ((PyObject*)Py_None); Py_INCREF(Py_None);
+  p->__pyx___charge_state = ((PyObject*)Py_None); Py_INCREF(Py_None);
+  p->__pyx___g = ((PyObject*)Py_None); Py_INCREF(Py_None);
   return o;
 }
 
 static void __pyx_tp_dealloc_8Schottky_4Trap_Trap(PyObject *o) {
   struct __pyx_obj_8Schottky_4Trap_Trap *p = (struct __pyx_obj_8Schottky_4Trap_Trap *)o;
   #if CYTHON_USE_TP_FINALIZE
-  if (unlikely(PyType_HasFeature(Py_TYPE(o), Py_TPFLAGS_HAVE_FINALIZE) && Py_TYPE(o)->tp_finalize) && (!PyType_IS_GC(Py_TYPE(o)) || !_PyGC_FINALIZED(o))) {
+  if (unlikely(PyType_HasFeature(Py_TYPE(o), Py_TPFLAGS_HAVE_FINALIZE) && Py_TYPE(o)->tp_finalize) && !_PyGC_FINALIZED(o)) {
     if (PyObject_CallFinalizerFromDealloc(o)) return;
   }
   #endif
+  PyObject_GC_UnTrack(o);
   Py_CLEAR(p->__pyx___label);
+  Py_CLEAR(p->__pyx___charge_state);
+  Py_CLEAR(p->__pyx___g);
   (*Py_TYPE(o)->tp_free)(o);
+}
+
+static int __pyx_tp_traverse_8Schottky_4Trap_Trap(PyObject *o, visitproc v, void *a) {
+  int e;
+  struct __pyx_obj_8Schottky_4Trap_Trap *p = (struct __pyx_obj_8Schottky_4Trap_Trap *)o;
+  if (p->__pyx___charge_state) {
+    e = (*v)(p->__pyx___charge_state, a); if (e) return e;
+  }
+  if (p->__pyx___g) {
+    e = (*v)(p->__pyx___g, a); if (e) return e;
+  }
+  return 0;
+}
+
+static int __pyx_tp_clear_8Schottky_4Trap_Trap(PyObject *o) {
+  PyObject* tmp;
+  struct __pyx_obj_8Schottky_4Trap_Trap *p = (struct __pyx_obj_8Schottky_4Trap_Trap *)o;
+  tmp = ((PyObject*)p->__pyx___charge_state);
+  p->__pyx___charge_state = ((PyObject*)Py_None); Py_INCREF(Py_None);
+  Py_XDECREF(tmp);
+  tmp = ((PyObject*)p->__pyx___g);
+  p->__pyx___g = ((PyObject*)Py_None); Py_INCREF(Py_None);
+  Py_XDECREF(tmp);
+  return 0;
 }
 
 static PyObject *__pyx_getprop_8Schottky_4Trap_4Trap_label(PyObject *o, CYTHON_UNUSED void *x) {
@@ -5429,8 +7378,46 @@ static int __pyx_setprop_8Schottky_4Trap_4Trap_h_cs_activation_ev(PyObject *o, P
   }
 }
 
+static PyObject *__pyx_getprop_8Schottky_4Trap_4Trap_charge_state(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_8Schottky_4Trap_4Trap_12charge_state_1__get__(o);
+}
+
+static int __pyx_setprop_8Schottky_4Trap_4Trap_charge_state(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+  if (v) {
+    return __pyx_pw_8Schottky_4Trap_4Trap_12charge_state_3__set__(o, v);
+  }
+  else {
+    PyErr_SetString(PyExc_NotImplementedError, "__del__");
+    return -1;
+  }
+}
+
+static PyObject *__pyx_getprop_8Schottky_4Trap_4Trap_g(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_8Schottky_4Trap_4Trap_1g_1__get__(o);
+}
+
+static int __pyx_setprop_8Schottky_4Trap_4Trap_g(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+  if (v) {
+    return __pyx_pw_8Schottky_4Trap_4Trap_1g_3__set__(o, v);
+  }
+  else {
+    PyErr_SetString(PyExc_NotImplementedError, "__del__");
+    return -1;
+  }
+}
+
 static PyObject *__pyx_getprop_8Schottky_4Trap_4Trap_f(PyObject *o, CYTHON_UNUSED void *x) {
   return __pyx_pw_8Schottky_4Trap_4Trap_1f_1__get__(o);
+}
+
+static int __pyx_setprop_8Schottky_4Trap_4Trap_f(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+  if (v) {
+    return __pyx_pw_8Schottky_4Trap_4Trap_1f_3__set__(o, v);
+  }
+  else {
+    PyErr_SetString(PyExc_NotImplementedError, "__del__");
+    return -1;
+  }
 }
 
 static PyMethodDef __pyx_methods_8Schottky_4Trap_Trap[] = {
@@ -5440,8 +7427,12 @@ static PyMethodDef __pyx_methods_8Schottky_4Trap_Trap[] = {
   {"h_c", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_8Schottky_4Trap_4Trap_9h_c, METH_VARARGS|METH_KEYWORDS, 0},
   {"e_cr", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_8Schottky_4Trap_4Trap_11e_cr, METH_VARARGS|METH_KEYWORDS, 0},
   {"h_cr", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_8Schottky_4Trap_4Trap_13h_cr, METH_VARARGS|METH_KEYWORDS, 0},
-  {"__reduce_cython__", (PyCFunction)__pyx_pw_8Schottky_4Trap_4Trap_17__reduce_cython__, METH_NOARGS, 0},
-  {"__setstate_cython__", (PyCFunction)__pyx_pw_8Schottky_4Trap_4Trap_19__setstate_cython__, METH_O, 0},
+  {"e_er", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_8Schottky_4Trap_4Trap_15e_er, METH_VARARGS|METH_KEYWORDS, 0},
+  {"h_er", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_8Schottky_4Trap_4Trap_17h_er, METH_VARARGS|METH_KEYWORDS, 0},
+  {"f_eq", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_8Schottky_4Trap_4Trap_19f_eq, METH_VARARGS|METH_KEYWORDS, 0},
+  {"df_dt", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_8Schottky_4Trap_4Trap_21df_dt, METH_VARARGS|METH_KEYWORDS, 0},
+  {"__reduce_cython__", (PyCFunction)__pyx_pw_8Schottky_4Trap_4Trap_25__reduce_cython__, METH_NOARGS, 0},
+  {"__setstate_cython__", (PyCFunction)__pyx_pw_8Schottky_4Trap_4Trap_27__setstate_cython__, METH_O, 0},
   {0, 0, 0, 0}
 };
 
@@ -5457,7 +7448,9 @@ static struct PyGetSetDef __pyx_getsets_8Schottky_4Trap_Trap[] = {
   {(char *)"h_cs_activation", __pyx_getprop_8Schottky_4Trap_4Trap_h_cs_activation, __pyx_setprop_8Schottky_4Trap_4Trap_h_cs_activation, (char *)0, 0},
   {(char *)"e_cs_activation_ev", __pyx_getprop_8Schottky_4Trap_4Trap_e_cs_activation_ev, __pyx_setprop_8Schottky_4Trap_4Trap_e_cs_activation_ev, (char *)0, 0},
   {(char *)"h_cs_activation_ev", __pyx_getprop_8Schottky_4Trap_4Trap_h_cs_activation_ev, __pyx_setprop_8Schottky_4Trap_4Trap_h_cs_activation_ev, (char *)0, 0},
-  {(char *)"f", __pyx_getprop_8Schottky_4Trap_4Trap_f, 0, (char *)0, 0},
+  {(char *)"charge_state", __pyx_getprop_8Schottky_4Trap_4Trap_charge_state, __pyx_setprop_8Schottky_4Trap_4Trap_charge_state, (char *)0, 0},
+  {(char *)"g", __pyx_getprop_8Schottky_4Trap_4Trap_g, __pyx_setprop_8Schottky_4Trap_4Trap_g, (char *)0, 0},
+  {(char *)"f", __pyx_getprop_8Schottky_4Trap_4Trap_f, __pyx_setprop_8Schottky_4Trap_4Trap_f, (char *)0, 0},
   {0, 0, 0, 0, 0}
 };
 
@@ -5482,14 +7475,14 @@ static PyTypeObject __pyx_type_8Schottky_4Trap_Trap = {
   0, /*tp_as_mapping*/
   0, /*tp_hash*/
   0, /*tp_call*/
-  __pyx_pw_8Schottky_4Trap_4Trap_15__str__, /*tp_str*/
+  __pyx_pw_8Schottky_4Trap_4Trap_23__str__, /*tp_str*/
   0, /*tp_getattro*/
   0, /*tp_setattro*/
   0, /*tp_as_buffer*/
-  Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE, /*tp_flags*/
+  Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_HAVE_GC, /*tp_flags*/
   "\n    Charge carrier trap class\n    ", /*tp_doc*/
-  0, /*tp_traverse*/
-  0, /*tp_clear*/
+  __pyx_tp_traverse_8Schottky_4Trap_Trap, /*tp_traverse*/
+  __pyx_tp_clear_8Schottky_4Trap_Trap, /*tp_clear*/
   0, /*tp_richcompare*/
   0, /*tp_weaklistoffset*/
   0, /*tp_iter*/
@@ -5565,12 +7558,13 @@ static struct PyModuleDef __pyx_moduledef = {
 #endif
 
 static __Pyx_StringTabEntry __pyx_string_tab[] = {
-  {&__pyx_kp_s_Incompatible_checksums_s_vs_0xf1, __pyx_k_Incompatible_checksums_s_vs_0xf1, sizeof(__pyx_k_Incompatible_checksums_s_vs_0xf1), 0, 0, 1, 0},
+  {&__pyx_kp_s_Incompatible_checksums_s_vs_0xb9, __pyx_k_Incompatible_checksums_s_vs_0xb9, sizeof(__pyx_k_Incompatible_checksums_s_vs_0xb9), 0, 0, 1, 0},
   {&__pyx_n_s_PickleError, __pyx_k_PickleError, sizeof(__pyx_k_PickleError), 0, 0, 1, 1},
   {&__pyx_n_s_Schottky_Trap, __pyx_k_Schottky_Trap, sizeof(__pyx_k_Schottky_Trap), 0, 0, 1, 1},
   {&__pyx_n_s_Trap, __pyx_k_Trap, sizeof(__pyx_k_Trap), 0, 0, 1, 1},
   {&__pyx_kp_u_Trap_s_Ec_Et_2_2f_eV_2_2g_J_Et_E, __pyx_k_Trap_s_Ec_Et_2_2f_eV_2_2g_J_Et_E, sizeof(__pyx_k_Trap_s_Ec_Et_2_2f_eV_2_2g_J_Et_E), 0, 1, 0, 0},
   {&__pyx_n_s_cline_in_traceback, __pyx_k_cline_in_traceback, sizeof(__pyx_k_cline_in_traceback), 0, 0, 1, 1},
+  {&__pyx_n_s_df_dt, __pyx_k_df_dt, sizeof(__pyx_k_df_dt), 0, 0, 1, 1},
   {&__pyx_n_s_dict, __pyx_k_dict, sizeof(__pyx_k_dict), 0, 0, 1, 1},
   {&__pyx_n_s_e_c, __pyx_k_e_c, sizeof(__pyx_k_e_c), 0, 0, 1, 1},
   {&__pyx_n_s_e_cr, __pyx_k_e_cr, sizeof(__pyx_k_e_cr), 0, 0, 1, 1},
@@ -5578,10 +7572,12 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_e_cs0, __pyx_k_e_cs0, sizeof(__pyx_k_e_cs0), 0, 0, 1, 1},
   {&__pyx_n_s_e_cs0_2, __pyx_k_e_cs0_2, sizeof(__pyx_k_e_cs0_2), 0, 0, 1, 1},
   {&__pyx_n_s_e_cs_activation, __pyx_k_e_cs_activation, sizeof(__pyx_k_e_cs_activation), 0, 0, 1, 1},
+  {&__pyx_n_s_e_er, __pyx_k_e_er, sizeof(__pyx_k_e_er), 0, 0, 1, 1},
   {&__pyx_n_s_energy_c, __pyx_k_energy_c, sizeof(__pyx_k_energy_c), 0, 0, 1, 1},
   {&__pyx_n_s_energy_c_ev, __pyx_k_energy_c_ev, sizeof(__pyx_k_energy_c_ev), 0, 0, 1, 1},
   {&__pyx_n_s_energy_v, __pyx_k_energy_v, sizeof(__pyx_k_energy_v), 0, 0, 1, 1},
   {&__pyx_n_s_energy_v_ev, __pyx_k_energy_v_ev, sizeof(__pyx_k_energy_v_ev), 0, 0, 1, 1},
+  {&__pyx_n_s_f_eq, __pyx_k_f_eq, sizeof(__pyx_k_f_eq), 0, 0, 1, 1},
   {&__pyx_n_s_getstate, __pyx_k_getstate, sizeof(__pyx_k_getstate), 0, 0, 1, 1},
   {&__pyx_n_s_h_c, __pyx_k_h_c, sizeof(__pyx_k_h_c), 0, 0, 1, 1},
   {&__pyx_n_s_h_cr, __pyx_k_h_cr, sizeof(__pyx_k_h_cr), 0, 0, 1, 1},
@@ -5589,11 +7585,14 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_h_cs0, __pyx_k_h_cs0, sizeof(__pyx_k_h_cs0), 0, 0, 1, 1},
   {&__pyx_n_s_h_cs0_2, __pyx_k_h_cs0_2, sizeof(__pyx_k_h_cs0_2), 0, 0, 1, 1},
   {&__pyx_n_s_h_cs_activation, __pyx_k_h_cs_activation, sizeof(__pyx_k_h_cs_activation), 0, 0, 1, 1},
+  {&__pyx_n_s_h_er, __pyx_k_h_er, sizeof(__pyx_k_h_er), 0, 0, 1, 1},
   {&__pyx_n_s_import, __pyx_k_import, sizeof(__pyx_k_import), 0, 0, 1, 1},
   {&__pyx_n_s_label, __pyx_k_label, sizeof(__pyx_k_label), 0, 0, 1, 1},
   {&__pyx_n_s_main, __pyx_k_main, sizeof(__pyx_k_main), 0, 0, 1, 1},
+  {&__pyx_n_s_n_c, __pyx_k_n_c, sizeof(__pyx_k_n_c), 0, 0, 1, 1},
   {&__pyx_n_s_n_e, __pyx_k_n_e, sizeof(__pyx_k_n_e), 0, 0, 1, 1},
   {&__pyx_n_s_n_h, __pyx_k_n_h, sizeof(__pyx_k_n_h), 0, 0, 1, 1},
+  {&__pyx_n_s_n_v, __pyx_k_n_v, sizeof(__pyx_k_n_v), 0, 0, 1, 1},
   {&__pyx_n_s_name, __pyx_k_name, sizeof(__pyx_k_name), 0, 0, 1, 1},
   {&__pyx_n_s_new, __pyx_k_new, sizeof(__pyx_k_new), 0, 0, 1, 1},
   {&__pyx_n_s_pickle, __pyx_k_pickle, sizeof(__pyx_k_pickle), 0, 0, 1, 1},
@@ -5643,7 +7642,11 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
 static CYTHON_SMALL_CODE int __Pyx_InitGlobals(void) {
   if (__Pyx_InitStrings(__pyx_string_tab) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  __pyx_int_252818944 = PyInt_FromLong(252818944L); if (unlikely(!__pyx_int_252818944)) __PYX_ERR(0, 1, __pyx_L1_error)
+  __pyx_int_0 = PyInt_FromLong(0); if (unlikely(!__pyx_int_0)) __PYX_ERR(0, 1, __pyx_L1_error)
+  __pyx_int_1 = PyInt_FromLong(1); if (unlikely(!__pyx_int_1)) __PYX_ERR(0, 1, __pyx_L1_error)
+  __pyx_int_2 = PyInt_FromLong(2); if (unlikely(!__pyx_int_2)) __PYX_ERR(0, 1, __pyx_L1_error)
+  __pyx_int_194450058 = PyInt_FromLong(194450058L); if (unlikely(!__pyx_int_194450058)) __PYX_ERR(0, 1, __pyx_L1_error)
+  __pyx_int_neg_1 = PyInt_FromLong(-1); if (unlikely(!__pyx_int_neg_1)) __PYX_ERR(0, 1, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -5686,12 +7689,17 @@ static int __Pyx_modinit_type_init_code(void) {
   __Pyx_RefNannySetupContext("__Pyx_modinit_type_init_code", 0);
   /*--- Type init code ---*/
   __pyx_vtabptr_8Schottky_4Trap_Trap = &__pyx_vtable_8Schottky_4Trap_Trap;
+  __pyx_vtable_8Schottky_4Trap_Trap.__pyx___coerce_f = (double (*)(struct __pyx_obj_8Schottky_4Trap_Trap *, double))__pyx_f_8Schottky_4Trap_4Trap___coerce_f;
   __pyx_vtable_8Schottky_4Trap_Trap.e_cs = (double (*)(struct __pyx_obj_8Schottky_4Trap_Trap *, double, int __pyx_skip_dispatch))__pyx_f_8Schottky_4Trap_4Trap_e_cs;
   __pyx_vtable_8Schottky_4Trap_Trap.h_cs = (double (*)(struct __pyx_obj_8Schottky_4Trap_Trap *, double, int __pyx_skip_dispatch))__pyx_f_8Schottky_4Trap_4Trap_h_cs;
   __pyx_vtable_8Schottky_4Trap_Trap.e_c = (double (*)(struct __pyx_obj_8Schottky_4Trap_Trap *, double, double, int __pyx_skip_dispatch))__pyx_f_8Schottky_4Trap_4Trap_e_c;
   __pyx_vtable_8Schottky_4Trap_Trap.h_c = (double (*)(struct __pyx_obj_8Schottky_4Trap_Trap *, double, double, int __pyx_skip_dispatch))__pyx_f_8Schottky_4Trap_4Trap_h_c;
   __pyx_vtable_8Schottky_4Trap_Trap.e_cr = (double (*)(struct __pyx_obj_8Schottky_4Trap_Trap *, double, double, double, int __pyx_skip_dispatch))__pyx_f_8Schottky_4Trap_4Trap_e_cr;
   __pyx_vtable_8Schottky_4Trap_Trap.h_cr = (double (*)(struct __pyx_obj_8Schottky_4Trap_Trap *, double, double, double, int __pyx_skip_dispatch))__pyx_f_8Schottky_4Trap_4Trap_h_cr;
+  __pyx_vtable_8Schottky_4Trap_Trap.e_er = (double (*)(struct __pyx_obj_8Schottky_4Trap_Trap *, double, double, double, int __pyx_skip_dispatch))__pyx_f_8Schottky_4Trap_4Trap_e_er;
+  __pyx_vtable_8Schottky_4Trap_Trap.h_er = (double (*)(struct __pyx_obj_8Schottky_4Trap_Trap *, double, double, double, int __pyx_skip_dispatch))__pyx_f_8Schottky_4Trap_4Trap_h_er;
+  __pyx_vtable_8Schottky_4Trap_Trap.f_eq = (PyObject *(*)(struct __pyx_obj_8Schottky_4Trap_Trap *, double, double, double, double, double, double, double, int __pyx_skip_dispatch))__pyx_f_8Schottky_4Trap_4Trap_f_eq;
+  __pyx_vtable_8Schottky_4Trap_Trap.df_dt = (PyObject *(*)(struct __pyx_obj_8Schottky_4Trap_Trap *, double, double, double, double, double, double, double, int __pyx_skip_dispatch))__pyx_f_8Schottky_4Trap_4Trap_df_dt;
   if (PyType_Ready(&__pyx_type_8Schottky_4Trap_Trap) < 0) __PYX_ERR(0, 8, __pyx_L1_error)
   __pyx_type_8Schottky_4Trap_Trap.tp_print = 0;
   if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_type_8Schottky_4Trap_Trap.tp_dictoffset && __pyx_type_8Schottky_4Trap_Trap.tp_getattro == PyObject_GenericGetAttr)) {
@@ -6528,6 +8536,117 @@ static void __Pyx_WriteUnraisable(const char *name, CYTHON_UNUSED int clineno,
 #endif
 }
 
+/* DictGetItem */
+#if PY_MAJOR_VERSION >= 3 && !CYTHON_COMPILING_IN_PYPY
+static PyObject *__Pyx_PyDict_GetItem(PyObject *d, PyObject* key) {
+    PyObject *value;
+    value = PyDict_GetItemWithError(d, key);
+    if (unlikely(!value)) {
+        if (!PyErr_Occurred()) {
+            if (unlikely(PyTuple_Check(key))) {
+                PyObject* args = PyTuple_Pack(1, key);
+                if (likely(args)) {
+                    PyErr_SetObject(PyExc_KeyError, args);
+                    Py_DECREF(args);
+                }
+            } else {
+                PyErr_SetObject(PyExc_KeyError, key);
+            }
+        }
+        return NULL;
+    }
+    Py_INCREF(value);
+    return value;
+}
+#endif
+
+/* GetItemInt */
+static PyObject *__Pyx_GetItemInt_Generic(PyObject *o, PyObject* j) {
+    PyObject *r;
+    if (!j) return NULL;
+    r = PyObject_GetItem(o, j);
+    Py_DECREF(j);
+    return r;
+}
+static CYTHON_INLINE PyObject *__Pyx_GetItemInt_List_Fast(PyObject *o, Py_ssize_t i,
+                                                              CYTHON_NCP_UNUSED int wraparound,
+                                                              CYTHON_NCP_UNUSED int boundscheck) {
+#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+    Py_ssize_t wrapped_i = i;
+    if (wraparound & unlikely(i < 0)) {
+        wrapped_i += PyList_GET_SIZE(o);
+    }
+    if ((!boundscheck) || likely(__Pyx_is_valid_index(wrapped_i, PyList_GET_SIZE(o)))) {
+        PyObject *r = PyList_GET_ITEM(o, wrapped_i);
+        Py_INCREF(r);
+        return r;
+    }
+    return __Pyx_GetItemInt_Generic(o, PyInt_FromSsize_t(i));
+#else
+    return PySequence_GetItem(o, i);
+#endif
+}
+static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Tuple_Fast(PyObject *o, Py_ssize_t i,
+                                                              CYTHON_NCP_UNUSED int wraparound,
+                                                              CYTHON_NCP_UNUSED int boundscheck) {
+#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+    Py_ssize_t wrapped_i = i;
+    if (wraparound & unlikely(i < 0)) {
+        wrapped_i += PyTuple_GET_SIZE(o);
+    }
+    if ((!boundscheck) || likely(__Pyx_is_valid_index(wrapped_i, PyTuple_GET_SIZE(o)))) {
+        PyObject *r = PyTuple_GET_ITEM(o, wrapped_i);
+        Py_INCREF(r);
+        return r;
+    }
+    return __Pyx_GetItemInt_Generic(o, PyInt_FromSsize_t(i));
+#else
+    return PySequence_GetItem(o, i);
+#endif
+}
+static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Fast(PyObject *o, Py_ssize_t i, int is_list,
+                                                     CYTHON_NCP_UNUSED int wraparound,
+                                                     CYTHON_NCP_UNUSED int boundscheck) {
+#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS && CYTHON_USE_TYPE_SLOTS
+    if (is_list || PyList_CheckExact(o)) {
+        Py_ssize_t n = ((!wraparound) | likely(i >= 0)) ? i : i + PyList_GET_SIZE(o);
+        if ((!boundscheck) || (likely(__Pyx_is_valid_index(n, PyList_GET_SIZE(o))))) {
+            PyObject *r = PyList_GET_ITEM(o, n);
+            Py_INCREF(r);
+            return r;
+        }
+    }
+    else if (PyTuple_CheckExact(o)) {
+        Py_ssize_t n = ((!wraparound) | likely(i >= 0)) ? i : i + PyTuple_GET_SIZE(o);
+        if ((!boundscheck) || likely(__Pyx_is_valid_index(n, PyTuple_GET_SIZE(o)))) {
+            PyObject *r = PyTuple_GET_ITEM(o, n);
+            Py_INCREF(r);
+            return r;
+        }
+    } else {
+        PySequenceMethods *m = Py_TYPE(o)->tp_as_sequence;
+        if (likely(m && m->sq_item)) {
+            if (wraparound && unlikely(i < 0) && likely(m->sq_length)) {
+                Py_ssize_t l = m->sq_length(o);
+                if (likely(l >= 0)) {
+                    i += l;
+                } else {
+                    if (!PyErr_ExceptionMatches(PyExc_OverflowError))
+                        return NULL;
+                    PyErr_Clear();
+                }
+            }
+            return m->sq_item(o, i);
+        }
+    }
+#else
+    if (is_list || PySequence_Check(o)) {
+        return PySequence_GetItem(o, i);
+    }
+#endif
+    return __Pyx_GetItemInt_Generic(o, PyInt_FromSsize_t(i));
+}
+
 /* PyErrExceptionMatches */
 #if CYTHON_FAST_THREAD_STATE
 static int __Pyx_PyErr_ExceptionMatchesTuple(PyObject *exc_type, PyObject *tuple) {
@@ -6867,93 +8986,6 @@ bad:
     return;
 }
 #endif
-
-/* GetItemInt */
-static PyObject *__Pyx_GetItemInt_Generic(PyObject *o, PyObject* j) {
-    PyObject *r;
-    if (!j) return NULL;
-    r = PyObject_GetItem(o, j);
-    Py_DECREF(j);
-    return r;
-}
-static CYTHON_INLINE PyObject *__Pyx_GetItemInt_List_Fast(PyObject *o, Py_ssize_t i,
-                                                              CYTHON_NCP_UNUSED int wraparound,
-                                                              CYTHON_NCP_UNUSED int boundscheck) {
-#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-    Py_ssize_t wrapped_i = i;
-    if (wraparound & unlikely(i < 0)) {
-        wrapped_i += PyList_GET_SIZE(o);
-    }
-    if ((!boundscheck) || likely(__Pyx_is_valid_index(wrapped_i, PyList_GET_SIZE(o)))) {
-        PyObject *r = PyList_GET_ITEM(o, wrapped_i);
-        Py_INCREF(r);
-        return r;
-    }
-    return __Pyx_GetItemInt_Generic(o, PyInt_FromSsize_t(i));
-#else
-    return PySequence_GetItem(o, i);
-#endif
-}
-static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Tuple_Fast(PyObject *o, Py_ssize_t i,
-                                                              CYTHON_NCP_UNUSED int wraparound,
-                                                              CYTHON_NCP_UNUSED int boundscheck) {
-#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-    Py_ssize_t wrapped_i = i;
-    if (wraparound & unlikely(i < 0)) {
-        wrapped_i += PyTuple_GET_SIZE(o);
-    }
-    if ((!boundscheck) || likely(__Pyx_is_valid_index(wrapped_i, PyTuple_GET_SIZE(o)))) {
-        PyObject *r = PyTuple_GET_ITEM(o, wrapped_i);
-        Py_INCREF(r);
-        return r;
-    }
-    return __Pyx_GetItemInt_Generic(o, PyInt_FromSsize_t(i));
-#else
-    return PySequence_GetItem(o, i);
-#endif
-}
-static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Fast(PyObject *o, Py_ssize_t i, int is_list,
-                                                     CYTHON_NCP_UNUSED int wraparound,
-                                                     CYTHON_NCP_UNUSED int boundscheck) {
-#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS && CYTHON_USE_TYPE_SLOTS
-    if (is_list || PyList_CheckExact(o)) {
-        Py_ssize_t n = ((!wraparound) | likely(i >= 0)) ? i : i + PyList_GET_SIZE(o);
-        if ((!boundscheck) || (likely(__Pyx_is_valid_index(n, PyList_GET_SIZE(o))))) {
-            PyObject *r = PyList_GET_ITEM(o, n);
-            Py_INCREF(r);
-            return r;
-        }
-    }
-    else if (PyTuple_CheckExact(o)) {
-        Py_ssize_t n = ((!wraparound) | likely(i >= 0)) ? i : i + PyTuple_GET_SIZE(o);
-        if ((!boundscheck) || likely(__Pyx_is_valid_index(n, PyTuple_GET_SIZE(o)))) {
-            PyObject *r = PyTuple_GET_ITEM(o, n);
-            Py_INCREF(r);
-            return r;
-        }
-    } else {
-        PySequenceMethods *m = Py_TYPE(o)->tp_as_sequence;
-        if (likely(m && m->sq_item)) {
-            if (wraparound && unlikely(i < 0) && likely(m->sq_length)) {
-                Py_ssize_t l = m->sq_length(o);
-                if (likely(l >= 0)) {
-                    i += l;
-                } else {
-                    if (!PyErr_ExceptionMatches(PyExc_OverflowError))
-                        return NULL;
-                    PyErr_Clear();
-                }
-            }
-            return m->sq_item(o, i);
-        }
-    }
-#else
-    if (is_list || PySequence_Check(o)) {
-        return PySequence_GetItem(o, i);
-    }
-#endif
-    return __Pyx_GetItemInt_Generic(o, PyInt_FromSsize_t(i));
-}
 
 /* HasAttr */
 static CYTHON_INLINE int __Pyx_HasAttr(PyObject *o, PyObject *n) {
