@@ -8,7 +8,7 @@ from matplotlib import pyplot as plt
 from Schottky import constants
 from Schottky.Helpers import to_pos_pwr, symplify_factor, solve_polynomial_eq
 from Schottky.Reference import database
-from Schottky.Semiconductor.Dopant import Dopant
+
 from Schottky.Semiconductor.BondingInterface import BondingInterface
 
 
