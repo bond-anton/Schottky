@@ -117,21 +117,18 @@ class TestDopant(unittest.TestCase):
         t = Dopant('My trap', TreeMesh1DUniform(c, aligned=True), TreeMesh1DUniform(f, aligned=True),
                    0.3 * constant.q, 0.8 * constant.q,
                    1e-15, 1e-15)
-        np.testing.assert_allclose(f.solution, np.zeros(f.num))
+        np.testing.assert_allclose(t.occupation.tree[0][0].solution, np.zeros(f.num))
         f.solution = np.ones(f.num)
-        np.testing.assert_allclose(f.solution, np.ones(f.num))
+        t.occupation = TreeMesh1DUniform(f, aligned=True)
+        np.testing.assert_allclose(t.occupation.tree[0][0].solution, np.ones(f.num))
         f.solution = np.ones(f.num) * 2
-        np.testing.assert_allclose(f.solution, np.ones(f.num) * 2)
-        t.coerce_mesh_occupation(f)
-        np.testing.assert_allclose(f.solution, np.ones(f.num))
+        t.occupation = TreeMesh1DUniform(f, aligned=True)
+        np.testing.assert_allclose(t.occupation.tree[0][0].solution, np.ones(f.num))
         f.solution = -2 * np.ones(f.num)
-        np.testing.assert_allclose(f.solution, -2 * np.ones(f.num))
-        t.coerce_mesh_occupation(f)
-        np.testing.assert_allclose(f.solution, np.zeros(f.num))
+        t.occupation = TreeMesh1DUniform(f, aligned=True)
+        np.testing.assert_allclose(t.occupation.tree[0][0].solution, np.zeros(f.num))
         f.solution = np.ones(f.num) * 2
         t = Dopant('My trap', TreeMesh1DUniform(c, aligned=True), TreeMesh1DUniform(f, aligned=True),
                    0.3 * constant.q, 0.8 * constant.q,
                    1e-15, 1e-15)
-        np.testing.assert_allclose(t.occupation.tree[0][0].solution, 2 * np.ones(f.num))
-        t.coerce_mesh_tree_occupation(t.occupation)
         np.testing.assert_allclose(t.occupation.tree[0][0].solution, np.ones(f.num))

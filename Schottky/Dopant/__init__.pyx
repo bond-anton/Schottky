@@ -1,9 +1,7 @@
 from __future__ import division, print_function
 
-import numpy as np
-
 from cython cimport boundscheck, wraparound
-from libc.math cimport exp
+from cpython.array cimport array, clone
 
 from BDMesh.Mesh1D cimport Mesh1D
 from BDMesh.TreeMesh1D cimport TreeMesh1D
@@ -25,6 +23,7 @@ cdef class Dopant(Trap):
         '''
         self.__concentration = concentration
         self.__f = f
+        self.__coerce_mesh_tree_occupation(self.__f)
         super(Dopant, self).__init__(label,
                                      energy_c, energy_v,
                                      e_cs0, h_cs0,
@@ -36,11 +35,12 @@ cdef class Dopant(Trap):
 
     @boundscheck(False)
     @wraparound(False)
-    cpdef coerce_mesh_occupation(self, Mesh1D mesh):
+    cdef void __coerce_mesh_occupation(self, Mesh1D mesh):
         cdef:
             Py_ssize_t n = mesh.num
             int i
-            double[:] new_solution = np.zeros(n, dtype=np.double)
+            array[double] new_solution, template = array('d')
+        new_solution = clone(template, n, zero=False)
         for i in range(n):
             if mesh.solution[i] > 1.0:
                 new_solution[i] = 1.0
@@ -52,13 +52,13 @@ cdef class Dopant(Trap):
 
     @boundscheck(False)
     @wraparound(False)
-    cpdef coerce_mesh_tree_occupation(self, TreeMesh1D mesh_tree):
+    cdef void __coerce_mesh_tree_occupation(self, TreeMesh1D mesh_tree):
         cdef:
             Py_ssize_t n
             int level
         for level in mesh_tree.levels:
             for i in range(len(mesh_tree.tree[level])):
-                self.coerce_mesh_occupation(mesh_tree.tree[level][i])
+                self.__coerce_mesh_occupation(mesh_tree.tree[level][i])
 
     @concentration.setter
     def concentration(self, TreeMesh1DUniform concentration):
@@ -71,6 +71,7 @@ cdef class Dopant(Trap):
     @occupation.setter
     def occupation(self, TreeMesh1DUniform f):
         self.__f = f
+        self.__coerce_mesh_tree_occupation(self.__f)
 
     cpdef double[:] n_t(self, double[:] z):
         return self.__concentration.interpolate_solution(z)
