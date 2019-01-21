@@ -52,12 +52,13 @@ cdef class Dopant(Trap):
 
     @boundscheck(False)
     @wraparound(False)
-    cpdef __coerce_mesh_tree_occupation(self, TreeMesh1D mesh_tree):
+    cpdef coerce_mesh_tree_occupation(self, TreeMesh1D mesh_tree):
         cdef:
             Py_ssize_t n
             int level
         for level in mesh_tree.levels:
-            print(level)
+            for i in range(len(mesh_tree.tree[level])):
+                self.coerce_mesh_occupation(mesh_tree.tree[level][i])
 
     @concentration.setter
     def concentration(self, TreeMesh1DUniform concentration):

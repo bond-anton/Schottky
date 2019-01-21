@@ -11,4 +11,4 @@ cdef class Dopant(Trap):
     cpdef double[:] n_t(self, double[:] z)
     cpdef double[:] f(self, double[:] z)
     cpdef coerce_mesh_occupation(self, Mesh1D mesh)
-    cpdef __coerce_mesh_tree_occupation(self, TreeMesh1D mesh)
+    cpdef coerce_mesh_tree_occupation(self, TreeMesh1D mesh)

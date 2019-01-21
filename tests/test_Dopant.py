@@ -132,4 +132,6 @@ class TestDopant(unittest.TestCase):
         t = Dopant('My trap', TreeMesh1DUniform(c, aligned=True), TreeMesh1DUniform(f, aligned=True),
                    0.3 * constant.q, 0.8 * constant.q,
                    1e-15, 1e-15)
-        np.testing.assert_allclose(t.occupation.solution, -2 * np.ones(f.num))
+        np.testing.assert_allclose(t.occupation.tree[0][0].solution, 2 * np.ones(f.num))
+        t.coerce_mesh_tree_occupation(t.occupation)
+        np.testing.assert_allclose(t.occupation.tree[0][0].solution, np.ones(f.num))
