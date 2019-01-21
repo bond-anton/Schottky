@@ -1,9 +1,12 @@
 from __future__ import division, print_function
 
+import numpy as np
+
 from cython cimport boundscheck, wraparound
 from libc.math cimport exp
 
 from BDMesh.Mesh1D cimport Mesh1D
+from BDMesh.TreeMesh1D cimport TreeMesh1D
 from BDMesh.TreeMesh1DUniform cimport TreeMesh1DUniform
 from Schottky.Trap cimport Trap
 
@@ -33,13 +36,28 @@ cdef class Dopant(Trap):
 
     @boundscheck(False)
     @wraparound(False)
-    cdef __coerce_mesh_solution(Mesh1D mesh):
+    cpdef coerce_mesh_occupation(self, Mesh1D mesh):
         cdef:
             Py_ssize_t n = mesh.num
             int i
+            double[:] new_solution = np.zeros(n, dtype=np.double)
         for i in range(n):
+            if mesh.solution[i] > 1.0:
+                new_solution[i] = 1.0
+            elif mesh.solution[i] < 0.0:
+                new_solution[i] = 0.0
+            else:
+                new_solution[i] = mesh.solution[i]
+        mesh.solution = new_solution
 
-
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef __coerce_mesh_tree_occupation(self, TreeMesh1D mesh_tree):
+        cdef:
+            Py_ssize_t n
+            int level
+        for level in mesh_tree.levels:
+            print(level)
 
     @concentration.setter
     def concentration(self, TreeMesh1DUniform concentration):

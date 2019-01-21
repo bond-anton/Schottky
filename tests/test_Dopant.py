@@ -92,7 +92,6 @@ class TestDopant(unittest.TestCase):
         result = np.asarray(t.n_t(query_z))
         np.testing.assert_allclose(result, query_z * 1e15)
 
-
     def test_str(self):
         c = Mesh1DUniform(0.0, 5e-6, physical_step=1e-6)
         f = Mesh1DUniform(0.0, 5e-6, physical_step=1e-6)
@@ -108,3 +107,29 @@ class TestDopant(unittest.TestCase):
                                                                                   t.energy_v_ev,
                                                                                   t.energy_v)
         self.assertEqual(str(t), s)
+
+    def test_coerce_occupation_mesh(self):
+        c = Mesh1DUniform(0.0, 5e-6, physical_step=1e-6)
+        f = Mesh1DUniform(0.0, 5e-6, physical_step=1e-6)
+        c.solution = np.ones(c.num) * 1e15
+        f.solution = np.zeros(f.num)
+
+        t = Dopant('My trap', TreeMesh1DUniform(c, aligned=True), TreeMesh1DUniform(f, aligned=True),
+                   0.3 * constant.q, 0.8 * constant.q,
+                   1e-15, 1e-15)
+        np.testing.assert_allclose(f.solution, np.zeros(f.num))
+        f.solution = np.ones(f.num)
+        np.testing.assert_allclose(f.solution, np.ones(f.num))
+        f.solution = np.ones(f.num) * 2
+        np.testing.assert_allclose(f.solution, np.ones(f.num) * 2)
+        t.coerce_mesh_occupation(f)
+        np.testing.assert_allclose(f.solution, np.ones(f.num))
+        f.solution = -2 * np.ones(f.num)
+        np.testing.assert_allclose(f.solution, -2 * np.ones(f.num))
+        t.coerce_mesh_occupation(f)
+        np.testing.assert_allclose(f.solution, np.zeros(f.num))
+        f.solution = np.ones(f.num) * 2
+        t = Dopant('My trap', TreeMesh1DUniform(c, aligned=True), TreeMesh1DUniform(f, aligned=True),
+                   0.3 * constant.q, 0.8 * constant.q,
+                   1e-15, 1e-15)
+        np.testing.assert_allclose(t.occupation.solution, -2 * np.ones(f.num))
