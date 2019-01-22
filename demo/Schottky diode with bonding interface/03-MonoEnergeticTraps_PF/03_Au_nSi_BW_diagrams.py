@@ -27,7 +27,7 @@ from ProjectManager.ProjectManager import Project
 from Schottky.Notation import q, Eg
 from Schottky import constant
 from Schottky.Metal import Metal
-from Schottky.Semiconductor import Semiconductor, Trap, Dopant, Dislocation, BondingInterface
+from Schottky.Semiconductor_old import Semiconductor, Trap, Dopant, Dislocation, BondingInterface
 from Schottky.Diode import SchottkyDiode, Poisson, Kinetics, Visual
 from Schottky.Helpers import Psi_approx
 

@@ -19,7 +19,7 @@ from scipy.optimize import fmin
 from Schottky import constants
 from Schottky.Helpers import smooth_dd, Psi_zero, to_numeric  # , interp_Fn#, fermihalf, gen_interpolated_P_E_function
 
-from Schottky.Semiconductor import Semiconductor  # , Trap, Dopant, Dislocation, BondingInterface
+from Schottky.Semiconductor_old import Semiconductor  # , Trap, Dopant, Dislocation, BondingInterface
 from Schottky.Metal import Metal as MetalElectrode
 
 

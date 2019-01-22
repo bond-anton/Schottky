@@ -7,7 +7,7 @@ import numpy as np
 
 from Schottky.Notation import q
 from Schottky.Metal import Metal
-from Schottky.Semiconductor import Semiconductor, Trap, Dopant, Dislocation, BondingInterface
+from Schottky.Semiconductor_old import Semiconductor, Trap, Dopant, Dislocation, BondingInterface
 from Potential.Potential_3D import ConstantFieldPotential, SuperposedPotential, ChargedCylinderPotential, \
     DislocationDeformationPotential
 

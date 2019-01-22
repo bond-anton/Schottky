@@ -9,7 +9,7 @@ from Schottky import constants
 from Schottky.Helpers import to_pos_pwr, symplify_factor, solve_polynomial_eq
 from Schottky.Reference import database
 
-from Schottky.Semiconductor.BondingInterface import BondingInterface
+from Schottky.Semiconductor_old.BondingInterface import BondingInterface
 
 
 Fermi = lambda E, Ef, T: 1 / (1 + sym.exp((E - Ef) / (k * T)))  # fermi distribution function

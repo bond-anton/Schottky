@@ -45,6 +45,11 @@ extensions = [
         ['Schottky/Dopant/__init__.pyx'],
         depends=['Schottky/Dopant/__init__.pxd'],
     ),
+    Extension(
+        'Schottky.Semiconductor',
+        ['Schottky/Semiconductor/__init__.pyx'],
+        depends=['Schottky/Semiconductor/__init__.pxd'],
+    ),
 ]
 
 setup(
@@ -84,7 +89,8 @@ setup(
     package_data={'Schottky.Constants': ['Constants.pxd'],
                   'Schottky.Metal': ['Schottky/Metal/__init__.pxd'],
                   'Schottky.Trap': ['Schottky/Trap/__init__.pxd'],
-                  'Schottky.Dopant': ['Schottky/Dopant/__init__.pxd']},
+                  'Schottky.Dopant': ['Schottky/Dopant/__init__.pxd'],
+                  'Schottky.Semiconductor': ['Schottky/Semiconductor/__init__.pxd']},
     install_requires=['numpy', 'Cython', 'scipy', 'matplotlib', 'BDMesh', 'BDPoisson1D'],
     test_suite='nose.collector',
     tests_require=['nose']
