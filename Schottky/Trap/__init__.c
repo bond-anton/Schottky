@@ -895,8 +895,8 @@ struct __pyx_vtabstruct_8Schottky_4Trap_Trap {
   double (*h_cr)(struct __pyx_obj_8Schottky_4Trap_Trap *, double, double, double, double, int __pyx_skip_dispatch);
   double (*e_er)(struct __pyx_obj_8Schottky_4Trap_Trap *, double, double, double, double, int __pyx_skip_dispatch);
   double (*h_er)(struct __pyx_obj_8Schottky_4Trap_Trap *, double, double, double, double, int __pyx_skip_dispatch);
-  PyObject *(*f_eq)(struct __pyx_obj_8Schottky_4Trap_Trap *, double, double, double, double, double, double, double, double, int __pyx_skip_dispatch);
-  PyObject *(*df_dt)(struct __pyx_obj_8Schottky_4Trap_Trap *, double, double, double, double, double, double, double, double, int __pyx_skip_dispatch);
+  double (*f_eq)(struct __pyx_obj_8Schottky_4Trap_Trap *, double, double, double, double, double, double, double, double, int __pyx_skip_dispatch);
+  double (*df_dt)(struct __pyx_obj_8Schottky_4Trap_Trap *, double, double, double, double, double, double, double, double, int __pyx_skip_dispatch);
 };
 static struct __pyx_vtabstruct_8Schottky_4Trap_Trap *__pyx_vtabptr_8Schottky_4Trap_Trap;
 
@@ -1257,8 +1257,8 @@ static double __pyx_f_8Schottky_4Trap_4Trap_e_cr(struct __pyx_obj_8Schottky_4Tra
 static double __pyx_f_8Schottky_4Trap_4Trap_h_cr(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_temperature, double __pyx_v_v_h, double __pyx_v_n_h, CYTHON_UNUSED double __pyx_v_f, int __pyx_skip_dispatch); /* proto*/
 static double __pyx_f_8Schottky_4Trap_4Trap_e_er(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_temperature, double __pyx_v_v_e, double __pyx_v_n_c, CYTHON_UNUSED double __pyx_v_f, int __pyx_skip_dispatch); /* proto*/
 static double __pyx_f_8Schottky_4Trap_4Trap_h_er(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_temperature, double __pyx_v_v_h, double __pyx_v_n_v, CYTHON_UNUSED double __pyx_v_f, int __pyx_skip_dispatch); /* proto*/
-static PyObject *__pyx_f_8Schottky_4Trap_4Trap_f_eq(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_temperature, double __pyx_v_v_e, double __pyx_v_n_e, double __pyx_v_n_c, double __pyx_v_v_h, double __pyx_v_n_h, double __pyx_v_n_v, double __pyx_v_f, int __pyx_skip_dispatch); /* proto*/
-static PyObject *__pyx_f_8Schottky_4Trap_4Trap_df_dt(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_temperature, double __pyx_v_v_e, double __pyx_v_n_e, double __pyx_v_n_c, double __pyx_v_v_h, double __pyx_v_n_h, double __pyx_v_n_v, double __pyx_v_f, int __pyx_skip_dispatch); /* proto*/
+static double __pyx_f_8Schottky_4Trap_4Trap_f_eq(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_temperature, double __pyx_v_v_e, double __pyx_v_n_e, double __pyx_v_n_c, double __pyx_v_v_h, double __pyx_v_n_h, double __pyx_v_n_v, double __pyx_v_f, int __pyx_skip_dispatch); /* proto*/
+static double __pyx_f_8Schottky_4Trap_4Trap_df_dt(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_temperature, double __pyx_v_v_e, double __pyx_v_n_e, double __pyx_v_n_c, double __pyx_v_v_h, double __pyx_v_n_h, double __pyx_v_n_v, double __pyx_v_f, int __pyx_skip_dispatch); /* proto*/
 
 /* Module declarations from 'libc.math' */
 
@@ -4824,7 +4824,7 @@ static double __pyx_f_8Schottky_4Trap_4Trap_h_er(struct __pyx_obj_8Schottky_4Tra
  *         exp_f = n_v * exp(-self.__energy_v /(constant.__k * temperature))
  *         return h_c * g * exp_f             # <<<<<<<<<<<<<<
  * 
- *     cpdef f_eq(self, double temperature,
+ *     cpdef double f_eq(self, double temperature,
  */
   __pyx_r = ((__pyx_v_h_c * __pyx_v_g) * __pyx_v_exp_f);
   goto __pyx_L0;
@@ -4964,18 +4964,18 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_16h_er(struct __pyx_obj_8Schottk
 /* "Schottky/Trap/__init__.pyx":152
  *         return h_c * g * exp_f
  * 
- *     cpdef f_eq(self, double temperature,             # <<<<<<<<<<<<<<
+ *     cpdef double f_eq(self, double temperature,             # <<<<<<<<<<<<<<
  *                double v_e, double n_e, double n_c,
  *                double v_h, double n_h, double n_v,
  */
 
 static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_19f_eq(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_f_8Schottky_4Trap_4Trap_f_eq(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_temperature, double __pyx_v_v_e, double __pyx_v_n_e, double __pyx_v_n_c, double __pyx_v_v_h, double __pyx_v_n_h, double __pyx_v_n_v, double __pyx_v_f, int __pyx_skip_dispatch) {
+static double __pyx_f_8Schottky_4Trap_4Trap_f_eq(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_temperature, double __pyx_v_v_e, double __pyx_v_n_e, double __pyx_v_n_c, double __pyx_v_v_h, double __pyx_v_n_h, double __pyx_v_n_v, double __pyx_v_f, int __pyx_skip_dispatch) {
   double __pyx_v_e_c;
   double __pyx_v_e_e;
   double __pyx_v_h_c;
   double __pyx_v_h_e;
-  PyObject *__pyx_r = NULL;
+  double __pyx_r;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -4991,8 +4991,8 @@ static PyObject *__pyx_f_8Schottky_4Trap_4Trap_f_eq(struct __pyx_obj_8Schottky_4
   PyObject *__pyx_t_12 = NULL;
   int __pyx_t_13;
   PyObject *__pyx_t_14 = NULL;
-  int __pyx_t_15;
-  double __pyx_t_16;
+  double __pyx_t_15;
+  int __pyx_t_16;
   __Pyx_RefNannySetupContext("f_eq", 0);
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
@@ -5007,7 +5007,6 @@ static PyObject *__pyx_f_8Schottky_4Trap_4Trap_f_eq(struct __pyx_obj_8Schottky_4
       __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_f_eq); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 152, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)(void*)__pyx_pw_8Schottky_4Trap_4Trap_19f_eq)) {
-        __Pyx_XDECREF(__pyx_r);
         __pyx_t_3 = PyFloat_FromDouble(__pyx_v_temperature); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 152, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_3);
         __pyx_t_4 = PyFloat_FromDouble(__pyx_v_v_e); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 152, __pyx_L1_error)
@@ -5104,8 +5103,9 @@ static PyObject *__pyx_f_8Schottky_4Trap_4Trap_f_eq(struct __pyx_obj_8Schottky_4
           __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
         }
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-        __pyx_r = __pyx_t_2;
-        __pyx_t_2 = 0;
+        __pyx_t_15 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_15 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 152, __pyx_L1_error)
+        __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+        __pyx_r = __pyx_t_15;
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
         goto __pyx_L0;
       }
@@ -5165,8 +5165,8 @@ static PyObject *__pyx_f_8Schottky_4Trap_4Trap_f_eq(struct __pyx_obj_8Schottky_4
  *             return e_c / (e_c + e_e)
  *         else:
  */
-  __pyx_t_15 = (((__pyx_v_e_c + __pyx_v_e_e) > (__pyx_v_h_c + __pyx_v_h_e)) != 0);
-  if (__pyx_t_15) {
+  __pyx_t_16 = (((__pyx_v_e_c + __pyx_v_e_e) > (__pyx_v_h_c + __pyx_v_h_e)) != 0);
+  if (__pyx_t_16) {
 
     /* "Schottky/Trap/__init__.pyx":163
  *         h_e = self.h_er(temperature, v_h, n_v, f)
@@ -5175,16 +5175,12 @@ static PyObject *__pyx_f_8Schottky_4Trap_4Trap_f_eq(struct __pyx_obj_8Schottky_4
  *         else:
  *             return h_e / (h_c + h_e)
  */
-    __Pyx_XDECREF(__pyx_r);
-    __pyx_t_16 = (__pyx_v_e_c + __pyx_v_e_e);
-    if (unlikely(__pyx_t_16 == 0)) {
+    __pyx_t_15 = (__pyx_v_e_c + __pyx_v_e_e);
+    if (unlikely(__pyx_t_15 == 0)) {
       PyErr_SetString(PyExc_ZeroDivisionError, "float division");
       __PYX_ERR(0, 163, __pyx_L1_error)
     }
-    __pyx_t_1 = PyFloat_FromDouble((__pyx_v_e_c / __pyx_t_16)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 163, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_1);
-    __pyx_r = __pyx_t_1;
-    __pyx_t_1 = 0;
+    __pyx_r = (__pyx_v_e_c / __pyx_t_15);
     goto __pyx_L0;
 
     /* "Schottky/Trap/__init__.pyx":162
@@ -5201,26 +5197,22 @@ static PyObject *__pyx_f_8Schottky_4Trap_4Trap_f_eq(struct __pyx_obj_8Schottky_4
  *         else:
  *             return h_e / (h_c + h_e)             # <<<<<<<<<<<<<<
  * 
- *     cpdef df_dt(self, double temperature,
+ *     cpdef double df_dt(self, double temperature,
  */
   /*else*/ {
-    __Pyx_XDECREF(__pyx_r);
-    __pyx_t_16 = (__pyx_v_h_c + __pyx_v_h_e);
-    if (unlikely(__pyx_t_16 == 0)) {
+    __pyx_t_15 = (__pyx_v_h_c + __pyx_v_h_e);
+    if (unlikely(__pyx_t_15 == 0)) {
       PyErr_SetString(PyExc_ZeroDivisionError, "float division");
       __PYX_ERR(0, 165, __pyx_L1_error)
     }
-    __pyx_t_1 = PyFloat_FromDouble((__pyx_v_h_e / __pyx_t_16)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 165, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_1);
-    __pyx_r = __pyx_t_1;
-    __pyx_t_1 = 0;
+    __pyx_r = (__pyx_v_h_e / __pyx_t_15);
     goto __pyx_L0;
   }
 
   /* "Schottky/Trap/__init__.pyx":152
  *         return h_c * g * exp_f
  * 
- *     cpdef f_eq(self, double temperature,             # <<<<<<<<<<<<<<
+ *     cpdef double f_eq(self, double temperature,             # <<<<<<<<<<<<<<
  *                double v_e, double n_e, double n_c,
  *                double v_h, double n_h, double n_v,
  */
@@ -5240,10 +5232,9 @@ static PyObject *__pyx_f_8Schottky_4Trap_4Trap_f_eq(struct __pyx_obj_8Schottky_4
   __Pyx_XDECREF(__pyx_t_11);
   __Pyx_XDECREF(__pyx_t_12);
   __Pyx_XDECREF(__pyx_t_14);
-  __Pyx_AddTraceback("Schottky.Trap.Trap.f_eq", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_WriteUnraisable("Schottky.Trap.Trap.f_eq", __pyx_clineno, __pyx_lineno, __pyx_filename, 1, 0);
   __pyx_r = 0;
   __pyx_L0:;
-  __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -5381,7 +5372,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_18f_eq(struct __pyx_obj_8Schottk
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("f_eq", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_8Schottky_4Trap_4Trap_f_eq(__pyx_v_self, __pyx_v_temperature, __pyx_v_v_e, __pyx_v_n_e, __pyx_v_n_c, __pyx_v_v_h, __pyx_v_n_h, __pyx_v_n_v, __pyx_v_f, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 152, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_8Schottky_4Trap_4Trap_f_eq(__pyx_v_self, __pyx_v_temperature, __pyx_v_v_e, __pyx_v_n_e, __pyx_v_n_c, __pyx_v_v_h, __pyx_v_n_h, __pyx_v_n_v, __pyx_v_f, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 152, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -5401,16 +5392,16 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_18f_eq(struct __pyx_obj_8Schottk
 /* "Schottky/Trap/__init__.pyx":167
  *             return h_e / (h_c + h_e)
  * 
- *     cpdef df_dt(self, double temperature,             # <<<<<<<<<<<<<<
+ *     cpdef double df_dt(self, double temperature,             # <<<<<<<<<<<<<<
  *                 double v_e, double n_e, double n_c,
  *                 double v_h, double n_h, double n_v,
  */
 
 static PyObject *__pyx_pw_8Schottky_4Trap_4Trap_21df_dt(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_f_8Schottky_4Trap_4Trap_df_dt(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_temperature, double __pyx_v_v_e, double __pyx_v_n_e, double __pyx_v_n_c, double __pyx_v_v_h, double __pyx_v_n_h, double __pyx_v_n_v, double __pyx_v_f, int __pyx_skip_dispatch) {
+static double __pyx_f_8Schottky_4Trap_4Trap_df_dt(struct __pyx_obj_8Schottky_4Trap_Trap *__pyx_v_self, double __pyx_v_temperature, double __pyx_v_v_e, double __pyx_v_n_e, double __pyx_v_n_c, double __pyx_v_v_h, double __pyx_v_n_h, double __pyx_v_n_v, double __pyx_v_f, int __pyx_skip_dispatch) {
   double __pyx_v_gain;
   double __pyx_v_loss;
-  PyObject *__pyx_r = NULL;
+  double __pyx_r;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -5426,6 +5417,7 @@ static PyObject *__pyx_f_8Schottky_4Trap_4Trap_df_dt(struct __pyx_obj_8Schottky_
   PyObject *__pyx_t_12 = NULL;
   int __pyx_t_13;
   PyObject *__pyx_t_14 = NULL;
+  double __pyx_t_15;
   __Pyx_RefNannySetupContext("df_dt", 0);
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
@@ -5440,7 +5432,6 @@ static PyObject *__pyx_f_8Schottky_4Trap_4Trap_df_dt(struct __pyx_obj_8Schottky_
       __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_df_dt); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 167, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)(void*)__pyx_pw_8Schottky_4Trap_4Trap_21df_dt)) {
-        __Pyx_XDECREF(__pyx_r);
         __pyx_t_3 = PyFloat_FromDouble(__pyx_v_temperature); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 167, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_3);
         __pyx_t_4 = PyFloat_FromDouble(__pyx_v_v_e); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 167, __pyx_L1_error)
@@ -5537,8 +5528,9 @@ static PyObject *__pyx_f_8Schottky_4Trap_4Trap_df_dt(struct __pyx_obj_8Schottky_
           __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
         }
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-        __pyx_r = __pyx_t_2;
-        __pyx_t_2 = 0;
+        __pyx_t_15 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_15 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 167, __pyx_L1_error)
+        __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+        __pyx_r = __pyx_t_15;
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
         goto __pyx_L0;
       }
@@ -5580,17 +5572,13 @@ static PyObject *__pyx_f_8Schottky_4Trap_4Trap_df_dt(struct __pyx_obj_8Schottky_
  * 
  *     @property
  */
-  __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble((__pyx_v_gain - __pyx_v_loss)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 175, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_r = __pyx_t_1;
-  __pyx_t_1 = 0;
+  __pyx_r = (__pyx_v_gain - __pyx_v_loss);
   goto __pyx_L0;
 
   /* "Schottky/Trap/__init__.pyx":167
  *             return h_e / (h_c + h_e)
  * 
- *     cpdef df_dt(self, double temperature,             # <<<<<<<<<<<<<<
+ *     cpdef double df_dt(self, double temperature,             # <<<<<<<<<<<<<<
  *                 double v_e, double n_e, double n_c,
  *                 double v_h, double n_h, double n_v,
  */
@@ -5610,10 +5598,9 @@ static PyObject *__pyx_f_8Schottky_4Trap_4Trap_df_dt(struct __pyx_obj_8Schottky_
   __Pyx_XDECREF(__pyx_t_11);
   __Pyx_XDECREF(__pyx_t_12);
   __Pyx_XDECREF(__pyx_t_14);
-  __Pyx_AddTraceback("Schottky.Trap.Trap.df_dt", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_WriteUnraisable("Schottky.Trap.Trap.df_dt", __pyx_clineno, __pyx_lineno, __pyx_filename, 1, 0);
   __pyx_r = 0;
   __pyx_L0:;
-  __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -5751,7 +5738,7 @@ static PyObject *__pyx_pf_8Schottky_4Trap_4Trap_20df_dt(struct __pyx_obj_8Schott
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("df_dt", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_8Schottky_4Trap_4Trap_df_dt(__pyx_v_self, __pyx_v_temperature, __pyx_v_v_e, __pyx_v_n_e, __pyx_v_n_c, __pyx_v_v_h, __pyx_v_n_h, __pyx_v_n_v, __pyx_v_f, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 167, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_8Schottky_4Trap_4Trap_df_dt(__pyx_v_self, __pyx_v_temperature, __pyx_v_v_e, __pyx_v_n_e, __pyx_v_n_c, __pyx_v_v_h, __pyx_v_n_h, __pyx_v_n_v, __pyx_v_f, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 167, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -7497,8 +7484,8 @@ static int __Pyx_modinit_type_init_code(void) {
   __pyx_vtable_8Schottky_4Trap_Trap.h_cr = (double (*)(struct __pyx_obj_8Schottky_4Trap_Trap *, double, double, double, double, int __pyx_skip_dispatch))__pyx_f_8Schottky_4Trap_4Trap_h_cr;
   __pyx_vtable_8Schottky_4Trap_Trap.e_er = (double (*)(struct __pyx_obj_8Schottky_4Trap_Trap *, double, double, double, double, int __pyx_skip_dispatch))__pyx_f_8Schottky_4Trap_4Trap_e_er;
   __pyx_vtable_8Schottky_4Trap_Trap.h_er = (double (*)(struct __pyx_obj_8Schottky_4Trap_Trap *, double, double, double, double, int __pyx_skip_dispatch))__pyx_f_8Schottky_4Trap_4Trap_h_er;
-  __pyx_vtable_8Schottky_4Trap_Trap.f_eq = (PyObject *(*)(struct __pyx_obj_8Schottky_4Trap_Trap *, double, double, double, double, double, double, double, double, int __pyx_skip_dispatch))__pyx_f_8Schottky_4Trap_4Trap_f_eq;
-  __pyx_vtable_8Schottky_4Trap_Trap.df_dt = (PyObject *(*)(struct __pyx_obj_8Schottky_4Trap_Trap *, double, double, double, double, double, double, double, double, int __pyx_skip_dispatch))__pyx_f_8Schottky_4Trap_4Trap_df_dt;
+  __pyx_vtable_8Schottky_4Trap_Trap.f_eq = (double (*)(struct __pyx_obj_8Schottky_4Trap_Trap *, double, double, double, double, double, double, double, double, int __pyx_skip_dispatch))__pyx_f_8Schottky_4Trap_4Trap_f_eq;
+  __pyx_vtable_8Schottky_4Trap_Trap.df_dt = (double (*)(struct __pyx_obj_8Schottky_4Trap_Trap *, double, double, double, double, double, double, double, double, int __pyx_skip_dispatch))__pyx_f_8Schottky_4Trap_4Trap_df_dt;
   if (PyType_Ready(&__pyx_type_8Schottky_4Trap_Trap) < 0) __PYX_ERR(0, 8, __pyx_L1_error)
   __pyx_type_8Schottky_4Trap_Trap.tp_print = 0;
   if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_type_8Schottky_4Trap_Trap.tp_dictoffset && __pyx_type_8Schottky_4Trap_Trap.tp_getattro == PyObject_GenericGetAttr)) {

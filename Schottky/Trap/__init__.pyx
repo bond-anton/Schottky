@@ -149,7 +149,7 @@ cdef class Trap(object):
         exp_f = n_v * exp(-self.__energy_v /(constant.__k * temperature))
         return h_c * g * exp_f
 
-    cpdef f_eq(self, double temperature,
+    cpdef double f_eq(self, double temperature,
                double v_e, double n_e, double n_c,
                double v_h, double n_h, double n_v,
                double f):
@@ -164,7 +164,7 @@ cdef class Trap(object):
         else:
             return h_e / (h_c + h_e)
 
-    cpdef df_dt(self, double temperature,
+    cpdef double df_dt(self, double temperature,
                 double v_e, double n_e, double n_c,
                 double v_h, double n_h, double n_v,
                 double f):

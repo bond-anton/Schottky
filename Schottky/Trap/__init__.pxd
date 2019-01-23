@@ -20,12 +20,12 @@ cdef class Trap(object):
     cpdef double e_er(self, double temperature, double v_e, double n_c, double f)
     cpdef double h_er(self, double temperature, double v_h, double n_v, double f)
 
-    cpdef f_eq(self, double temperature,
-               double v_e, double n_e, double n_c,
-               double v_h, double n_h, double n_v,
-               double f)
+    cpdef double f_eq(self, double temperature,
+                      double v_e, double n_e, double n_c,
+                      double v_h, double n_h, double n_v,
+                      double f)
 
-    cpdef df_dt(self, double temperature,
-                double v_e, double n_e, double n_c,
-                double v_h, double n_h, double n_v,
-                double f)
+    cpdef double df_dt(self, double temperature,
+                       double v_e, double n_e, double n_c,
+                       double v_h, double n_h, double n_v,
+                       double f)
