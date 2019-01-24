@@ -1,6 +1,6 @@
 from __future__ import division, print_function
 
-from libc.math cimport sqrt, exp
+from libc.math cimport sqrt, exp, fabs
 from cython cimport boundscheck, wraparound
 from cpython.array cimport array, clone
 
@@ -112,30 +112,40 @@ cdef class Semiconductor(object):
                              (self.__reference['carrier_mass']['m_h_coeff'] * constant.m_e))
         return result
 
-    cpdef double[:] bulk_charge(self, double[:] temperature, double mu):
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double bulk_charge(self, double temperature, double mu):
         cdef:
-            Py_ssize_t n = len(temperature)
-            int i
-            double ff
-            double[:] band_gap = self.band_gap(temperature)
-            double[:] n_c = self.n_c(temperature)
-            double[:] n_v = self.n_v(temperature)
-            double[:] v_e = self.v_e(temperature)
-            double[:] v_h = self.v_h(temperature)
-            array[double] result, z = array('d'), template = array('d')
-        result = clone(template, n, zero=False)
+            double f, ff, f_threshold = 1.0e-8
+            double band_gap, n_c, n_v, v_e, v_h, result
+            array[double] z = array('d'), t = array('d')
         z[0] = 1.0e5
-        for i in range(n):
-            result[i] = -n_c[i] * exp(-mu / (constant.k * temperature[i]))
-            result[i] += n_v[i] * exp((mu - band_gap[i]) / (constant.k * temperature[i]))
-            for dopant in self.__dopants:
-                ff = dopant.f_eq(temperature[i],
-                                 v_e[i], n_c[i] * exp(-mu / (constant.k * temperature[i])), n_c[i],
-                                 v_h[i], n_v[i] * exp((mu - band_gap[i]) / (constant.k * temperature[i])), n_v[i],
-                                 dopant.f(z)[0])
-                result[i] += dopant.n_t(z)[0] * ((dopant.charge_state[1] - dopant.charge_state[0]) * ff
-                                                 + dopant.charge_state[0])
+        t[0] = temperature
+        band_gap = self.band_gap(t)[0]
+        n_c = self.n_c(t)[0]
+        n_v = self.n_v(t)[0]
+        v_e = self.v_e(t)[0]
+        v_h = self.v_h(t)[0]
+        result = -n_c * exp(-mu / (constant.k * temperature))
+        result += n_v * exp((mu - band_gap) / (constant.k * temperature))
+        for dopant in self.__dopants:
+            f = 2.0
+            ff = 0.0
+            while fabs(f - ff) > f_threshold:
+                f = ff
+                ff = dopant.f_eq(temperature,
+                             v_e, n_c * exp(-mu / (constant.k * temperature)), n_c,
+                             v_h, n_v * exp((mu - band_gap) / (constant.k * temperature)), n_v,
+                             f)
+            result += dopant.n_t(z)[0] * ((dopant.charge_state[1] - dopant.charge_state[0]) * ff
+                                             + dopant.charge_state[0])
         return result
+
+    cpdef double el_chem_pot(self, double temperature):
+        cdef:
+            double mu = 0.0
+        return mu
+
 
     def __str__(self):
         return 'Semiconductor: ' + self.__label
