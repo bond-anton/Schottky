@@ -27,6 +27,7 @@ cdef class Trap(object):
         self.__h_cs_activation = h_cs_activation
         self.__charge_state = {0: 0, 1: -1}
         self.__g = {0: 1, 1: 2}
+        self.__capture_barrier = {0: 0.0, 1: 0.0}
 
     @property
     def label(self):
@@ -132,6 +133,24 @@ cdef class Trap(object):
     def h_cs_activation_ev(self, double h_cs_activation_ev):
         self.__h_cs_activation = h_cs_activation_ev * constant.__q
 
+    @property
+    def capture_barrier(self):
+        return self.__capture_barrier
+
+    @capture_barrier.setter
+    def capture_barrier(self, dict capture_barrier):
+        self.__capture_barrier[0] = capture_barrier[0]
+        self.__capture_barrier[1] = capture_barrier[1]
+
+    @property
+    def capture_barrier_ev(self):
+        return {0: self.__capture_barrier[0] / constant.__q, 1: self.__capture_barrier[1] / constant.__q}
+
+    @capture_barrier_ev.setter
+    def capture_barrier_ev(self, dict capture_barrier_ev):
+        self.__capture_barrier[0] = capture_barrier_ev[0] * constant.__q
+        self.__capture_barrier[1] = capture_barrier_ev[1] * constant.__q
+
     cpdef double e_cs(self, double temperature):
         return self.__e_cs0 * exp(-self.__e_cs_activation / (constant.__k * temperature))
 
@@ -145,10 +164,10 @@ cdef class Trap(object):
         return self.h_cs(temperature) * v_h
 
     cpdef double e_cr(self, double temperature, double v_e, double n_e, double f):
-        return self.e_c(temperature, v_e) * n_e
+        return self.e_c(temperature, v_e) * n_e * exp(-self.__capture_barrier[1] * f / (constant.__k * temperature))
 
     cpdef double h_cr(self, double temperature, double v_h, double n_h, double f):
-        return self.h_c(temperature, v_h) * n_h
+        return self.h_c(temperature, v_h) * n_h * exp(-self.__capture_barrier[0] * (1 - f) / (constant.__k * temperature))
 
     cpdef double e_er(self, double temperature, double v_e, double n_c, double f):
         cdef:

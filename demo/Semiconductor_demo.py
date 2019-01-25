@@ -37,6 +37,7 @@ boron = Dopant('B', False, TreeMesh1DUniform(c_b, aligned=True), TreeMesh1DUnifo
                silicon.band_gap_t(0.0) - 0.045 * constant.q,  0.045 * constant.q,
                1e-15, 1e-15)
 boron.charge_state = {0: 0, 1: -1}
+boron.capture_barrier_ev = {0: 0.6, 1: 0.0}
 boron.color = 'r'
 boron.linestyle = '--'
 

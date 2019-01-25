@@ -10,6 +10,7 @@ cdef class Trap(object):
         double __h_cs_activation
         dict __charge_state
         dict __g
+        dict __capture_barrier
 
     cpdef double e_cs(self, double temperature)
     cpdef double h_cs(self, double temperature)
