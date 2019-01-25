@@ -1,6 +1,7 @@
 cdef class Trap(object):
     cdef:
         str __label
+        bint __cb_bound
         double __energy_c
         double __energy_v
         double __e_cs0

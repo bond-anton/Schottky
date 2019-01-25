@@ -22,7 +22,7 @@ class TestDopant(unittest.TestCase):
         c.solution = np.ones(c.num) * 1e15
         f.solution = np.zeros(f.num)
 
-        t = Dopant('My trap', TreeMesh1DUniform(c, aligned=True), TreeMesh1DUniform(f, aligned=True),
+        t = Dopant('My trap', True, TreeMesh1DUniform(c, aligned=True), TreeMesh1DUniform(f, aligned=True),
                  0.3 * constant.q, 0.8 * constant.q,
                  1e-15, 1e-15)
         self.assertEqual(t.label, 'My trap')
@@ -31,7 +31,7 @@ class TestDopant(unittest.TestCase):
         with self.assertRaises(TypeError):
             t.label = 3
         with self.assertRaises(TypeError):
-            Dopant(3,
+            Dopant(3, True,
                  0.3 * constant.q, 0.8 * constant.q,
                  1e-15, 1e-15)
 
@@ -40,7 +40,7 @@ class TestDopant(unittest.TestCase):
         f = Mesh1DUniform(0.0, 5e-6, physical_step=1e-6)
         c.solution = np.ones(c.num) * 1e15
         f.solution = np.zeros(f.num)
-        t = Dopant('My trap', TreeMesh1DUniform(c, aligned=True), TreeMesh1DUniform(f, aligned=True),
+        t = Dopant('My trap', True, TreeMesh1DUniform(c, aligned=True), TreeMesh1DUniform(f, aligned=True),
                  0.3 * constant.q, 0.8 * constant.q,
                  1e-15, 1e-15)
         np.testing.assert_allclose(t.energy_c, 0.3 * constant.q, atol=1e-15)
@@ -62,7 +62,7 @@ class TestDopant(unittest.TestCase):
         c.solution = np.ones(c.num) * 1e15
         f.solution = np.zeros(f.num)
 
-        t = Dopant('My trap', TreeMesh1DUniform(c, aligned=True), TreeMesh1DUniform(f, aligned=True),
+        t = Dopant('My trap', True, TreeMesh1DUniform(c, aligned=True), TreeMesh1DUniform(f, aligned=True),
                    0.3 * constant.q, 0.8 * constant.q,
                    1e-15, 1e-15)
         np.testing.assert_allclose(t.e_cs0, 1e-15)
@@ -78,7 +78,7 @@ class TestDopant(unittest.TestCase):
         c.solution = np.ones(c.num) * 1e15
         f.solution = np.zeros(f.num)
 
-        t = Dopant('My trap', TreeMesh1DUniform(c, aligned=True), TreeMesh1DUniform(f, aligned=True),
+        t = Dopant('My trap', True, TreeMesh1DUniform(c, aligned=True), TreeMesh1DUniform(f, aligned=True),
                    0.3 * constant.q, 0.8 * constant.q,
                    1e-15, 1e-15)
 
@@ -98,7 +98,7 @@ class TestDopant(unittest.TestCase):
         c.solution = np.ones(c.num) * 1e15
         f.solution = np.zeros(f.num)
 
-        t = Dopant('My trap', TreeMesh1DUniform(c, aligned=True), TreeMesh1DUniform(f, aligned=True),
+        t = Dopant('My trap', True, TreeMesh1DUniform(c, aligned=True), TreeMesh1DUniform(f, aligned=True),
                    0.3 * constant.q, 0.8 * constant.q,
                    1e-15, 1e-15)
         s = 'Dopant: %s\nEc-Et: %2.2f eV (%2.2g J)\nEt-Ev: %2.2f eV (%2.2g J)' % (t.label,
@@ -114,7 +114,7 @@ class TestDopant(unittest.TestCase):
         c.solution = np.ones(c.num) * 1e15
         f.solution = np.zeros(f.num)
 
-        t = Dopant('My trap', TreeMesh1DUniform(c, aligned=True), TreeMesh1DUniform(f, aligned=True),
+        t = Dopant('My trap', True, TreeMesh1DUniform(c, aligned=True), TreeMesh1DUniform(f, aligned=True),
                    0.3 * constant.q, 0.8 * constant.q,
                    1e-15, 1e-15)
         np.testing.assert_allclose(t.occupation.tree[0][0].solution, np.zeros(f.num))
@@ -128,7 +128,7 @@ class TestDopant(unittest.TestCase):
         t.occupation = TreeMesh1DUniform(f, aligned=True)
         np.testing.assert_allclose(t.occupation.tree[0][0].solution, np.zeros(f.num))
         f.solution = np.ones(f.num) * 2
-        t = Dopant('My trap', TreeMesh1DUniform(c, aligned=True), TreeMesh1DUniform(f, aligned=True),
+        t = Dopant('My trap', True, TreeMesh1DUniform(c, aligned=True), TreeMesh1DUniform(f, aligned=True),
                    0.3 * constant.q, 0.8 * constant.q,
                    1e-15, 1e-15)
         np.testing.assert_allclose(t.occupation.tree[0][0].solution, np.ones(f.num))

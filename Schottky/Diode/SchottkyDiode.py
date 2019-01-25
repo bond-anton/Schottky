@@ -17,7 +17,7 @@ from scipy.constants.codata import epsilon0
 from scipy.optimize import fmin
 
 from Schottky import constants
-from Schottky.Helpers import smooth_dd, Psi_zero, to_numeric  # , interp_Fn#, fermihalf, gen_interpolated_P_E_function
+
 
 from Schottky.Semiconductor_old import Semiconductor  # , Trap, Dopant, Dislocation, BondingInterface
 from Schottky.Metal import Metal as MetalElectrode
@@ -227,7 +227,7 @@ class SchottkyDiode(object):
                                    Vbi, datetime.datetime.now())
         return np.float(Vbi)
 
-    def EfEc(self, Psi=Psi_zero, z=0, eV=False):
+    def EfEc(self, Psi=0, z=0, eV=False):
         coeff = 1 if eV else to_numeric(q)
         Psi_nodes = Psi(z)
         xi = np.float(self.Semiconductor.Ech_pot(T=self.T, z=1e3, eV=eV, debug=False))
@@ -269,7 +269,7 @@ class SchottkyDiode(object):
         BI.set_traps_f(BI.dsl_tilt_f, BI.dsl_twist_f)
         BI.set_traps_df(BI.dsl_tilt_df, BI.dsl_twist_df)
 
-    def build_rho_z_Psi(self, Psi=Psi_zero, carriers_charge=False):
+    def build_rho_z_Psi(self, Psi=0, carriers_charge=False):
         if not (Psi, self.T, carriers_charge) in self.rho_z_Psi_memo:
             def rho_z_Psi(z, Psi):
                 rho = 0
@@ -294,7 +294,7 @@ class SchottkyDiode(object):
             self.rho_z_Psi_memo[(Psi, self.T, carriers_charge)] = rho_z_Psi
         return self.rho_z_Psi_memo[(Psi, self.T, carriers_charge)]
 
-    def get_phi_bn(self, Psi=Psi_zero, Va=0, SchottkyEffect=False):
+    def get_phi_bn(self, Psi=0, Va=0, SchottkyEffect=False):
         chg_sign = 1 if self.Semiconductor.dop_type == 'n' else -1
         F = to_numeric(q / (16 * np.pi * epsilon0 * self.Semiconductor.reference['epsilon']))
         if not SchottkyEffect:
@@ -358,7 +358,7 @@ class SchottkyDiode(object):
         Vd = Va - A * J * Rs
         return np.float(Vd), np.float(J)
 
-    def Ec(self, Psi=Psi_zero, Va=0, z=0, eV=False):
+    def Ec(self, Psi=0, Va=0, z=0, eV=False):
         coeff = 1.0 if eV else to_numeric(q)
         Psi_nodes = Psi(z)
         xi = np.float(self.Semiconductor.Ech_pot(T=self.T, z=1e3, eV=eV, debug=False))
@@ -366,13 +366,13 @@ class SchottkyDiode(object):
         Ec = -coeff * Psi_nodes + xi + coeff * type_sign * Va
         return Ec
 
-    def Ev(self, Psi=Psi_zero, Va=0, z=0, eV=False):
+    def Ev(self, Psi=0, Va=0, z=0, eV=False):
         Eg = self.Semiconductor.band_gap(self.T, symbolic=False, electron_volts=eV)
         Ec = self.Ec(Psi, Va, z, eV=eV)
         Ev = Ec - Eg
         return Ev
 
-    def n_carriers_theory(self, Psi=Psi_zero, z=0):
+    def n_carriers_theory(self, Psi=0, z=0):
         '''
         Charge carrier concentration in the main band
         '''
@@ -398,7 +398,7 @@ class SchottkyDiode(object):
             p = 0
         return n, p
 
-    def dn_carriers_dEf_theory(self, Psi=Psi_zero, z=0):
+    def dn_carriers_dEf_theory(self, Psi=0, z=0):
         k_n = to_numeric(k)
         Ef = self.EfEc(Psi, z, eV=False)
         Eg = self.Semiconductor.band_gap(self.T, symbolic=False, electron_volts=False)

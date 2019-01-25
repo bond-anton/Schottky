@@ -14,7 +14,8 @@ cdef class Dopant(Trap):
     Charge carrier trap class
     '''
 
-    def __init__(self, str label, TreeMesh1DUniform concentration, TreeMesh1DUniform f,
+    def __init__(self, str label, bint conduction_band_bound,
+                 TreeMesh1DUniform concentration, TreeMesh1DUniform f,
                  double energy_c, double energy_v,
                  double e_cs0, double h_cs0,
                  double e_cs_activation=0.0, double h_cs_activation=0.0):
@@ -24,7 +25,7 @@ cdef class Dopant(Trap):
         self.__concentration = concentration
         self.__f = f
         self.__coerce_mesh_tree_occupation(self.__f)
-        super(Dopant, self).__init__(label,
+        super(Dopant, self).__init__(label, conduction_band_bound,
                                      energy_c, energy_v,
                                      e_cs0, h_cs0,
                                      e_cs_activation, h_cs_activation)

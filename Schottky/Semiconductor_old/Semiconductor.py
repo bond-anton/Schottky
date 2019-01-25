@@ -6,7 +6,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 from Schottky import constants
-from Schottky.Helpers import to_pos_pwr, symplify_factor, solve_polynomial_eq
+
 from Schottky.Reference import database
 
 from Schottky.Semiconductor_old.BondingInterface import BondingInterface

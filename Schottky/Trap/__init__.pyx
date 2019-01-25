@@ -10,7 +10,7 @@ cdef class Trap(object):
     Charge carrier trap class
     '''
 
-    def __init__(self, str label,
+    def __init__(self, str label, bint conduction_band_bound,
                  double energy_c, double energy_v,
                  double e_cs0, double h_cs0,
                  double e_cs_activation=0.0, double h_cs_activation=0.0):
@@ -18,6 +18,7 @@ cdef class Trap(object):
         Constructor
         '''
         self.__label = label
+        self.__cb_bound = conduction_band_bound
         self.__energy_c = energy_c
         self.__energy_v = energy_v
         self.__e_cs0 = e_cs0
@@ -34,6 +35,22 @@ cdef class Trap(object):
     @label.setter
     def label(self, str label):
         self.__label = label
+
+    @property
+    def cb_bound(self):
+        return self.__cb_bound
+
+    @cb_bound.setter
+    def cb_bound(self, bint conduction_band_bound):
+        self.__cb_bound = conduction_band_bound
+
+    @property
+    def vb_bound(self):
+        return not self.__cb_bound
+
+    @vb_bound.setter
+    def vb_bound(self, bint valence_band_bound):
+        self.__cb_bound = not valence_band_bound
 
     @property
     def energy_c(self):
@@ -193,8 +210,9 @@ cdef class Trap(object):
         self.__g[1] = g[1]
 
     def __str__(self):
-        return 'Trap: %s\nEc-Et: %2.2f eV (%2.2g J)\nEt-Ev: %2.2f eV (%2.2g J)' % (self.label,
-                                                                                   self.energy_c_ev,
-                                                                                   self.energy_c,
-                                                                                   self.energy_v_ev,
-                                                                                   self.energy_v)
+        description = 'Trap: %s\n' % self.label
+        if self.cb_bound:
+            description += 'Ec-Et: %2.2f eV (%2.2g J)' % (self.energy_c_ev, self.energy_c)
+        else:
+            description += 'Et-Ev: %2.2f eV (%2.2g J)' % (self.energy_v_ev, self.energy_v)
+        return description

@@ -177,6 +177,10 @@ cdef class Semiconductor(object):
         n_h = self.n_h_t(mu, temperature)
         result = n_h - n_e
         for dopant in self.__dopants:
+            if dopant.cb_bound:
+                dopant.energy_v = band_gap - dopant.energy_c
+            else:
+                dopant.energy_c = band_gap - dopant.energy_v
             f = 2.0
             ff = 0.0
             while fabs(f - ff) > f_threshold:
@@ -191,7 +195,7 @@ cdef class Semiconductor(object):
 
     @boundscheck(False)
     @wraparound(False)
-    cpdef double el_chem_pot(self, double temperature):
+    cpdef double el_chem_pot_t(self, double temperature):
         cdef:
             int i, max_iter = 100
             # int func_calls
@@ -199,8 +203,8 @@ cdef class Semiconductor(object):
             double tol, xtol = constant.k * temperature / 1000, rtol = 4.5e-16
             double xa = 0.0, xb = self.__band_gap_t(temperature)
         if temperature < 8.0:
-            fa = self.el_chem_pot(10.0)
-            fb = self.el_chem_pot(8.0)
+            fa = self.el_chem_pot_t(10.0)
+            fb = self.el_chem_pot_t(8.0)
             return temperature * (fa - fb) / 2.0 + fa - 10.0 * (fa - fb) / 2.0
         tol = xtol + rtol*(fabs(xa) + fabs(xb))
         fa = self.bulk_charge(xa, temperature)
@@ -223,6 +227,18 @@ cdef class Semiconductor(object):
             if fm == 0 or fabs(dm) < tol:
                 break
         return xm
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] el_chem_pot(self, double[:] temperature):
+        cdef:
+            Py_ssize_t n = len(temperature)
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = self.el_chem_pot_t(temperature[i])
+        return result
 
     def __str__(self):
         return 'Semiconductor: ' + self.__label
