@@ -162,12 +162,12 @@ cdef class Semiconductor(object):
 
     @boundscheck(False)
     @wraparound(False)
-    cpdef double bulk_charge(self, double mu, double temperature):
+    cpdef double bulk_charge(self, double mu, double temperature, double z=1.0e5):
         cdef:
             double f, ff, f_threshold = 1.0e-8
             double band_gap, n_c, n_v, v_e, v_h, n_e, n_h, result
-            array[double] z = clone(array('d'), 1, zero=False)
-        z[0] = 1.0e5
+            array[double] _z = clone(array('d'), 1, zero=False)
+        _z[0] = z
         band_gap = self.__band_gap_t(temperature)
         n_c = self.n_c_t(temperature)
         n_v = self.n_v_t(temperature)
@@ -189,7 +189,7 @@ cdef class Semiconductor(object):
                              v_e, n_e, n_c,
                              v_h, n_h, n_v,
                              f)
-            result += dopant.n_t(z)[0] * ((dopant.charge_state[1] - dopant.charge_state[0]) * ff
+            result += dopant.n_t(_z)[0] * ((dopant.charge_state[1] - dopant.charge_state[0]) * ff
                                           + dopant.charge_state[0])
         return result
 

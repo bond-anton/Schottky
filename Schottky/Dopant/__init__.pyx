@@ -25,6 +25,8 @@ cdef class Dopant(Trap):
         self.__concentration = concentration
         self.__f = f
         self.__coerce_mesh_tree_occupation(self.__f)
+        self.__color = 'k'
+        self.__linestyle = '-'
         super(Dopant, self).__init__(label, conduction_band_bound,
                                      energy_c, energy_v,
                                      e_cs0, h_cs0,
@@ -79,6 +81,22 @@ cdef class Dopant(Trap):
 
     cpdef double[:] f(self, double[:] z):
         return self.__f.interpolate_solution(z)
+
+    @property
+    def color(self):
+        return self.__color
+
+    @color.setter
+    def color(self, str color):
+        self.__color = color
+
+    @property
+    def linestyle(self):
+        return self.__linestyle
+
+    @linestyle.setter
+    def linestyle(self, str linestyle):
+        self.__linestyle = linestyle
 
     def __str__(self):
         s = 'Dopant: %s\nEc-Et: %2.2f eV (%2.2g J)\nEt-Ev: %2.2f eV (%2.2g J)' % (self.label,

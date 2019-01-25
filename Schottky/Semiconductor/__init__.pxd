@@ -19,6 +19,6 @@ cdef class Semiconductor(object):
     cpdef double[:] v_e(self, double[:] temperature)
     cpdef double v_h_t(self, double temperature)
     cpdef double[:] v_h(self, double[:] temperature)
-    cpdef double bulk_charge(self, double mu, double temperature)
+    cpdef double bulk_charge(self, double mu, double temperature, double z=*)
     cpdef double el_chem_pot_t(self, double temperature)
     cpdef double[:] el_chem_pot(self, double[:] temperature)

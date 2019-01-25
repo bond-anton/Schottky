@@ -7,6 +7,8 @@ cdef class Dopant(Trap):
     cdef:
         TreeMesh1DUniform __concentration
         TreeMesh1DUniform __f
+        str __color
+        str __linestyle
 
     cpdef double[:] n_t(self, double[:] z)
     cpdef double[:] f(self, double[:] z)
