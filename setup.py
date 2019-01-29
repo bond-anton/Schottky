@@ -91,13 +91,14 @@ setup(
 
     packages=find_packages(exclude=['demo', 'tests', 'docs', 'contrib', 'venv']),
     ext_modules=cythonize(extensions, compiler_directives={'language_level': sys.version_info[0]}),
-    package_data={'Schottky.Constants': ['Constants.pxd'],
-                  'Schottky.Metal': ['Schottky/Metal/__init__.pxd'],
-                  'Schottky.Trap': ['Schottky/Trap/__init__.pxd'],
-                  'Schottky.Dopant': ['Schottky/Dopant/__init__.pxd'],
-                  'Schottky.Semiconductor': ['Schottky/Semiconductor/__init__.pxd'],
-                  'Schottky.Potential': ['Schottky/Potential/__init__.pxd']},
+    package_data={'Schottky': ['*.pxd'],
+                  'Schottky/Metal': ['*.pxd'],
+                  'Schottky/Trap': ['*.pxd'],
+                  'Schottky/Dopant': ['*.pxd'],
+                  'Schottky/Semiconductor': ['*.pxd'],
+                  'Schottky/Potential': ['*.pxd']},
     install_requires=['numpy', 'Cython', 'scipy', 'matplotlib', 'BDSpace', 'BDMesh', 'BDPoisson1D'],
     test_suite='nose.collector',
-    tests_require=['nose']
+    tests_require=['nose'],
+    zip_safe=False
 )
