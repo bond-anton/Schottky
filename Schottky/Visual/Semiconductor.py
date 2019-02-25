@@ -13,7 +13,7 @@ def draw_bands_diagram(semiconductor, temperature, ax=None):
     max_x = 0
     for dopant in semiconductor.dopants:
         mesh = dopant.concentration.flatten()
-        x = mesh.physical_nodes * 1e6
+        x = np.asarray(mesh.physical_nodes) * 1e6
         max_x = max(max_x, max(x))
     x = np.linspace(0.0, max_x, num=100, endpoint=True, dtype=np.double)
     ax.plot(x, np.zeros_like(x), 'k-', linewidth=2)
@@ -56,7 +56,7 @@ def draw_dopants_profile(semiconductor, ax=None):
     max_x = 0
     for dopant in semiconductor.dopants:
         mesh = dopant.concentration.flatten()
-        x = mesh.physical_nodes * 1e6
+        x = np.asarray(mesh.physical_nodes) * 1e6
         n = np.asarray(dopant.n_t(x)) * 1e-6
         max_x = max(max_x, max(x))
         ax.plot(x, n, color=dopant.color, linestyle=dopant.linestyle, linewidth=1, label=dopant.label)

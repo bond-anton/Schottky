@@ -84,7 +84,7 @@ cdef class Semiconductor(object):
         return result
 
     cpdef double n_v_t(self, double temperature):
-        return self.__reference['N_c0'] * temperature ** (3 / 2)
+        return self.__reference['N_v0'] * temperature ** (3 / 2)
 
     @boundscheck(False)
     @wraparound(False)
@@ -164,7 +164,8 @@ cdef class Semiconductor(object):
     @wraparound(False)
     cpdef double bulk_charge(self, double mu, double temperature, double z=1.0e5):
         cdef:
-            double f, ff, f_threshold = 1.0e-8
+            int i, max_iter = 100
+            double fa, fb, fm, ff_a, ff_b, ff_m, f_threshold = 1.0e-8, dm
             double band_gap, n_c, n_v, v_e, v_h, n_e, n_h, result
             array[double] _z = clone(array('d'), 1, zero=False)
         _z[0] = z
@@ -181,15 +182,25 @@ cdef class Semiconductor(object):
                 dopant.energy_v = band_gap - dopant.energy_c
             else:
                 dopant.energy_c = band_gap - dopant.energy_v
-            f = 2.0
-            ff = 0.0
-            while fabs(f - ff) > f_threshold:
-                f = ff
-                ff = dopant.f_eq(temperature,
-                             v_e, n_e, n_c,
-                             v_h, n_h, n_v,
-                             f)
-            result += dopant.n_t(_z)[0] * ((dopant.charge_state[1] - dopant.charge_state[0]) * ff
+            fa = 0.0
+            fb = 1.0
+            ff_a = fa - dopant.f_eq(temperature, v_e, n_e, n_c, v_h, n_h, n_v, fa)
+            ff_b = fb - dopant.f_eq(temperature, v_e, n_e, n_c, v_h, n_h, n_v, fb)
+            if ff_a == 0:
+                fm = fa
+            elif ff_b == 0:
+                fm = fb
+            else:
+                dm = fb - fa
+                for i in range(max_iter):
+                    dm *= 0.5
+                    fm = fa + dm
+                    ff_m = fm - dopant.f_eq(temperature, v_e, n_e, n_c, v_h, n_h, n_v, fm)
+                    if ff_m * ff_a >= 0:
+                        fa = fm
+                    if ff_m == 0 or fabs(dm) < f_threshold:
+                        break
+            result += dopant.n_t(_z)[0] * ((dopant.charge_state[1] - dopant.charge_state[0]) * fm
                                           + dopant.charge_state[0])
         return result
 
@@ -198,7 +209,6 @@ cdef class Semiconductor(object):
     cpdef double el_chem_pot_t(self, double temperature):
         cdef:
             int i, max_iter = 100
-            # int func_calls
             double dm, xm, fm, fa, fb
             double tol, xtol = constant.k * temperature / 1000, rtol = 4.5e-16
             double xa = 0.0, xb = self.__band_gap_t(temperature)
@@ -209,7 +219,6 @@ cdef class Semiconductor(object):
         tol = xtol + rtol*(fabs(xa) + fabs(xb))
         fa = self.bulk_charge(xa, temperature)
         fb = self.bulk_charge(xb, temperature)
-        # func_calls = 2
         if fa * fb > 0:
             return -1.0
         if fa == 0.0:
@@ -221,7 +230,6 @@ cdef class Semiconductor(object):
             dm *= 0.5
             xm = xa + dm
             fm = self.bulk_charge(xm, temperature)
-            # func_calls += 1
             if fm * fa >= 0:
                 xa = xm
             if fm == 0 or fabs(dm) < tol:
