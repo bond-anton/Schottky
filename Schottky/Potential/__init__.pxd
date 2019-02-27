@@ -1,9 +1,12 @@
-from BDSpace.Field.Field cimport Field
+from BDSpace.Field.Field cimport ConstantVectorConservativeField, HyperbolicPotentialSphericalConservativeField
 
 
-cdef class ElectricField(Field):
+cdef class ExternalField(ConstantVectorConservativeField):
     pass
 
-cdef class ConstantPotentialField(ElectricField):
+
+cdef class PointChargeCoulombPotential(HyperbolicPotentialSphericalConservativeField):
+
     cdef:
-        double __potential
+        double __epsilon
+        double __q
