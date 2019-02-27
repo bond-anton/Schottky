@@ -6,7 +6,7 @@ import BDSpaceVis as Visual
 from mayavi import mlab
 
 
-r = 1
+r = 3e-9
 q = 1.6e-19
 epsilon = 1.0
 
@@ -15,15 +15,22 @@ my_field = PointChargeCoulombPotential('External field', q, r, epsilon)
 my_field.epsilon = -11.0  # Should give a warning
 
 my_field.epsilon = 11.0
-my_field.r = 2
-my_field.charge *= -2
+my_field.r = 5e-9
+my_field.charge *= -0.1
 
 fig = mlab.figure('CS demo', bgcolor=(0.0, 0.0, 0.0))  # Create the mayavi figure
 
 
-field_vis = Visual.FieldView(fig, my_field, scalar_field_visible=False)
+field_vis = Visual.FieldView(fig, my_field, scalar_field_visible=True)
 
-grid = np.mgrid[-10:10:40j, -10:10:40j, -5:5:10j]
+x_start = -1e-7
+x_stop = 1e-7
+y_start = -1e-7
+y_stop = 1e-7
+z_start = -5e-8
+z_stop = 5e-8
+
+grid = np.mgrid[x_start:x_stop:40j, y_start:y_stop:40j, z_start:z_stop:10j]
 
 field_vis.set_grid(grid)
 field_vis.set_cs_visible(False)
