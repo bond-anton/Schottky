@@ -1,9 +1,11 @@
 import numpy as np
 from Schottky.Potential import PointChargeCoulombPotential
+from Schottky.Visual.Potential import draw_1d_profile_scalar
 
 import BDSpaceVis as Visual
 
 from mayavi import mlab
+from matplotlib import pyplot as plt
 
 
 r = 3e-9
@@ -35,5 +37,10 @@ grid = np.mgrid[x_start:x_stop:40j, y_start:y_stop:40j, z_start:z_stop:10j]
 field_vis.set_grid(grid)
 field_vis.set_cs_visible(False)
 field_vis.draw()
+field_vis.set_scale_factor(my_field.r)
 
+fig.scene.isometric_view()
 mlab.show()
+
+ax = draw_1d_profile_scalar(my_field, np.array([0, 0, 1.0]), -1e-7, 1e-7, 100)
+plt.show()
