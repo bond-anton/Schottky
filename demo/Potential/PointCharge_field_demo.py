@@ -42,5 +42,5 @@ field_vis.set_scale_factor(my_field.r)
 fig.scene.isometric_view()
 mlab.show()
 
-ax = draw_1d_profile_scalar(my_field, np.array([0, 0, 1.0]), -1e-7, 1e-7, 100)
+ax = draw_1d_profile_scalar(my_field, np.array([0, 0, 1.0]), -200, 200, num=1000, scale=1.0e-9)
 plt.show()
