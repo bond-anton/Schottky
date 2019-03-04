@@ -51,9 +51,14 @@ extensions = [
         depends=['Schottky/Semiconductor/__init__.pxd'],
     ),
     Extension(
-        'Schottky.Potential',
-        ['Schottky/Potential/__init__.pyx'],
-        depends=['Schottky/Potential/__init__.pxd'],
+        'Schottky.Potential.ExternalField',
+        ['Schottky/Potential/ExternalField.pyx'],
+        depends=['Schottky/Potential/ExternalField.pxd'],
+    ),
+    Extension(
+        'Schottky.Potential.PointLike',
+        ['Schottky/Potential/PointLike.pyx'],
+        depends=['Schottky/Potential/PointLike.pxd'],
     ),
 ]
 

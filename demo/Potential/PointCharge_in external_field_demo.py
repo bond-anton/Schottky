@@ -1,5 +1,5 @@
 import numpy as np
-from Schottky.Potential import PointChargeCoulombPotential, ExternalField
+from Schottky.Potential import ExternalField, PointChargeCoulombPotential
 from Schottky.Visual.Potential import draw_1d_profile_scalar, draw_1d_profile_superposition_scalar
 
 from BDSpace.Field import SuperposedField
