@@ -10,7 +10,7 @@ from matplotlib import pyplot as plt
 
 
 ext_field_direction = np.array([0.0, 0.0, 1.0])
-ext_field_magnitude = 1.0e7
+ext_field_magnitude = 5.0e8
 ext_field = ExternalField('External field', ext_field_direction, ext_field_magnitude)
 
 r = 0.5e-9

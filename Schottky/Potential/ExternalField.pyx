@@ -1,5 +1,5 @@
 from BDSpace.Coordinates.transforms cimport unit_vector, vector_norm
-from BDSpace.Field.Field cimport ConstantVectorConservativeField, HyperbolicPotentialSphericalConservativeField
+from BDSpace.Field.Field cimport ConstantVectorConservativeField
 
 
 cdef class ExternalField(ConstantVectorConservativeField):
