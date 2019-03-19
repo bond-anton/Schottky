@@ -1,6 +1,6 @@
 import numpy as np
 from Schottky.Potential import ExternalField, PointChargeCoulombPotential
-from Schottky.Visual.Potential import draw_1d_profile_scalar, draw_1d_profile_superposition_scalar
+from Schottky.Visual.Potential import draw_1d_profile_superposition_scalar
 
 from BDSpace.Field import SuperposedField
 import BDSpaceVis as Visual
@@ -20,7 +20,7 @@ point_charge = PointChargeCoulombPotential('Point charge', q, r, epsilon)
 
 superposed_field = SuperposedField('Point charge in external field', [ext_field, point_charge])
 
-fig = mlab.figure('CS demo', bgcolor=(0.0, 0.0, 0.0))  # Create the mayavi figure
+fig = mlab.figure('CS demo', bgcolor=(0.0, 0.0, 0.0))  # Create mayavi figure
 
 
 field_vis = Visual.FieldView(fig, superposed_field, scalar_field_visible=True)
@@ -38,7 +38,6 @@ field_vis.set_grid(grid)
 field_vis.set_cs_visible(False)
 field_vis.draw()
 field_vis.set_scale_factor(point_charge.r)
-# field_vis.set_scale_factor(1e-6)
 
 fig.scene.isometric_view()
 mlab.show()

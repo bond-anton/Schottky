@@ -1,27 +1,8 @@
 import warnings
 
 from BDSpace.Field.SphericallySymmetric cimport SphericallySymmetric, HyperbolicPotentialSphericalConservativeField
-from BDSpace.Field.SuperposedField cimport SuperposedField
-from Schottky.Potential.ExternalField cimport ExternalField
 from Schottky.Constants cimport constant
 from libc.math cimport M_PI
-
-
-cdef class PointLikeInExternalField(SuperposedField):
-
-    def __init__(self, str name, SphericallySymmetric point_like, ExternalField external_field,
-                 double r_min, double r_max):
-        self.__point_like = point_like
-        self.__external_field = external_field
-        self.__r_min = r_min
-        self.__r_max = r_max
-        super(PointLikeInExternalField, self).__init__(name, [point_like, external_field])
-
-
-    # cdef scalar_potential_polar(self, r, theta, phi):
-        
-
-
 
 
 cdef class PointChargeCoulombPotential(HyperbolicPotentialSphericalConservativeField):

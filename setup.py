@@ -60,6 +60,11 @@ extensions = [
         ['Schottky/Potential/PointLike.pyx'],
         depends=['Schottky/Potential/PointLike.pxd'],
     ),
+    Extension(
+        'Schottky.Potential.TrapPotential',
+        ['Schottky/Potential/TrapPotential.pyx'],
+        depends=['Schottky/Potential/TrapPotential.pxd'],
+    ),
 ]
 
 setup(

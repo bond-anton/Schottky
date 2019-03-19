@@ -20,7 +20,7 @@ my_field.epsilon = 11.0
 my_field.r = 5e-9
 my_field.charge *= -0.1
 
-fig = mlab.figure('CS demo', bgcolor=(0.0, 0.0, 0.0))  # Create the mayavi figure
+fig = mlab.figure('CS demo', bgcolor=(0.0, 0.0, 0.0))  # Create mayavi figure
 
 
 field_vis = Visual.FieldView(fig, my_field, scalar_field_visible=True)

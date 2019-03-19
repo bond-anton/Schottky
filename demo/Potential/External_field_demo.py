@@ -13,7 +13,7 @@ my_field = ExternalField('External field', direction, magnitude)
 my_field.magnitude *= 2
 my_field.direction = np.array([1.0, 1.0, 1.0])
 
-fig = mlab.figure('CS demo', bgcolor=(0.0, 0.0, 0.0))  # Create the mayavi figure
+fig = mlab.figure('CS demo', bgcolor=(0.0, 0.0, 0.0))  # Create mayavi figure
 
 
 field_vis = Visual.FieldView(fig, my_field, scalar_field_visible=False)
