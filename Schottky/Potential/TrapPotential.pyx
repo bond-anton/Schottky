@@ -51,4 +51,5 @@ cdef class PointLikeInExternalField(TrapPotential):
         super(PointLikeInExternalField, self).__init__(name, trap, point_like, external_field)
 
 
-    # cdef scalar_potential_polar(self, r, theta, phi):
+    cpdef double emission_rate_enhancement(self):
+        return 1.0
