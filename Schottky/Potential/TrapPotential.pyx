@@ -298,10 +298,10 @@ cdef class HyperbolicInExternalField(SphericallySymmetricInExternalField):
     @wraparound(False)
     cpdef double max_energy_r_point(self, double theta, double phi):
         cdef:
-            double f = self.__external_field.magnitude
+            double r, f = self.__external_field.magnitude
             bint aligned = self.is_aligned()
         if aligned:
-            if f > 1.0e-10:
+            if f > 1.0e-10 and theta < M_PI / 2.0:
                 return sqrt(self.__trap_field.a / f / cos(theta))
             else:
                 return self.__r_max

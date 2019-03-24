@@ -31,7 +31,7 @@ t_pot = HyperbolicInExternalField('Coulomb potential', t, point_charge, ext_fiel
 emission_rate_enhancement = t_pot.emission_rate_enhancement()
 print('E3/E0 =', emission_rate_enhancement)
 
-theta = np.pi * 0.5
+theta = np.pi * 0.75
 phi = 0.0
 
 r_min = t_pot.max_energy_r_point(theta, phi)
