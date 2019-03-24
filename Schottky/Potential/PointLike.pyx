@@ -1,6 +1,6 @@
 import warnings
 
-from BDSpace.Field.SphericallySymmetric cimport SphericallySymmetric, HyperbolicPotentialSphericalConservativeField
+from BDSpace.Field.SphericallySymmetric cimport HyperbolicPotentialSphericalConservativeField
 from Schottky.Constants cimport constant
 from libc.math cimport M_PI
 
@@ -39,4 +39,3 @@ cdef class PointChargeCoulombPotential(HyperbolicPotentialSphericalConservativeF
     def charge(self, double q):
         self.__q = q
         self.__a = q / (4 * M_PI * constant.epsilon_0 * self.__epsilon)
-

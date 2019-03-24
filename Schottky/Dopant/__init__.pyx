@@ -1,5 +1,3 @@
-from __future__ import division, print_function
-
 from cython cimport boundscheck, wraparound
 from cpython.array cimport array, clone
 

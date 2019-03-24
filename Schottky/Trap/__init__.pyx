@@ -1,5 +1,3 @@
-from __future__ import division, print_function
-
 from libc.math cimport exp
 
 from Schottky.Constants cimport constant

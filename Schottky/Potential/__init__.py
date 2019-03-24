@@ -1,2 +1,4 @@
 from .ExternalField import ExternalField
 from .PointLike import PointChargeCoulombPotential
+from .TrapPotential import TrapPotential, NullPotential, PointLikeInExternalField
+from .TrapPotential import SphericallySymmetricInExternalField, HyperbolicInExternalField
