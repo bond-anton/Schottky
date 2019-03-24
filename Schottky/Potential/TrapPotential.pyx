@@ -29,7 +29,7 @@ cdef class TrapPotential(SuperposedField):
             self.__external_field = external_field
         super(TrapPotential, self).__init__(name, [self.__trap_field, self.__external_field])
 
-    cpdef double emission_rate_enhancement(self, double temperature=300):
+    cpdef double emission_rate_enhancement(self, double temperature=300, double f=0.0):
         return 1.0
 
 
@@ -38,11 +38,11 @@ cdef class NullPotential(TrapPotential):
     def __init__(self, str name, Trap trap, ExternalField external_field=None):
         super(NullPotential, self).__init__(name, trap,
                                             ConstantScalarConservativeField(name='Null Potential',
-                                                                            type='Electric Field',
+                                                                            field_type='Electric Field',
                                                                             potential=0.0),
                                             external_field)
 
-    cpdef double emission_rate_enhancement(self, double temperature=300):
+    cpdef double emission_rate_enhancement(self, double temperature=300, double f=0.0):
         return 1.0
 
 
@@ -183,7 +183,7 @@ cdef class PointLikeInExternalField(TrapPotential):
 
     @boundscheck(False)
     @wraparound(False)
-    cpdef double emission_rate_enhancement(self, double temperature=300):
+    cpdef double emission_rate_enhancement(self, double temperature=300, double f=0.0):
         cdef:
             int i, j
             array[double] template = array('d')
@@ -255,7 +255,7 @@ cdef class SphericallySymmetricInExternalField(PointLikeInExternalField):
 
     @boundscheck(False)
     @wraparound(False)
-    cpdef double emission_rate_enhancement(self, double temperature=300):
+    cpdef double emission_rate_enhancement(self, double temperature=300, double f=0.0):
         cdef:
             int i, j
             array[double] template = array('d')

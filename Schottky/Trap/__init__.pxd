@@ -1,3 +1,6 @@
+from Schottky.Potential.TrapPotential cimport TrapPotential
+
+
 cdef class Trap(object):
     cdef:
         str __label
@@ -11,6 +14,8 @@ cdef class Trap(object):
         dict __charge_state
         dict __g
         dict __capture_barrier
+        TrapPotential __e_potential
+        TrapPotential __h_potential
 
     cpdef double e_cs(self, double temperature)
     cpdef double h_cs(self, double temperature)

@@ -1,5 +1,6 @@
 from libc.math cimport exp
 
+from Schottky.Potential.TrapPotential cimport TrapPotential, NullPotential
 from Schottky.Constants cimport constant
 
 
@@ -11,7 +12,8 @@ cdef class Trap(object):
     def __init__(self, str label, bint conduction_band_bound,
                  double energy_c, double energy_v,
                  double e_cs0, double h_cs0,
-                 double e_cs_activation=0.0, double h_cs_activation=0.0):
+                 double e_cs_activation=0.0, double h_cs_activation=0.0,
+                 TrapPotential e_potential=None, TrapPotential h_potential=None):
         '''
         Constructor
         '''
@@ -26,6 +28,14 @@ cdef class Trap(object):
         self.__charge_state = {0: 0, 1: -1}
         self.__g = {0: 1, 1: 2}
         self.__capture_barrier = {0: 0.0, 1: 0.0}
+        if e_potential is None:
+            self.__e_potential = NullPotential('electron null potential', self)
+        else:
+            self.__e_potential = e_potential
+        if h_potential is None:
+            self.__h_potential = NullPotential('hole null potential', self)
+        else:
+            self.__h_potential = h_potential
 
     @property
     def label(self):
@@ -149,6 +159,22 @@ cdef class Trap(object):
         self.__capture_barrier[0] = capture_barrier_ev[0] * constant.__q
         self.__capture_barrier[1] = capture_barrier_ev[1] * constant.__q
 
+    @property
+    def e_potential(self):
+        return self.__e_potential
+
+    @e_potential.setter
+    def e_potential(self, TrapPotential e_potential):
+        self.__e_potential = e_potential
+
+    @property
+    def h_potential(self):
+        return self.__h_potential
+
+    @h_potential.setter
+    def h_potential(self, TrapPotential h_potential):
+        self.__h_potential = h_potential
+
     cpdef double e_cs(self, double temperature):
         return self.__e_cs0 * exp(-self.__e_cs_activation / (constant.__k * temperature))
 
@@ -169,19 +195,21 @@ cdef class Trap(object):
 
     cpdef double e_er(self, double temperature, double v_e, double n_c, double f):
         cdef:
-            double cr, exp_f, g
+            double cr, exp_f, g, enhancement
         e_c = self.e_c(temperature, v_e)
         g = self.__g[0] / self.__g[1]
         exp_f = n_c * exp(-self.__energy_c /(constant.__k * temperature))
-        return e_c * g * exp_f
+        enhancement = self.__e_potential.emission_rate_enhancement(temperature, f)
+        return e_c * g * exp_f * enhancement
 
     cpdef double h_er(self, double temperature, double v_h, double n_v, double f):
         cdef:
-            double cr, exp_f, g
+            double cr, exp_f, g, enhancement
         h_c = self.h_c(temperature, v_h)
         g = self.__g[1] / self.__g[0]
         exp_f = n_v * exp(-self.__energy_v /(constant.__k * temperature))
-        return h_c * g * exp_f
+        enhancement = self.__h_potential.emission_rate_enhancement(temperature, f)
+        return h_c * g * exp_f * enhancement
 
     cpdef double f_eq(self, double temperature,
                double v_e, double n_e, double n_c,

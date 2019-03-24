@@ -9,7 +9,7 @@ cdef class TrapPotential(SuperposedField):
         Trap __trap
         Field __trap_field
         ExternalField __external_field
-    cpdef double emission_rate_enhancement(self, double temperature=*)
+    cpdef double emission_rate_enhancement(self, double temperature=*, double f=*)
 
 
 cdef class NullPotential(TrapPotential):
