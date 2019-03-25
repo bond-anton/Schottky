@@ -27,6 +27,7 @@ cdef class Dopant(Trap):
         self.__coerce_mesh_tree_occupation(self.__f)
         self.__color = 'k'
         self.__linestyle = '-'
+        self.__marker = ''
         super(Dopant, self).__init__(label, conduction_band_bound,
                                      energy_c, energy_v,
                                      e_cs0, h_cs0,
@@ -98,6 +99,14 @@ cdef class Dopant(Trap):
     @linestyle.setter
     def linestyle(self, str linestyle):
         self.__linestyle = linestyle
+
+    @property
+    def marker(self):
+        return self.__marker
+
+    @marker.setter
+    def marker(self, str marker):
+        self.__marker = marker
 
     def __str__(self):
         s = 'Dopant: %s\nEc-Et: %2.2f eV (%2.2g J)\nEt-Ev: %2.2f eV (%2.2g J)' % (self.label,

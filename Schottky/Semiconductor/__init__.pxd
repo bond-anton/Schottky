@@ -1,3 +1,6 @@
+from Schottky.Trap cimport Trap
+
+
 cdef class Semiconductor(object):
     cdef:
         str __label
@@ -12,13 +15,14 @@ cdef class Semiconductor(object):
     cpdef double n_v_t(self, double temperature)
     cpdef double[:] n_v(self, double[:] temperature)
     cpdef double n_e_t(self, double mu, double temperature)
-    cpdef double[:] n_e(self, double mu, double[:] temperature)
+    cpdef double[:] n_e(self, double[:] mu, double[:] temperature)
     cpdef double n_h_t(self, double mu, double temperature)
-    cpdef double[:] n_h(self, double mu, double[:] temperature)
+    cpdef double[:] n_h(self, double[:] mu, double[:] temperature)
     cpdef double v_e_t(self, double temperature)
     cpdef double[:] v_e(self, double[:] temperature)
     cpdef double v_h_t(self, double temperature)
     cpdef double[:] v_h(self, double[:] temperature)
-    cpdef double bulk_charge(self, double mu, double temperature, double z=*)
-    cpdef double el_chem_pot_t(self, double temperature)
-    cpdef double[:] el_chem_pot(self, double[:] temperature)
+    cpdef double trap_eq_occupation(self, Trap trap, double mu, double temperature, int max_iter=*)
+    cpdef double bulk_charge(self, double mu, double temperature, double z=*, int max_iter=*)
+    cpdef double el_chem_pot_t(self, double temperature, int max_iter=*)
+    cpdef double[:] el_chem_pot(self, double[:] temperature, int max_iter=*)

@@ -15,6 +15,8 @@ def draw_bands_diagram(semiconductor, temperature, ax=None):
         mesh = dopant.concentration.flatten()
         x = np.asarray(mesh.physical_nodes) * 1e6
         max_x = max(max_x, max(x))
+    if max_x == 0:
+        max_x = 5
     x = np.linspace(0.0, max_x, num=100, endpoint=True, dtype=np.double)
     ax.plot(x, np.zeros_like(x), 'k-', linewidth=2)
     ax.plot(x, np.ones_like(x) * band_gap, 'k-', linewidth=2)
@@ -59,11 +61,14 @@ def draw_dopants_profile(semiconductor, ax=None):
         x = np.asarray(mesh.physical_nodes) * 1e6
         n = np.asarray(dopant.n_t(x)) * 1e-6
         max_x = max(max_x, max(x))
-        ax.plot(x, n, color=dopant.color, linestyle=dopant.linestyle, linewidth=1, label=dopant.label)
-    ax.set_xlim([0, max_x * 1.1])
+        ax.semilogy(x, n, color=dopant.color, linestyle=dopant.linestyle, linewidth=1, label=dopant.label)
+    if max_x == 0:
+        max_x = 5
+    ax.set_xlim([0, max_x])
     ax.set_xlabel('z, $\mu$m')
     ax.set_ylabel('N, cm$^{-3}$')
-    ax.legend()
+    if semiconductor.dopants:
+        ax.legend()
     return ax
 
 
@@ -77,7 +82,7 @@ def draw_bands_diagram_t(semiconductor, temperature, ax=None):
     band_gap = np.asarray(semiconductor.band_gap(temperature, electron_volts=True))
     ax.plot(temperature, np.zeros_like(temperature), 'k-', linewidth=2)
     ax.plot(temperature, band_gap, 'k-', linewidth=2)
-    e_f = np.asarray(semiconductor.el_chem_pot(temperature)) / constant.q
+    e_f = np.asarray(semiconductor.el_chem_pot(temperature, max_iter=100)) / constant.q
     ax.plot(temperature, band_gap - e_f,
             color='k', linestyle='-.', linewidth=1)
     ax.text(t_max * 1.05, band_gap[i_max] - e_f[i_max], 'Ef',
@@ -105,4 +110,28 @@ def draw_bands_diagram_t(semiconductor, temperature, ax=None):
     ax.set_ylim([-max(band_gap) * 0.1, max(band_gap) * 1.1])
     ax.set_xlabel('T, K')
     ax.set_ylabel('E, eV')
+    return ax
+
+
+def draw_dopants_occupation_diagram_t(semiconductor, temperature, ax=None):
+    if ax is None:
+        _, ax = plt.subplots()
+    i_max = np.argmax(temperature)
+    i_min = np.argmin(temperature)
+    t_max = temperature[i_max]
+    t_min = temperature[i_min]
+    e_f = semiconductor.el_chem_pot(temperature)
+    f = np.empty(temperature.shape[0], dtype=np.double)
+    for dopant in semiconductor.dopants:
+        for i in range(temperature.shape[0]):
+            f[i] = semiconductor.trap_eq_occupation(dopant, e_f[i], temperature[i], max_iter=100)
+        ax.plot(temperature, f, marker=dopant.marker, color=dopant.color,
+                linestyle=dopant.linestyle, linewidth=1, label=dopant.label)
+    ax.set_xlim([t_min, t_max])
+    ax.set_ylim([-0.05, 1.05])
+    ax.set_xlabel('T, K')
+    ax.set_ylabel('Occupation')
+    ax.grid(True)
+    if semiconductor.dopants:
+        ax.legend()
     return ax
