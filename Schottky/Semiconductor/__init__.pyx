@@ -163,10 +163,11 @@ cdef class Semiconductor(object):
 
     @boundscheck(False)
     @wraparound(False)
-    cpdef double trap_eq_occupation(self, Trap trap, double mu, double temperature, int max_iter=100):
+    cpdef double trap_eq_occupation(self, Trap trap, double mu, double temperature,
+                                    double f_threshold=1.0e-23, int max_iter=100, bint verbose=False):
         cdef:
             int i = 0
-            double fa, fb, fm=0.0, ff_a, ff_b, ff_m, f_threshold = 1.0e-8, dm
+            double fa, fb, fm=0.0, ff_a, ff_b, ff_m, dm
             double band_gap, n_c, n_v, v_e, v_h, n_e, n_h
         band_gap = self.__band_gap_t(temperature)
         n_c = self.n_c_t(temperature)
@@ -175,7 +176,7 @@ cdef class Semiconductor(object):
         v_h = self.v_h_t(temperature)
         n_e = self.n_e_t(mu, temperature)
         n_h = self.n_h_t(mu, temperature)
-        if trap.cb_bound:
+        if trap.__cb_bound:
             trap.energy_v = band_gap - trap.energy_c
         else:
             trap.energy_c = band_gap - trap.energy_v
@@ -197,13 +198,14 @@ cdef class Semiconductor(object):
                     fa = fm
                 if ff_m == 0 or fabs(dm) < f_threshold:
                     break
-        # if i == max_iter - 1:
-        #     print('    trap_eq_occupation iters=', i, 'T=', temperature, 'K')
+        if verbose and i == max_iter - 1:
+            print('    trap_eq_occupation (%s)' % trap.__label, 'reached max iters=', i + 1, 'T=', temperature, 'K')
         return fm
 
     @boundscheck(False)
     @wraparound(False)
-    cpdef double bulk_charge(self, double mu, double temperature, double z=1.0e5, int max_iter=100):
+    cpdef double bulk_charge(self, double mu, double temperature, double z=1.0e5,
+                             double f_threshold=1.0e-23, int max_iter=100, bint verbose=False):
         cdef:
             double fm, result
             array[double] _z = clone(array('d'), 1, zero=False)
@@ -212,26 +214,24 @@ cdef class Semiconductor(object):
         n_h = self.n_h_t(mu, temperature)
         result = n_h - n_e
         for dopant in self.__dopants:
-            fm = self.trap_eq_occupation(dopant, mu, temperature, max_iter=max_iter)
+            fm = self.trap_eq_occupation(dopant, mu, temperature,
+                                         f_threshold=f_threshold, max_iter=max_iter, verbose=verbose)
             result += dopant.n_t(_z)[0] * ((dopant.charge_state[1] - dopant.charge_state[0]) * fm
                                           + dopant.charge_state[0])
         return result
 
     @boundscheck(False)
     @wraparound(False)
-    cpdef double el_chem_pot_t(self, double temperature, int max_iter=100):
+    cpdef double el_chem_pot_t(self, double temperature,
+                               double f_threshold=1.0e-23, int max_iter=100, bint verbose=False):
         cdef:
             int i = 0
             double dm, xm=0.0, fm, fa, fb
             double tol, xtol = constant.k * temperature / 1000, rtol = 4.5e-16
             double xa = 0.0, xb = self.__band_gap_t(temperature)
-        # if temperature < 8.0:
-        #     fa = self.el_chem_pot_t(10.0)
-        #     fb = self.el_chem_pot_t(8.0)
-        #     return temperature * (fa - fb) / 2.0 + fa - 10.0 * (fa - fb) / 2.0
         tol = xtol + rtol*(fabs(xa) + fabs(xb))
-        fa = self.bulk_charge(xa, temperature)
-        fb = self.bulk_charge(xb, temperature)
+        fa = self.bulk_charge(xa, temperature, f_threshold=f_threshold, max_iter=max_iter, verbose=verbose)
+        fb = self.bulk_charge(xb, temperature, f_threshold=f_threshold, max_iter=max_iter, verbose=verbose)
         if fa * fb > 0:
             return -1.0
         if fa == 0.0:
@@ -242,25 +242,27 @@ cdef class Semiconductor(object):
         for i in range(max_iter):
             dm *= 0.5
             xm = xa + dm
-            fm = self.bulk_charge(xm, temperature, max_iter=max_iter)
+            fm = self.bulk_charge(xm, temperature, f_threshold=f_threshold, max_iter=max_iter, verbose=verbose)
             if fm * fa >= 0:
                 xa = xm
             if fm == 0 or fabs(dm) < tol:
                 break
-        # if i == max_iter - 1:
-        #     print('el_chem_pot_t iters=', i, 'T=', temperature, 'K')
+        if verbose and i == max_iter - 1:
+            print('el_chem_pot_t reached max iters=', i + 1, 'T=', temperature, 'K')
         return xm
 
     @boundscheck(False)
     @wraparound(False)
-    cpdef double[:] el_chem_pot(self, double[:] temperature, int max_iter=100):
+    cpdef double[:] el_chem_pot(self, double[:] temperature,
+                                double f_threshold=1.0e-23, int max_iter=100, bint verbose=False):
         cdef:
             Py_ssize_t n = len(temperature)
             int i
             array[double] result, template = array('d')
         result = clone(template, n, zero=False)
         for i in range(n):
-            result[i] = self.el_chem_pot_t(temperature[i], max_iter=max_iter)
+            result[i] = self.el_chem_pot_t(temperature[i],
+                                           f_threshold=f_threshold, max_iter=max_iter, verbose=verbose)
         return result
 
     def __str__(self):

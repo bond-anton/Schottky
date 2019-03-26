@@ -6,7 +6,7 @@ from matplotlib import pyplot as plt
 from Schottky import constant
 
 
-def draw_bands_diagram(semiconductor, temperature, ax=None):
+def draw_bands_diagram(semiconductor, temperature, f_threshold=1.0e-23, max_iter=100, verbose=False, ax=None):
     if ax is None:
         _, ax = plt.subplots()
     band_gap = semiconductor.band_gap_t(temperature, electron_volts=True)
@@ -20,7 +20,8 @@ def draw_bands_diagram(semiconductor, temperature, ax=None):
     x = np.linspace(0.0, max_x, num=100, endpoint=True, dtype=np.double)
     ax.plot(x, np.zeros_like(x), 'k-', linewidth=2)
     ax.plot(x, np.ones_like(x) * band_gap, 'k-', linewidth=2)
-    e_f = semiconductor.el_chem_pot_t(temperature) / constant.q
+    e_f = semiconductor.el_chem_pot_t(temperature, f_threshold=f_threshold,
+                                      max_iter=max_iter, verbose=verbose) / constant.q
     ax.plot(x, np.ones_like(x) * (band_gap - e_f),
             color='k', linestyle='-.', linewidth=1)
     ax.text(max_x * 1.05, band_gap - e_f, 'Ef',
@@ -72,7 +73,7 @@ def draw_dopants_profile(semiconductor, ax=None):
     return ax
 
 
-def draw_bands_diagram_t(semiconductor, temperature, ax=None):
+def draw_bands_diagram_t(semiconductor, temperature, f_threshold=1.0e-23, max_iter=100, verbose=False, ax=None):
     if ax is None:
         _, ax = plt.subplots()
     i_max = np.argmax(temperature)
@@ -82,7 +83,8 @@ def draw_bands_diagram_t(semiconductor, temperature, ax=None):
     band_gap = np.asarray(semiconductor.band_gap(temperature, electron_volts=True))
     ax.plot(temperature, np.zeros_like(temperature), 'k-', linewidth=2)
     ax.plot(temperature, band_gap, 'k-', linewidth=2)
-    e_f = np.asarray(semiconductor.el_chem_pot(temperature, max_iter=100)) / constant.q
+    e_f = np.asarray(semiconductor.el_chem_pot(temperature, f_threshold=f_threshold,
+                                               max_iter=max_iter, verbose=verbose)) / constant.q
     ax.plot(temperature, band_gap - e_f,
             color='k', linestyle='-.', linewidth=1)
     ax.text(t_max * 1.05, band_gap[i_max] - e_f[i_max], 'Ef',
@@ -113,7 +115,8 @@ def draw_bands_diagram_t(semiconductor, temperature, ax=None):
     return ax
 
 
-def draw_dopants_occupation_diagram_t(semiconductor, temperature, ax=None):
+def draw_dopants_occupation_diagram_t(semiconductor, temperature,
+                                      f_threshold=1.0e-23, max_iter=100, verbose=False, ax=None):
     if ax is None:
         _, ax = plt.subplots()
     i_max = np.argmax(temperature)
@@ -124,7 +127,8 @@ def draw_dopants_occupation_diagram_t(semiconductor, temperature, ax=None):
     f = np.empty(temperature.shape[0], dtype=np.double)
     for dopant in semiconductor.dopants:
         for i in range(temperature.shape[0]):
-            f[i] = semiconductor.trap_eq_occupation(dopant, e_f[i], temperature[i], max_iter=100)
+            f[i] = semiconductor.trap_eq_occupation(dopant, e_f[i], temperature[i],
+                                                    f_threshold=f_threshold, max_iter=max_iter, verbose=verbose)
         ax.plot(temperature, f, marker=dopant.marker, color=dopant.color,
                 linestyle=dopant.linestyle, linewidth=1, label=dopant.label)
     ax.set_xlim([t_min, t_max])
