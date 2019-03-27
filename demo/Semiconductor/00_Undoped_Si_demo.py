@@ -18,4 +18,9 @@ ax1 = draw_bands_diagram(silicon, 300)
 ax2 = draw_bands_diagram_t(silicon, temperature)
 # ax3 = draw_dopants_profile(silicon)
 # ax4 = draw_dopants_occupation_diagram_t(silicon, temperature)
+
+e_f = silicon.el_chem_pot(temperature)
+fig, ax = plt.subplots()
+ax.plot(temperature, np.asarray(e_f) / 1.6e-19)
+
 plt.show()
