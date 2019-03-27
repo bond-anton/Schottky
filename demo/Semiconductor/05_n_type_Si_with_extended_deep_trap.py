@@ -45,8 +45,13 @@ silicon.dopants = [phosphorus, deep_trap]
 
 temperature = np.linspace(1.0, 600.0, num=600, endpoint=True)
 
-ax1 = draw_bands_diagram(silicon, 300)
-ax2 = draw_bands_diagram_t(silicon, temperature)
+f_threshold = 1.0e-28
+max_iter = 100
+verbose = True
+
+ax1 = draw_bands_diagram(silicon, 300, f_threshold=f_threshold, max_iter=max_iter, verbose=verbose)
+ax2 = draw_bands_diagram_t(silicon, temperature, f_threshold=f_threshold, max_iter=max_iter, verbose=verbose)
 ax3 = draw_dopants_profile(silicon)
-ax4 = draw_dopants_occupation_diagram_t(silicon, temperature)
+ax4 = draw_dopants_occupation_diagram_t(silicon, temperature,
+                                        f_threshold=f_threshold, max_iter=max_iter, verbose=verbose)
 plt.show()

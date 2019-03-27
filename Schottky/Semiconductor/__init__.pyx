@@ -182,8 +182,8 @@ cdef class Semiconductor(object):
             trap.energy_c = band_gap - trap.energy_v
         fa = 0.0
         fb = 1.0
-        ff_a = fa - trap.f_eq(temperature, v_e, n_e, n_c, v_h, n_h, n_v, fa)
-        ff_b = fb - trap.f_eq(temperature, v_e, n_e, n_c, v_h, n_h, n_v, fb)
+        ff_a = fa - trap.f_eq(temperature, v_e, n_e, n_c, v_h, n_h, n_v, fa, verbose=verbose)
+        ff_b = fb - trap.f_eq(temperature, v_e, n_e, n_c, v_h, n_h, n_v, fb, verbose=verbose)
         if ff_a == 0:
             fm = fa
         elif ff_b == 0:
@@ -193,7 +193,7 @@ cdef class Semiconductor(object):
             for i in range(max_iter):
                 dm *= 0.5
                 fm = fa + dm
-                ff_m = fm - trap.f_eq(temperature, v_e, n_e, n_c, v_h, n_h, n_v, fm)
+                ff_m = fm - trap.f_eq(temperature, v_e, n_e, n_c, v_h, n_h, n_v, fm, verbose=verbose)
                 if ff_m * ff_a >= 0:
                     fa = fm
                 if ff_m == 0 or fabs(dm) < f_threshold:

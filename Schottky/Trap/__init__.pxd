@@ -30,7 +30,8 @@ cdef class Trap(object):
     cpdef double f_eq(self, double temperature,
                       double v_e, double n_e, double n_c,
                       double v_h, double n_h, double n_v,
-                      double f)
+                      double f,
+                      bint verbose=*)
 
     cpdef double df_dt(self, double temperature,
                        double v_e, double n_e, double n_c,

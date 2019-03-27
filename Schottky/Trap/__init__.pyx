@@ -191,7 +191,8 @@ cdef class Trap(object):
         return self.e_c(temperature, v_e) * n_e * exp(-self.__capture_barrier[0] * f / (constant.__k * temperature))
 
     cpdef double h_cr(self, double temperature, double v_h, double n_h, double f):
-        return self.h_c(temperature, v_h) * n_h * exp(-self.__capture_barrier[1] * (1 - f) / (constant.__k * temperature))
+        return self.h_c(temperature, v_h) * n_h \
+               * exp(-self.__capture_barrier[1] * (1 - f) / (constant.__k * temperature))
 
     cpdef double e_er(self, double temperature, double v_e, double n_c, double f):
         cdef:
@@ -212,9 +213,10 @@ cdef class Trap(object):
         return h_c * g * exp_f * enhancement
 
     cpdef double f_eq(self, double temperature,
-               double v_e, double n_e, double n_c,
-               double v_h, double n_h, double n_v,
-               double f):
+                      double v_e, double n_e, double n_c,
+                      double v_h, double n_h, double n_v,
+                      double f,
+                      bint verbose=False):
         cdef:
             double e_c, e_e, h_c, h_e
         e_c = self.e_cr(temperature, v_e, n_e, f)
@@ -226,13 +228,14 @@ cdef class Trap(object):
         else:
             if fabs(h_c + h_e) > 0.0:
                 return h_e / (h_c + h_e)
-            print('problem T =', temperature, 'K')
+            if verbose:
+                print('%s:' % self.__label, 'f_eq problem @ T =', temperature, 'K')
             return 0.0
 
     cpdef double df_dt(self, double temperature,
-                double v_e, double n_e, double n_c,
-                double v_h, double n_h, double n_v,
-                double f):
+                       double v_e, double n_e, double n_c,
+                       double v_h, double n_h, double n_v,
+                       double f):
         cdef:
             double gain, loss
         gain = (self.e_cr(temperature, v_e, n_e, f) + self.h_er(temperature, v_h, n_v, f)) * (1 - f)
