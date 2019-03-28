@@ -9,15 +9,20 @@ cdef class PointChargeCoulombPotential(HyperbolicPotentialSphericalConservativeF
 
     def __init__(self, str name, double q, double r, double epsilon=1.0):
         cdef:
-            double a = q / (4 * M_PI * constant.epsilon_0 * epsilon)
+            double a
             str field_type = 'Electric Field'
-        super(PointChargeCoulombPotential, self).__init__(name, field_type, a, r)
         if epsilon <= 0:
             warnings.warn('Epsilon must be grater than zero. Setting epsilon to 1.0 (Vacuum)')
             self.__epsilon = 1.0
         else:
             self.__epsilon = epsilon
         self.__q = q
+        if q >= 0:
+            self.__sign = 1
+        else:
+            self.__sign = -1
+        a = self.__sign * q * q / (4 * M_PI * constant.epsilon_0 * epsilon)
+        super(PointChargeCoulombPotential, self).__init__(name, field_type, a, r)
 
     @property
     def epsilon(self):
@@ -38,4 +43,8 @@ cdef class PointChargeCoulombPotential(HyperbolicPotentialSphericalConservativeF
     @charge.setter
     def charge(self, double q):
         self.__q = q
-        self.__a = q / (4 * M_PI * constant.epsilon_0 * self.__epsilon)
+        if q >= 0:
+            self.__sign = 1
+        else:
+            self.__sign = -1
+        self.__a = self.__sign * q * q / (4 * M_PI * constant.epsilon_0 * self.__epsilon)

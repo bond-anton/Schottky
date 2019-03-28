@@ -311,13 +311,50 @@ cdef class HyperbolicInExternalField(SphericallySymmetricInExternalField):
     @wraparound(False)
     cpdef double max_energy_r_point(self, double theta, double phi):
         cdef:
-            double f = self.__external_field.magnitude
+            double f
             bint aligned = self.is_aligned()
         if aligned:
+            f = self.__external_field.magnitude
             if f > 1.0e-10 and theta < M_PI / 2.0:
                 return sqrt(self.__trap_field.a / f / cos(theta))
             else:
                 return self.__r_max
         return super(HyperbolicInExternalField, self).max_energy_r_point(theta, phi)
 
-
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double emission_rate_enhancement(self, double temperature=300, double f=0.0):
+        cdef:
+            int i, j
+            array[double] template = array('d')
+            double[:] phi, theta, integrand_theta, integrand_phi
+            bint aligned = self.is_aligned()
+            double field, delta_e
+        integrand_theta = clone(template, self.__theta_resolution, zero=False)
+        theta = linspace(0.0, M_PI, self.__theta_resolution)
+        if aligned:
+            field = self.__external_field.magnitude
+            for j in range(self.__theta_resolution):
+                if field > 1.0e-10 and theta[j] < M_PI / 2.0:
+                    delta_e = fabs(
+                        self.__trap_field.charge * sqrt(
+                            self.__trap_field.charge * field * cos(theta[j])
+                            / (M_PI * self.__trap_field.epsilon * constant.__epsilon_0)
+                        )
+                    )
+                else:
+                    delta_e = 0.0
+                integrand_theta[j] = exp(
+                    -delta_e / constant.__k / temperature * constant.__q
+                ) * sin(theta[j])
+            return trapz_1d(integrand_theta, theta) * M_PI * 2
+        else:
+            integrand_phi = clone(template, self.__phi_resolution, zero=False)
+            phi = linspace(0.0, 2 * M_PI, self.__phi_resolution)
+            for i in range(self.__phi_resolution):
+                for j in range(self.__theta_resolution):
+                    integrand_theta[j] = exp(
+                        -self.energy_lowering_point(theta[j], phi[i]) / constant.__k / temperature * constant.__q
+                    ) * sin(theta[j])
+                integrand_phi[i] = trapz_1d(integrand_theta, theta)
+            return trapz_1d(integrand_phi, phi)

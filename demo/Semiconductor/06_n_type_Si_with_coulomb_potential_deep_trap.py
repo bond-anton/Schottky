@@ -61,7 +61,7 @@ deep_trap.marker = ''
 
 silicon.dopants = [phosphorus, deep_trap]
 
-temperature = np.linspace(1.0, 500.0, num=10, endpoint=True)
+temperature = np.linspace(1.0, 600.0, num=600, endpoint=True)
 
 f_threshold = 1.0e-28
 max_iter = 100

@@ -25,8 +25,11 @@ t = Trap('My trap', True,
          1e-15, 1e-15,
          e_potential=t_pot)
 
-cProfile.runctx()
+cProfile.runctx('t_pot.emission_rate_enhancement()', globals(), locals(), 'Profile.prof')
+# cProfile.runctx('t_pot.energy_lowering_point(0.0, 0.0)', globals(), locals(), 'Profile.prof')
+s = pstats.Stats('Profile.prof')
+s.strip_dirs().sort_stats('time').print_stats()
 
-emission_rate_enhancement = t_pot.emission_rate_enhancement()
-
-print('E3/E0 =', emission_rate_enhancement)
+# emission_rate_enhancement = t_pot.emission_rate_enhancement()
+#
+# print('E3/E0 =', emission_rate_enhancement)
