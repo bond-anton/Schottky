@@ -36,7 +36,7 @@ deep_trap = Dopant('Et', True, TreeMesh1DUniform(c_t, aligned=True), TreeMesh1DU
                    0.3 * constant.q,  silicon.band_gap_t(0.0) - 0.3 * constant.q,
                    1e-15, 1e-15)
 deep_trap.charge_state = {0: -1, 1: -2}
-deep_trap.capture_barrier_ev = {0: 0.0, 1: 0.0}
+deep_trap.capture_barrier_ev = {0: 0.6, 1: 0.0}
 deep_trap.color = 'g'
 deep_trap.linestyle = '--'
 deep_trap.marker = ''
