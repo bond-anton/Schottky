@@ -1,3 +1,5 @@
+# cython: profile=True
+
 from libc.math cimport M_PI, abs, fabs, sqrt, sin, cos, exp
 from cython cimport boundscheck, wraparound
 from cpython.array cimport array, clone
@@ -309,7 +311,7 @@ cdef class HyperbolicInExternalField(SphericallySymmetricInExternalField):
     @wraparound(False)
     cpdef double max_energy_r_point(self, double theta, double phi):
         cdef:
-            double r, f = self.__external_field.magnitude
+            double f = self.__external_field.magnitude
             bint aligned = self.is_aligned()
         if aligned:
             if f > 1.0e-10 and theta < M_PI / 2.0:
@@ -317,3 +319,5 @@ cdef class HyperbolicInExternalField(SphericallySymmetricInExternalField):
             else:
                 return self.__r_max
         return super(HyperbolicInExternalField, self).max_energy_r_point(theta, phi)
+
+
