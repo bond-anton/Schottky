@@ -5,17 +5,20 @@ from BDSpace.Field.Field cimport Field, ConstantScalarConservativeField
 from BDSpace.Field.SuperposedField cimport SuperposedField
 from BDSpace.Field.SphericallySymmetric cimport SphericallySymmetric, HyperbolicPotentialSphericalConservativeField
 from Schottky.Potential.ExternalField cimport ExternalField
-from Schottky.Trap cimport Trap
+from Schottky.Trap cimport Trap, NullTrap
 from Schottky.Constants cimport constant
 from ._helpers cimport trapz_1d, linspace
 
 
 cdef class TrapPotential(SuperposedField):
 
-    def __init__(self, str name, Trap trap, Field trap_field, ExternalField external_field=None):
+    def __init__(self, str name, Field trap_field, ExternalField external_field=None, Trap trap=None):
         cdef:
             array[double] direction
-        self.__trap = trap
+        if trap is None:
+            self.__trap = NullTrap()
+        else:
+            self.__trap = trap
         self.__trap_field = trap_field
         if external_field is None:
             direction = clone(array('d'), 3, zero=False)
@@ -29,18 +32,26 @@ cdef class TrapPotential(SuperposedField):
             self.__external_field = external_field
         super(TrapPotential, self).__init__(name, [self.__trap_field, self.__external_field])
 
+    @property
+    def trap(self):
+        return self.__trap
+
+    @trap.setter
+    def trap(self, Trap trap):
+        self.__trap = trap
+
     cpdef double emission_rate_enhancement(self, double temperature=300, double f=0.0):
         return 1.0
 
 
 cdef class NullPotential(TrapPotential):
 
-    def __init__(self, str name, Trap trap, ExternalField external_field=None):
-        super(NullPotential, self).__init__(name, trap,
+    def __init__(self, str name, ExternalField external_field=None, Trap trap=None):
+        super(NullPotential, self).__init__(name,
                                             ConstantScalarConservativeField(name='Null Potential',
                                                                             field_type='Electric Field',
                                                                             potential=0.0),
-                                            external_field)
+                                            external_field, trap)
 
     cpdef double emission_rate_enhancement(self, double temperature=300, double f=0.0):
         return 1.0
@@ -48,7 +59,7 @@ cdef class NullPotential(TrapPotential):
 
 cdef class PointLikeInExternalField(TrapPotential):
 
-    def __init__(self, str name, Trap trap, Field point_like, ExternalField external_field=None,
+    def __init__(self, str name, Field point_like, ExternalField external_field=None, Trap trap=None,
                  double r_min=1.0e-11, double r_max=1.0e-5,
                  int phi_resolution=10, int theta_resolution=50):
         if fabs(r_min) < fabs(r_max):
@@ -70,7 +81,7 @@ cdef class PointLikeInExternalField(TrapPotential):
             self.__theta_resolution = abs(theta_resolution)
         else:
             self.__theta_resolution = 50
-        super(PointLikeInExternalField, self).__init__(name, trap, point_like, external_field)
+        super(PointLikeInExternalField, self).__init__(name, point_like, external_field, trap)
 
     @property
     def r_min(self):
@@ -203,12 +214,12 @@ cdef class PointLikeInExternalField(TrapPotential):
 
 cdef class SphericallySymmetricInExternalField(PointLikeInExternalField):
 
-    def __init__(self, str name, Trap trap, SphericallySymmetric point_like, ExternalField external_field=None,
+    def __init__(self, str name, SphericallySymmetric point_like, ExternalField external_field=None, Trap trap=None,
                  double r_min=1.0e-11, double r_max=1.0e-5,
                  int phi_resolution=10, int theta_resolution=50):
         cdef:
             double[:] rot_axis = clone(array('d'), 3, zero=True)
-        super(SphericallySymmetricInExternalField, self).__init__(name, trap, point_like, external_field,
+        super(SphericallySymmetricInExternalField, self).__init__(name, point_like, external_field, trap,
                                                                   r_min, r_max,
                                                                   phi_resolution=phi_resolution,
                                                                   theta_resolution=theta_resolution)
@@ -283,16 +294,16 @@ cdef class SphericallySymmetricInExternalField(PointLikeInExternalField):
 
 cdef class HyperbolicInExternalField(SphericallySymmetricInExternalField):
 
-    def __init__(self, str name, Trap trap, HyperbolicPotentialSphericalConservativeField point_charge,
-                 ExternalField external_field=None,
+    def __init__(self, str name, HyperbolicPotentialSphericalConservativeField point_charge,
+                 ExternalField external_field=None, Trap trap=None,
                  double r_min=1.0e-11, double r_max=1.0e-5,
                  int phi_resolution=10, int theta_resolution=50):
         cdef:
             double[:] rot_axis = clone(array('d'), 3, zero=True)
-        super(HyperbolicInExternalField, self).__init__(name, trap, point_charge, external_field,
-                                                                  r_min, r_max,
-                                                                  phi_resolution=phi_resolution,
-                                                                  theta_resolution=theta_resolution)
+        super(HyperbolicInExternalField, self).__init__(name, point_charge, external_field, trap,
+                                                        r_min, r_max,
+                                                        phi_resolution=phi_resolution,
+                                                        theta_resolution=theta_resolution)
 
     @boundscheck(False)
     @wraparound(False)

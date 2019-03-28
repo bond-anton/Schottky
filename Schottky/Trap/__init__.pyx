@@ -29,13 +29,15 @@ cdef class Trap(object):
         self.__g = {0: 1, 1: 2}
         self.__capture_barrier = {0: 0.0, 1: 0.0}
         if e_potential is None:
-            self.__e_potential = NullPotential('electron null potential', self)
+            self.__e_potential = NullPotential('electron null potential', trap=self)
         else:
             self.__e_potential = e_potential
+            self.__e_potential.trap = self
         if h_potential is None:
-            self.__h_potential = NullPotential('hole null potential', self)
+            self.__h_potential = NullPotential('hole null potential', trap=self)
         else:
             self.__h_potential = h_potential
+            self.__h_potential.trap = self
 
     @property
     def label(self):
@@ -267,3 +269,12 @@ cdef class Trap(object):
         else:
             description += 'Et-Ev: %2.2f eV (%2.2g J)' % (self.energy_v_ev, self.energy_v)
         return description
+
+
+cdef class NullTrap(Trap):
+    '''
+    Stub class for Null Trap
+    '''
+
+    def __init__(self):
+        super(NullTrap, self).__init__('NullTrap', False, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, None, None)

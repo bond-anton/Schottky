@@ -12,10 +12,6 @@ from matplotlib import pyplot as plt
 from time import time
 
 
-t = Trap('My trap', True,
-         0.3 * constant.q, 0.8 * constant.q,
-         1e-15, 1e-15)
-
 ext_field_direction = np.array([0.0, 0.0, 1.0])
 ext_field_magnitude = 1.0e7
 ext_field = ExternalField('External field', ext_field_direction, ext_field_magnitude)
@@ -25,17 +21,22 @@ q = 1.6e-19
 epsilon = 11.0
 point_charge = PointChargeCoulombPotential('Point charge', q, r, epsilon)
 
-t_pot = PointLikeInExternalField('Coulomb potential', t, point_charge, ext_field,
+t_pot = PointLikeInExternalField('Coulomb potential', point_charge, ext_field,
                                  r_min=1.0e-10, r_max=1.0e-7,
                                  phi_resolution=10, theta_resolution=50)
 
-t_pot_sym = SphericallySymmetricInExternalField('Coulomb potential', t, point_charge, ext_field,
+t_pot_sym = SphericallySymmetricInExternalField('Coulomb potential', point_charge, ext_field,
                                                 r_min=1.0e-10, r_max=1.0e-7,
                                                 phi_resolution=10, theta_resolution=50)
 
-t_pot_hyp = HyperbolicInExternalField('Coulomb potential', t, point_charge, ext_field,
+t_pot_hyp = HyperbolicInExternalField('Coulomb potential', point_charge, ext_field,
                                       r_min=1.0e-10, r_max=1.0e-7,
                                       phi_resolution=10, theta_resolution=50)
+
+t = Trap('My trap', True,
+         0.3 * constant.q, 0.8 * constant.q,
+         1e-15, 1e-15,
+         e_potential=t_pot)
 
 t0 = time()
 emission_rate_enhancement = t_pot.emission_rate_enhancement()

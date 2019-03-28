@@ -37,3 +37,7 @@ cdef class Trap(object):
                        double v_e, double n_e, double n_c,
                        double v_h, double n_h, double n_v,
                        double f)
+
+
+cdef class NullTrap(Trap):
+    pass
