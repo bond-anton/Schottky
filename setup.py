@@ -1,4 +1,5 @@
 from setuptools import setup, find_packages
+from setuptools.command.build_ext import build_ext
 from setuptools.extension import Extension
 from Cython.Build import cythonize
 
@@ -72,6 +73,46 @@ extensions = [
     ),
 ]
 
+copt = {'msvc': ['/openmp', '/Ox', '/fp:fast', '/favor:INTEL64', '/Og'],
+        'mingw32': ['-fopenmp', '-O3', '-ffast-math', '-march=native'],
+        'unix': ['-fopenmp', '-O3', '-ffast-math', '-march=native']}
+lopt = {'mingw32': ['-fopenmp'],
+        'unix': ['-fopenmp']}
+
+
+# check whether compiler supports a flag
+def has_flag(compiler, flagname):
+    import tempfile
+    from distutils.errors import CompileError
+    with tempfile.NamedTemporaryFile('w', suffix='.cpp') as f:
+        f.write('int main (int argc, char **argv) { return 0; }')
+        try:
+            compiler.compile([f.name], extra_postargs=[flagname])
+        except CompileError:
+            return False
+    return True
+
+
+# filter flags, returns list of accepted flags
+def flag_filter(compiler, flags):
+    result = []
+    for flag in flags:
+        if has_flag(compiler, flag):
+            result.append(flag)
+    return result
+
+
+class CustomBuildExt(build_ext):
+    def build_extensions(self):
+        c = self.compiler.compiler_type
+        print('Compiler:', c)
+        opts = flag_filter(self.compiler, copt.get(c, []))
+        lopts = flag_filter(self.compiler, lopt.get(c, []))
+        for e in self.extensions:
+            e.extra_compile_args = opts
+            e.extra_link_args = lopts
+        build_ext.build_extensions(self)
+
 setup(
     name=package_name,
     version=version_string,
@@ -113,5 +154,6 @@ setup(
     install_requires=['numpy', 'Cython', 'scipy', 'matplotlib', 'BDSpace', 'BDMesh', 'BDPoisson1D'],
     test_suite='nose.collector',
     tests_require=['nose'],
+    cmdclass={'build_ext': CustomBuildExt},
     zip_safe=False
 )
