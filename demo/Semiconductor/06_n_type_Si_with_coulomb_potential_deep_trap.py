@@ -72,4 +72,7 @@ ax2 = draw_bands_diagram_t(silicon, temperature, f_threshold=f_threshold, max_it
 ax3 = draw_dopants_profile(silicon)
 ax4 = draw_dopants_occupation_diagram_t(silicon, temperature,
                                         f_threshold=f_threshold, max_iter=max_iter, verbose=verbose)
+
+print(silicon.band_gap_t.cache_info())
+
 plt.show()

@@ -1,4 +1,4 @@
-from __future__ import division, print_function
+from functools import lru_cache
 
 from libc.math cimport sqrt, exp, fabs
 from cython cimport boundscheck, wraparound
@@ -7,6 +7,7 @@ from cpython.array cimport array, clone
 from Schottky.Constants cimport constant
 from Schottky.Dopant cimport Dopant
 from Schottky.Trap cimport Trap
+from Schottky.Potential._helpers cimport hash_list
 
 
 cdef class Semiconductor(object):
@@ -15,6 +16,9 @@ cdef class Semiconductor(object):
         self.__label = label
         self.__reference = reference
         self.__dopants = []
+        self.__trap_eq_occupation_cache = {}
+        self.__bulk_charge_cache = {}
+        self.__el_chem_pot_cache = {}
         if dopants is not None:
             for dopant in dopants:
                 if isinstance(dopant, Dopant):
@@ -52,7 +56,8 @@ cdef class Semiconductor(object):
                 self.__reference['band_gap']['alpha'] * temperature ** 2 /
                 (temperature + self.__reference['band_gap']['beta']))
 
-    cpdef double band_gap_t(self, double temperature, bint electron_volts=False):
+    @lru_cache(maxsize=2048)
+    def band_gap_t(self, double temperature, bint electron_volts=False):
         if electron_volts:
             return self.__band_gap_t(temperature) / constant.q
         return self.__band_gap_t(temperature)
@@ -169,38 +174,41 @@ cdef class Semiconductor(object):
             int i = 0
             double fa, fb, fm=0.0, ff_a, ff_b, ff_m, dm
             double band_gap, n_c, n_v, v_e, v_h, n_e, n_h
-        band_gap = self.__band_gap_t(temperature)
-        n_c = self.n_c_t(temperature)
-        n_v = self.n_v_t(temperature)
-        v_e = self.v_e_t(temperature)
-        v_h = self.v_h_t(temperature)
-        n_e = self.n_e_t(mu, temperature)
-        n_h = self.n_h_t(mu, temperature)
-        if trap.__cb_bound:
-            trap.energy_v = band_gap - trap.energy_c
-        else:
-            trap.energy_c = band_gap - trap.energy_v
-        fa = 0.0
-        fb = 1.0
-        ff_a = fa - trap.f_eq(temperature, v_e, n_e, n_c, v_h, n_h, n_v, fa, verbose=verbose)
-        ff_b = fb - trap.f_eq(temperature, v_e, n_e, n_c, v_h, n_h, n_v, fb, verbose=verbose)
-        if ff_a == 0:
-            fm = fa
-        elif ff_b == 0:
-            fm = fb
-        else:
-            dm = fb - fa
-            for i in range(max_iter):
-                dm *= 0.5
-                fm = fa + dm
-                ff_m = fm - trap.f_eq(temperature, v_e, n_e, n_c, v_h, n_h, n_v, fm, verbose=verbose)
-                if ff_m * ff_a >= 0:
-                    fa = fm
-                if ff_m == 0 or fabs(dm) < f_threshold:
-                    break
-        if verbose and i == max_iter - 1:
-            print('    trap_eq_occupation (%s)' % trap.__label, 'reached max iters=', i + 1, 'T=', temperature, 'K')
-        return fm
+            long key = hash_list([trap, mu, temperature, f_threshold, max_iter])
+        if key not in self.__trap_eq_occupation_cache:
+            band_gap = self.__band_gap_t(temperature)
+            n_c = self.n_c_t(temperature)
+            n_v = self.n_v_t(temperature)
+            v_e = self.v_e_t(temperature)
+            v_h = self.v_h_t(temperature)
+            n_e = self.n_e_t(mu, temperature)
+            n_h = self.n_h_t(mu, temperature)
+            if trap.__cb_bound:
+                trap.energy_v = band_gap - trap.energy_c
+            else:
+                trap.energy_c = band_gap - trap.energy_v
+            fa = 0.0
+            fb = 1.0
+            ff_a = fa - trap.f_eq(temperature, v_e, n_e, n_c, v_h, n_h, n_v, fa, verbose=verbose)
+            ff_b = fb - trap.f_eq(temperature, v_e, n_e, n_c, v_h, n_h, n_v, fb, verbose=verbose)
+            if ff_a == 0:
+                fm = fa
+            elif ff_b == 0:
+                fm = fb
+            else:
+                dm = fb - fa
+                for i in range(max_iter):
+                    dm *= 0.5
+                    fm = fa + dm
+                    ff_m = fm - trap.f_eq(temperature, v_e, n_e, n_c, v_h, n_h, n_v, fm, verbose=verbose)
+                    if ff_m * ff_a >= 0:
+                        fa = fm
+                    if ff_m == 0 or fabs(dm) < f_threshold:
+                        break
+            if verbose and i == max_iter - 1:
+                print('    trap_eq_occupation (%s)' % trap.__label, 'reached max iters=', i + 1, 'T=', temperature, 'K')
+            self.__trap_eq_occupation_cache[key] = fm
+        return self.__trap_eq_occupation_cache[key]
 
     @boundscheck(False)
     @wraparound(False)
@@ -209,16 +217,19 @@ cdef class Semiconductor(object):
         cdef:
             double fm, result
             array[double] _z = clone(array('d'), 1, zero=False)
-        _z[0] = z
-        n_e = self.n_e_t(mu, temperature)
-        n_h = self.n_h_t(mu, temperature)
-        result = n_h - n_e
-        for dopant in self.__dopants:
-            fm = self.trap_eq_occupation(dopant, mu, temperature,
-                                         f_threshold=f_threshold, max_iter=max_iter, verbose=verbose)
-            result += dopant.n_t(_z)[0] * ((dopant.charge_state[1] - dopant.charge_state[0]) * fm
-                                          + dopant.charge_state[0])
-        return result
+            long key = hash_list([mu, temperature, z, f_threshold, max_iter])
+        if key not in self.__bulk_charge_cache:
+            _z[0] = z
+            n_e = self.n_e_t(mu, temperature)
+            n_h = self.n_h_t(mu, temperature)
+            result = n_h - n_e
+            for dopant in self.__dopants:
+                fm = self.trap_eq_occupation(dopant, mu, temperature,
+                                             f_threshold=f_threshold, max_iter=max_iter, verbose=verbose)
+                result += dopant.n_t(_z)[0] * ((dopant.charge_state[1] - dopant.charge_state[0]) * fm
+                                              + dopant.charge_state[0])
+            self.__bulk_charge_cache[key] = result
+        return self.__bulk_charge_cache[key]
 
     @boundscheck(False)
     @wraparound(False)
@@ -229,27 +240,30 @@ cdef class Semiconductor(object):
             double dm, xm=0.0, fm, fa, fb
             double tol, xtol = constant.k * temperature / 1000, rtol = 4.5e-16
             double xa = 0.0, xb = self.__band_gap_t(temperature)
-        tol = xtol + rtol*(fabs(xa) + fabs(xb))
-        fa = self.bulk_charge(xa, temperature, f_threshold=f_threshold, max_iter=max_iter, verbose=verbose)
-        fb = self.bulk_charge(xb, temperature, f_threshold=f_threshold, max_iter=max_iter, verbose=verbose)
-        if fa * fb > 0:
-            return -1.0
-        if fa == 0.0:
-            return xa
-        if fb == 0:
-            return xb
-        dm = xb - xa
-        for i in range(max_iter):
-            dm *= 0.5
-            xm = xa + dm
-            fm = self.bulk_charge(xm, temperature, f_threshold=f_threshold, max_iter=max_iter, verbose=verbose)
-            if fm * fa >= 0:
-                xa = xm
-            if fm == 0 or fabs(dm) < tol:
-                break
-        if verbose and i == max_iter - 1:
-            print('el_chem_pot_t reached max iters=', i + 1, 'T=', temperature, 'K')
-        return xm
+            long key = hash_list([temperature, f_threshold, max_iter])
+        if key not in self.__el_chem_pot_cache:
+            tol = xtol + rtol*(fabs(xa) + fabs(xb))
+            fa = self.bulk_charge(xa, temperature, f_threshold=f_threshold, max_iter=max_iter, verbose=verbose)
+            fb = self.bulk_charge(xb, temperature, f_threshold=f_threshold, max_iter=max_iter, verbose=verbose)
+            if fa * fb > 0:
+                return -1.0
+            if fa == 0.0:
+                return xa
+            if fb == 0:
+                return xb
+            dm = xb - xa
+            for i in range(max_iter):
+                dm *= 0.5
+                xm = xa + dm
+                fm = self.bulk_charge(xm, temperature, f_threshold=f_threshold, max_iter=max_iter, verbose=verbose)
+                if fm * fa >= 0:
+                    xa = xm
+                if fm == 0 or fabs(dm) < tol:
+                    break
+            if verbose and i == max_iter - 1:
+                print('el_chem_pot_t reached max iters=', i + 1, 'T=', temperature, 'K')
+            self.__el_chem_pot_cache[key] = xm
+        return self.__el_chem_pot_cache[key]
 
     @boundscheck(False)
     @wraparound(False)
