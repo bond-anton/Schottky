@@ -1,7 +1,5 @@
 # cython: profile=True
 
-from cython.parallel import prange
-
 from libc.math cimport M_PI, abs, fabs, sqrt, sin, cos, exp
 from cython cimport boundscheck, wraparound
 from cpython.array cimport array, clone
@@ -11,7 +9,8 @@ from BDSpace.Field.SphericallySymmetric cimport SphericallySymmetric, Hyperbolic
 from Schottky.Potential.ExternalField cimport ExternalField
 from Schottky.Trap cimport Trap, NullTrap
 from Schottky.Constants cimport constant
-from ._helpers cimport trapz_1d, linspace, hash_list
+from Schottky.Helpers.array cimport trapz_1d, linspace
+from Schottky.Helpers.Cache cimport hash_list
 
 
 cdef class TrapPotential(SuperposedField):

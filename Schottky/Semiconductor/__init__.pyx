@@ -7,7 +7,7 @@ from cpython.array cimport array, clone
 from Schottky.Constants cimport constant
 from Schottky.Dopant cimport Dopant
 from Schottky.Trap cimport Trap
-from Schottky.Potential._helpers cimport hash_list
+from Schottky.Helpers.Cache cimport hash_list
 
 
 cdef class Semiconductor(object):

@@ -67,9 +67,14 @@ extensions = [
         depends=['Schottky/Potential/TrapPotential.pxd'],
     ),
     Extension(
-        'Schottky.Potential._helpers',
-        ['Schottky/Potential/_helpers.pyx'],
-        depends=['Schottky/Potential/_helpers.pxd'],
+        'Schottky.Helpers.array',
+        ['Schottky/Helpers/array.pyx'],
+        depends=['Schottky/Helpers/array.pxd'],
+    ),
+    Extension(
+        'Schottky.Helpers.Cache',
+        ['Schottky/Helpers/Cache.pyx'],
+        depends=['Schottky/Helpers/Cache.pxd'],
     ),
 ]
 
@@ -146,11 +151,13 @@ setup(
     packages=find_packages(exclude=['demo', 'tests', 'docs', 'contrib', 'venv']),
     ext_modules=cythonize(extensions, compiler_directives={'language_level': sys.version_info[0]}),
     package_data={'Schottky': ['*.pxd'],
+                  'Schottky/Helpers': ['*.pxd'],
                   'Schottky/Metal': ['*.pxd'],
                   'Schottky/Trap': ['*.pxd'],
                   'Schottky/Dopant': ['*.pxd'],
                   'Schottky/Semiconductor': ['*.pxd'],
-                  'Schottky/Potential': ['*.pxd']},
+                  'Schottky/Potential': ['*.pxd'],
+                  },
     install_requires=['numpy', 'Cython', 'scipy', 'matplotlib', 'BDSpace', 'BDMesh', 'BDPoisson1D'],
     test_suite='nose.collector',
     tests_require=['nose'],
