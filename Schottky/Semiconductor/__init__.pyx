@@ -68,7 +68,7 @@ cdef class Semiconductor(object):
             return self.__band_gap_cache[key]
         except KeyError:
             if electron_volts:
-                self.__band_gap_cache[key] = self.__band_gap_t(temperature) / constant.q
+                self.__band_gap_cache[key] = self.band_gap_t(temperature, False) / constant.q
             else:
                 self.__band_gap_cache[key] = self.__band_gap_t(temperature)
         return self.__band_gap_cache[key]
@@ -180,7 +180,8 @@ cdef class Semiconductor(object):
     @boundscheck(False)
     @wraparound(False)
     cpdef double trap_eq_occupation(self, Trap trap, double mu, double temperature,
-                                    double f_threshold=1.0e-23, int max_iter=100, bint verbose=False):
+                                    double f_threshold=1.0e-23, int max_iter=100,
+                                    bint verbose=False):
         cdef:
             int i = 0
             double fa, fb, fm=0.0, ff_a, ff_b, ff_m, dm
@@ -226,7 +227,8 @@ cdef class Semiconductor(object):
     @boundscheck(False)
     @wraparound(False)
     cpdef double bulk_charge(self, double mu, double temperature, double z=1.0e5,
-                             double f_threshold=1.0e-23, int max_iter=100, bint verbose=False):
+                             double f_threshold=1.0e-23, int max_iter=100,
+                             bint verbose=False):
         cdef:
             double fm, result
             array[double] _z = clone(array('d'), 1, zero=False)
@@ -249,7 +251,8 @@ cdef class Semiconductor(object):
     @boundscheck(False)
     @wraparound(False)
     cpdef double el_chem_pot_t(self, double temperature,
-                               double f_threshold=1.0e-23, int max_iter=100, bint verbose=False):
+                               double f_threshold=1.0e-23, int max_iter=100,
+                               bint verbose=False):
         cdef:
             int i = 0
             double dm, xm=0.0, fm, fa, fb
@@ -285,7 +288,8 @@ cdef class Semiconductor(object):
     @boundscheck(False)
     @wraparound(False)
     cpdef double[:] el_chem_pot(self, double[:] temperature,
-                                double f_threshold=1.0e-23, int max_iter=100, bint verbose=False):
+                                double f_threshold=1.0e-23, int max_iter=100,
+                                bint verbose=False):
         cdef:
             Py_ssize_t n = len(temperature)
             int i

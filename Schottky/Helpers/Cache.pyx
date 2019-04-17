@@ -46,8 +46,9 @@ cdef class Cache(dict):
 
     def info(self):
         print('%s:' % self.__label)
-        print('  Hits: %d, Misses: %d, Size: %d, Efficiency: %.2f' % (self.__hits, self.__misses, len(self),
-                                                                      self.__hits / self.__misses))
+        print('  Hits: %d, Misses: %d, Size: %d, Efficiency: %.2f %%'
+              % (self.__hits, self.__misses, len(self),
+                 self.__hits / (self.__misses + self.__hits) * 100))
 
 cdef long hash_list(list seq):
     cdef long result = 0x345678
