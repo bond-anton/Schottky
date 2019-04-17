@@ -40,14 +40,16 @@ t = Trap('My trap', True,
 
 t0 = time()
 emission_rate_enhancement = t_pot.emission_rate_enhancement()
-print('E3/E0 gen = %2.2f, elapsed %2.6f s' % (emission_rate_enhancement, time() - t0))
+print('\nE3/E0 gen = %2.2f, elapsed %2.6f s' % (emission_rate_enhancement, time() - t0))
+t_pot.cache_info()
 t0 = time()
 emission_rate_enhancement = t_pot_sym.emission_rate_enhancement()
-print('E3/E0 sym = %2.2f, elapsed %2.6f s' % (emission_rate_enhancement, time() - t0))
+print('\nE3/E0 sym = %2.2f, elapsed %2.6f s' % (emission_rate_enhancement, time() - t0))
+t_pot_sym.cache_info()
 t0 = time()
 emission_rate_enhancement = t_pot_hyp.emission_rate_enhancement()
-print('E3/E0 hyp = %2.2f, elapsed %2.6f s' % (emission_rate_enhancement, time() - t0))
-
+print('\nE3/E0 hyp = %2.2f, elapsed %2.6f s' % (emission_rate_enhancement, time() - t0))
+t_pot_hyp.cache_info()
 
 theta = np.pi * 0.5
 phi = 0.0

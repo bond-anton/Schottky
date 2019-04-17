@@ -10,7 +10,7 @@ from Schottky.Potential.ExternalField cimport ExternalField
 from Schottky.Trap cimport Trap, NullTrap
 from Schottky.Constants cimport constant
 from Schottky.Helpers.array cimport trapz_1d, linspace
-from Schottky.Helpers.Cache cimport hash_list
+from Schottky.Helpers.Cache cimport Cache, hash_list
 
 
 cdef class TrapPotential(SuperposedField):
@@ -18,7 +18,7 @@ cdef class TrapPotential(SuperposedField):
     def __init__(self, str name, Field trap_field, ExternalField external_field=None, Trap trap=None):
         cdef:
             array[double] direction
-        self.__emission_rate_cache = {}
+        self.__emission_rate_cache = Cache('Emission Rate Enhancement Cache')
         if trap is None:
             self.__trap = NullTrap()
         else:
@@ -50,9 +50,14 @@ cdef class TrapPotential(SuperposedField):
     cpdef double emission_rate_enhancement(self, double temperature=300, double f=0.0):
         cdef:
             long key = hash(temperature)
-        if key not in self.__emission_rate_cache:
+        try:
+            return self.__emission_rate_cache[key]
+        except KeyError:
             self.__emission_rate_cache[key] = self.emission_rate_enhancement_calc(temperature, f)
         return self.__emission_rate_cache[key]
+
+    def cache_info(self):
+        self.__emission_rate_cache.info()
 
 
 cdef class NullPotential(TrapPotential):
@@ -73,8 +78,8 @@ cdef class PointLikeInExternalField(TrapPotential):
     def __init__(self, str name, Field point_like, ExternalField external_field=None, Trap trap=None,
                  double r_min=1.0e-11, double r_max=1.0e-5,
                  int phi_resolution=10, int theta_resolution=50):
-        self.__max_energy_r_cache = {}
-        self.__energy_lowering_cache = {}
+        self.__max_energy_r_cache = Cache('Potential extrema R Cache')
+        self.__energy_lowering_cache = Cache('Energy Lowering Cache')
         if fabs(r_min) < fabs(r_max):
             self.__r_min = fabs(r_min)
             self.__r_max = fabs(r_max)
@@ -165,7 +170,9 @@ cdef class PointLikeInExternalField(TrapPotential):
     cpdef double max_energy_r_point(self, double theta, double phi):
         cdef:
             long key = hash_list([theta, phi])
-        if key not in self.__max_energy_r_cache:
+        try:
+            return self.__max_energy_r_cache[key]
+        except KeyError:
             self.__max_energy_r_cache[key] = self.max_energy_r_point_calc(theta, phi)
         return self.__max_energy_r_cache[key]
 
@@ -195,7 +202,9 @@ cdef class PointLikeInExternalField(TrapPotential):
     cpdef double energy_lowering_point(self, double theta, double phi):
         cdef:
             long key = hash_list([theta, phi])
-        if key not in self.__energy_lowering_cache:
+        try:
+            return self.__energy_lowering_cache[key]
+        except KeyError:
             self.__energy_lowering_cache[key] = self.energy_lowering_point_calc(theta, phi)
         return self.__energy_lowering_cache[key]
 
@@ -239,6 +248,11 @@ cdef class PointLikeInExternalField(TrapPotential):
             integrand_phi[i] = trapz_1d(integrand_theta, theta)
         return trapz_1d(integrand_phi, phi) / (4 * M_PI)
 
+    def cache_info(self):
+        self.__emission_rate_cache.info()
+        self.__max_energy_r_cache.info()
+        self.__energy_lowering_cache.info()
+
 
 cdef class SphericallySymmetricInExternalField(PointLikeInExternalField):
 
@@ -268,7 +282,9 @@ cdef class SphericallySymmetricInExternalField(PointLikeInExternalField):
             key = hash(theta)
         else:
             key = hash_list([theta, phi])
-        if key not in self.__max_energy_r_cache:
+        try:
+            return self.__max_energy_r_cache[key]
+        except KeyError:
             self.__max_energy_r_cache[key] = self.max_energy_r_point_calc(theta, phi)
         return self.__max_energy_r_cache[key]
 
@@ -280,7 +296,9 @@ cdef class SphericallySymmetricInExternalField(PointLikeInExternalField):
             key = hash(theta)
         else:
             key = hash_list([theta, phi])
-        if key not in self.__energy_lowering_cache:
+        try:
+            return self.__energy_lowering_cache[key]
+        except KeyError:
             self.__energy_lowering_cache[key] = self.energy_lowering_point_calc(theta, phi)
         return self.__energy_lowering_cache[key]
 
@@ -319,8 +337,6 @@ cdef class HyperbolicInExternalField(SphericallySymmetricInExternalField):
                  ExternalField external_field=None, Trap trap=None,
                  double r_min=1.0e-11, double r_max=1.0e-5,
                  int phi_resolution=10, int theta_resolution=50):
-        cdef:
-            double[:] rot_axis = clone(array('d'), 3, zero=True)
         super(HyperbolicInExternalField, self).__init__(name, point_charge, external_field, trap,
                                                         r_min, r_max,
                                                         phi_resolution=phi_resolution,
