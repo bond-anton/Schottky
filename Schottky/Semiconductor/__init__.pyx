@@ -7,7 +7,7 @@ from cpython.array cimport array, clone
 from Schottky.Constants cimport constant
 from Schottky.Dopant cimport Dopant
 from Schottky.Trap cimport Trap
-from Schottky.Helpers.Cache cimport hash_list
+from Schottky.Helpers.Cache cimport Cache, hash_list
 
 
 cdef class Semiconductor(object):
@@ -16,9 +16,10 @@ cdef class Semiconductor(object):
         self.__label = label
         self.__reference = reference
         self.__dopants = []
-        self.__trap_eq_occupation_cache = {}
-        self.__bulk_charge_cache = {}
-        self.__el_chem_pot_cache = {}
+        self.__band_gap_cache = Cache()
+        self.__trap_eq_occupation_cache = Cache()
+        self.__bulk_charge_cache = Cache()
+        self.__el_chem_pot_cache = Cache()
         if dopants is not None:
             for dopant in dopants:
                 if isinstance(dopant, Dopant):
@@ -51,16 +52,26 @@ cdef class Semiconductor(object):
             if isinstance(dopant, Dopant):
                 self.__dopants.append(dopant)
 
+    @boundscheck(False)
+    @wraparound(False)
     cdef double __band_gap_t(self, double temperature):
         return (self.__reference['band_gap']['E_g0'] -
                 self.__reference['band_gap']['alpha'] * temperature ** 2 /
                 (temperature + self.__reference['band_gap']['beta']))
 
-    @lru_cache(maxsize=2048)
-    def band_gap_t(self, double temperature, bint electron_volts=False):
-        if electron_volts:
-            return self.__band_gap_t(temperature) / constant.q
-        return self.__band_gap_t(temperature)
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double band_gap_t(self, double temperature, bint electron_volts=False):
+        cdef:
+            long key = hash_list([temperature, electron_volts])
+        try:
+            return self.__band_gap_cache[key]
+        except KeyError:
+            if electron_volts:
+                self.__band_gap_cache[key] = self.__band_gap_t(temperature) / constant.q
+            else:
+                self.__band_gap_cache[key] = self.__band_gap_t(temperature)
+        return self.__band_gap_cache[key]
 
     @boundscheck(False)
     @wraparound(False)
@@ -175,7 +186,9 @@ cdef class Semiconductor(object):
             double fa, fb, fm=0.0, ff_a, ff_b, ff_m, dm
             double band_gap, n_c, n_v, v_e, v_h, n_e, n_h
             long key = hash_list([trap, mu, temperature, f_threshold, max_iter])
-        if key not in self.__trap_eq_occupation_cache:
+        try:
+            return self.__trap_eq_occupation_cache[key]
+        except KeyError:
             band_gap = self.__band_gap_t(temperature)
             n_c = self.n_c_t(temperature)
             n_v = self.n_v_t(temperature)
@@ -218,7 +231,9 @@ cdef class Semiconductor(object):
             double fm, result
             array[double] _z = clone(array('d'), 1, zero=False)
             long key = hash_list([mu, temperature, z, f_threshold, max_iter])
-        if key not in self.__bulk_charge_cache:
+        try:
+            return self.__bulk_charge_cache[key]
+        except KeyError:
             _z[0] = z
             n_e = self.n_e_t(mu, temperature)
             n_h = self.n_h_t(mu, temperature)
@@ -241,7 +256,9 @@ cdef class Semiconductor(object):
             double tol, xtol = constant.k * temperature / 1000, rtol = 4.5e-16
             double xa = 0.0, xb = self.__band_gap_t(temperature)
             long key = hash_list([temperature, f_threshold, max_iter])
-        if key not in self.__el_chem_pot_cache:
+        try:
+            return self.__el_chem_pot_cache[key]
+        except KeyError:
             tol = xtol + rtol*(fabs(xa) + fabs(xb))
             fa = self.bulk_charge(xa, temperature, f_threshold=f_threshold, max_iter=max_iter, verbose=verbose)
             fb = self.bulk_charge(xb, temperature, f_threshold=f_threshold, max_iter=max_iter, verbose=verbose)
@@ -281,3 +298,13 @@ cdef class Semiconductor(object):
 
     def __str__(self):
         return 'Semiconductor: ' + self.__label
+
+    def cache_info(self):
+        print('Band Gap cache')
+        self.__band_gap_cache.info()
+        print('Trap Eq Occupation cache')
+        self.__trap_eq_occupation_cache.info()
+        print('Bulk Charge cache')
+        self.__bulk_charge_cache.info()
+        print('El Chem Pot cache')
+        self.__el_chem_pot_cache.info()

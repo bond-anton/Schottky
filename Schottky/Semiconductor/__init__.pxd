@@ -1,4 +1,5 @@
 from Schottky.Trap cimport Trap
+from Schottky.Helpers.Cache cimport Cache
 
 
 cdef class Semiconductor(object):
@@ -6,12 +7,13 @@ cdef class Semiconductor(object):
         str __label
         dict __reference
         list __dopants
-        dict __trap_eq_occupation_cache
-        dict __bulk_charge_cache
-        dict __el_chem_pot_cache
+        Cache __band_gap_cache
+        Cache __trap_eq_occupation_cache
+        Cache __bulk_charge_cache
+        Cache __el_chem_pot_cache
 
     cdef double __band_gap_t(self, double temperature)
-    # cpdef double band_gap_t(self, double temperature, bint electron_volts=*)
+    cpdef double band_gap_t(self, double temperature, bint electron_volts=*)
     cpdef double[:] band_gap(self, double[:] temperature, bint electron_volts=*)
     cpdef double n_c_t(self, double temperature)
     cpdef double[:] n_c(self, double[:] temperature)
