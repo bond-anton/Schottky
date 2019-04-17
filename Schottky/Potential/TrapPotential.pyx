@@ -348,7 +348,7 @@ cdef class HyperbolicInExternalField(SphericallySymmetricInExternalField):
             array[double] template = array('d')
             double[:] phi, theta, integrand_theta, integrand_phi
             bint aligned = self.is_aligned()
-            double field, delta_e, eps, eps0, q, kt
+            double field, delta_e, a, ktq
         field = self.__external_field.magnitude
         if field < 1.0e-10:
             return 1.0
@@ -356,13 +356,11 @@ cdef class HyperbolicInExternalField(SphericallySymmetricInExternalField):
             half_theta_num = self.__theta_resolution // 2
             theta = linspace(0.0, M_PI / 2, half_theta_num)
             integrand_theta = clone(template, half_theta_num, zero=False)
-            eps = self.__trap_field.epsilon
-            eps0 = constant.__epsilon_0
-            q = self.__trap_field.charge
-            kt = constant.__k * temperature
+            a = self.__trap_field.a
+            ktq = constant.__k * temperature / constant.__q
             for j in range(half_theta_num):
-                delta_e = fabs(q * sqrt(q * field * cos(theta[j]) / (M_PI * eps * eps0)))
-                integrand_theta[j] = exp(delta_e / kt) * sin(theta[j])
+                delta_e = 2 * sqrt(a * field * cos(theta[j]))
+                integrand_theta[j] = exp(delta_e / ktq) * sin(theta[j])
             return trapz_1d(integrand_theta, theta) / 2 + 0.5
         else:
             theta = linspace(0.0, M_PI, self.__theta_resolution)

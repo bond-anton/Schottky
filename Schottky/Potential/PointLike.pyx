@@ -17,11 +17,7 @@ cdef class PointChargeCoulombPotential(HyperbolicPotentialSphericalConservativeF
         else:
             self.__epsilon = epsilon
         self.__q = q
-        if q >= 0:
-            self.__sign = 1
-        else:
-            self.__sign = -1
-        a = self.__sign * q * q / (4 * M_PI * constant.epsilon_0 * epsilon)
+        a = q / (4 * M_PI * constant.epsilon_0 * epsilon)
         super(PointChargeCoulombPotential, self).__init__(name, field_type, a, r)
 
     @property
@@ -43,8 +39,4 @@ cdef class PointChargeCoulombPotential(HyperbolicPotentialSphericalConservativeF
     @charge.setter
     def charge(self, double q):
         self.__q = q
-        if q >= 0:
-            self.__sign = 1
-        else:
-            self.__sign = -1
-        self.__a = self.__sign * q * q / (4 * M_PI * constant.epsilon_0 * self.__epsilon)
+        self.__a = q / (4 * M_PI * constant.epsilon_0 * self.__epsilon)

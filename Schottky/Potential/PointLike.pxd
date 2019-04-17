@@ -6,4 +6,3 @@ cdef class PointChargeCoulombPotential(HyperbolicPotentialSphericalConservativeF
     cdef:
         double __epsilon
         double __q
-        int __sign

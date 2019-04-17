@@ -1,5 +1,3 @@
-from functools import lru_cache
-
 from libc.math cimport sqrt, exp, fabs
 from cython cimport boundscheck, wraparound
 from cpython.array cimport array, clone
