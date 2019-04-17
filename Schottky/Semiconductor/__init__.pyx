@@ -16,10 +16,10 @@ cdef class Semiconductor(object):
         self.__label = label
         self.__reference = reference
         self.__dopants = []
-        self.__band_gap_cache = Cache()
-        self.__trap_eq_occupation_cache = Cache()
-        self.__bulk_charge_cache = Cache()
-        self.__el_chem_pot_cache = Cache()
+        self.__band_gap_cache = Cache('Band Gap Cache')
+        self.__trap_eq_occupation_cache = Cache('Trap Eq Occupation Cache')
+        self.__bulk_charge_cache = Cache('Bulk Charge Cache')
+        self.__el_chem_pot_cache = Cache('El-Chem Potential Cache')
         if dopants is not None:
             for dopant in dopants:
                 if isinstance(dopant, Dopant):
@@ -300,11 +300,7 @@ cdef class Semiconductor(object):
         return 'Semiconductor: ' + self.__label
 
     def cache_info(self):
-        print('Band Gap cache')
         self.__band_gap_cache.info()
-        print('Trap Eq Occupation cache')
         self.__trap_eq_occupation_cache.info()
-        print('Bulk Charge cache')
         self.__bulk_charge_cache.info()
-        print('El Chem Pot cache')
         self.__el_chem_pot_cache.info()

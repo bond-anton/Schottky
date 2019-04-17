@@ -1,9 +1,21 @@
 cdef class Cache(dict):
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, label=None, *args, **kwargs):
         super(Cache, self).__init__(*args, **kwargs)
         self.__hits = 0
         self.__misses = 0
+        if label is None:
+            self.__label = 'Cache'
+        else:
+            self.__label = str(label)
+
+    @property
+    def label(self):
+        return self.__label
+
+    @label.setter
+    def label(self, str label):
+        self.__label = label
 
     def __getitem__(self, key):
         self.__hits += 1
@@ -33,8 +45,9 @@ cdef class Cache(dict):
         return self[key]
 
     def info(self):
-        print('Hits: %d, Misses: %d, Size: %d, Efficiency: %.2f' % (self.__hits, self.__misses, len(self),
-                                                                    self.__hits / self.__misses))
+        print('%s:' % self.__label)
+        print('  Hits: %d, Misses: %d, Size: %d, Efficiency: %.2f' % (self.__hits, self.__misses, len(self),
+                                                                      self.__hits / self.__misses))
 
 cdef long hash_list(list seq):
     cdef long result = 0x345678
