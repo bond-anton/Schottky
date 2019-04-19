@@ -76,6 +76,11 @@ extensions = [
         ['Schottky/Helpers/Cache.pyx'],
         depends=['Schottky/Helpers/Cache.pxd'],
     ),
+    Extension(
+        'Schottky.SchottkyDiode',
+        ['Schottky/SchottkyDiode/__init__.pyx'],
+        depends=['Schottky/SchottkyDiode/__init__.pxd'],
+    ),
 ]
 
 copt = {'msvc': ['/openmp', '/Ox', '/fp:fast', '/favor:INTEL64', '/Og'],

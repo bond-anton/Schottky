@@ -298,6 +298,33 @@ cdef class Semiconductor(object):
                                            f_threshold=f_threshold, max_iter=max_iter, verbose=verbose)
         return result
 
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double work_function_t(self, double temperature,
+                                 double f_threshold=1.0e-23, int max_iter=100,
+                                 bint verbose=False):
+        return self.el_chem_pot_t(temperature,
+                                  f_threshold=f_threshold,
+                                  max_iter=max_iter,
+                                  verbose=verbose) + self.__reference['affinity']
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] work_function(self, double[:] temperature,
+                                  double f_threshold=1.0e-23, int max_iter=100,
+                                  bint verbose=False):
+        cdef:
+            Py_ssize_t n = len(temperature)
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = self.el_chem_pot_t(temperature[i],
+                                           f_threshold=f_threshold,
+                                           max_iter=max_iter,
+                                           verbose=verbose) + self.__reference['affinity']
+        return result
+
     def __str__(self):
         return 'Semiconductor: ' + self.__label
 
