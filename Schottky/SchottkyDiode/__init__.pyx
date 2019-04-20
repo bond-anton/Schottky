@@ -1,9 +1,10 @@
 from libc.math cimport M_PI, sqrt, fabs
-# from cython cimport boundscheck, wraparound
-# from cpython.array cimport array, clone
+from cython cimport boundscheck, wraparound
+from cpython.array cimport array, clone
 
 from Schottky.Metal cimport Metal
 from Schottky.Semiconductor cimport Semiconductor
+from Schottky.Constants cimport constant
 
 cdef class SchottkyDiode(object):
 
@@ -72,3 +73,24 @@ cdef class SchottkyDiode(object):
     @serial_resistance.setter
     def serial_resistance(self, double serial_resistance):
         self.__serial_resistance = fabs(serial_resistance)
+
+    cpdef double built_in_voltage_t(self, double temperature, bint electron_volts=False):
+        cdef double result
+        result = self.__metal.__work_function - self.__semiconductor.work_function_t(temperature,
+                                                                                     f_threshold=1.0e-23,
+                                                                                     max_iter=100, verbose=False)
+        if electron_volts:
+            return result / constant.__q
+        return result
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] built_in_voltage(self, double[:] temperature, bint electron_volts=False):
+        cdef:
+            int n = temperature.shape[0]
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = self.built_in_voltage_t(temperature[i], electron_volts=electron_volts)
+        return result

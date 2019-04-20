@@ -75,7 +75,7 @@ cdef class Semiconductor(object):
     @wraparound(False)
     cpdef double[:] band_gap(self, double[:] temperature, bint electron_volts=False):
         cdef:
-            Py_ssize_t n = len(temperature)
+            int n = temperature.shape[0]
             int i
             array[double] result, template = array('d')
         result = clone(template, n, zero=False)
@@ -90,7 +90,7 @@ cdef class Semiconductor(object):
     @wraparound(False)
     cpdef double[:] n_c(self, double[:] temperature):
         cdef:
-            Py_ssize_t n = len(temperature)
+            int n = temperature.shape[0]
             int i
             array[double] result, template = array('d')
         result = clone(template, n, zero=False)
@@ -105,7 +105,7 @@ cdef class Semiconductor(object):
     @wraparound(False)
     cpdef double[:] n_v(self, double[:] temperature):
         cdef:
-            Py_ssize_t n = len(temperature)
+            int n = temperature.shape[0]
             int i
             array[double] result, template = array('d')
         result = clone(template, n, zero=False)
@@ -120,7 +120,7 @@ cdef class Semiconductor(object):
     @wraparound(False)
     cpdef double[:] n_e(self, double[:] mu, double[:] temperature):
         cdef:
-            Py_ssize_t n = len(temperature)
+            int n = temperature.shape[0]
             int i
             array[double] result, template = array('d')
         result = clone(template, n, zero=False)
@@ -135,7 +135,7 @@ cdef class Semiconductor(object):
     @wraparound(False)
     cpdef double[:] n_h(self, double[:] mu, double[:] temperature):
         cdef:
-            Py_ssize_t n = len(temperature)
+            int n = temperature.shape[0]
             int i
             array[double] result, template = array('d')
         result = clone(template, n, zero=False)
@@ -151,7 +151,7 @@ cdef class Semiconductor(object):
     @wraparound(False)
     cpdef double[:] v_e(self, double[:] temperature):
         cdef:
-            Py_ssize_t n = len(temperature)
+            int n = temperature.shape[0]
             int i
             array[double] result, template = array('d')
         result = clone(template, n, zero=False)
@@ -289,7 +289,7 @@ cdef class Semiconductor(object):
                                 double f_threshold=1.0e-23, int max_iter=100,
                                 bint verbose=False):
         cdef:
-            Py_ssize_t n = len(temperature)
+            int n = temperature.shape[0]
             int i
             array[double] result, template = array('d')
         result = clone(template, n, zero=False)
@@ -314,7 +314,7 @@ cdef class Semiconductor(object):
                                   double f_threshold=1.0e-23, int max_iter=100,
                                   bint verbose=False):
         cdef:
-            Py_ssize_t n = len(temperature)
+            int n = temperature.shape[0]
             int i
             array[double] result, template = array('d')
         result = clone(template, n, zero=False)
