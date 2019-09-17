@@ -162,6 +162,7 @@ setup(
                   'Schottky/Dopant': ['*.pxd'],
                   'Schottky/Semiconductor': ['*.pxd'],
                   'Schottky/Potential': ['*.pxd'],
+                  'Schottky/SchottkyDiode': ['*.pxd'],
                   },
     install_requires=['numpy', 'Cython', 'scipy', 'matplotlib', 'BDSpace', 'BDMesh', 'BDPoisson1D'],
     test_suite='nose.collector',
