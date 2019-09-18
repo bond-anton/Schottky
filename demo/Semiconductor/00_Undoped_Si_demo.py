@@ -32,3 +32,8 @@ fig, ax = plt.subplots()
 ax.plot(temperature, np.asarray(e_i_boltzmann) / np.asarray(band_gap_boltzmann), '-r')
 
 plt.show()
+
+n_i = silicon.n_i(temperature)
+fig, ax = plt.subplots()
+ax.plot(temperature, np.asarray(n_i), '-k')
+plt.show()
