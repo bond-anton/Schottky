@@ -1,5 +1,5 @@
-from __future__ import division, print_function
 from scipy.constants import c, N_A, k, e, m_e, epsilon_0
+import numpy as np
 
 from Schottky.Constants import Constants
 from Schottky import constant
@@ -30,3 +30,10 @@ class TestConstants(unittest.TestCase):
         self.assertEqual(constant.m_e, m_e)
         self.assertEqual(constant.epsilon_0, epsilon_0)
         self.assertEqual(constant.A_R, 1.20173e6)
+
+    def test_thermal_voltage(self):
+        constants = Constants()
+        self.assertEqual(constants.thermal_voltage_t(0.0), 0.0)
+        t = np.linspace(0.0, 700, num=1000)
+        np.testing.assert_allclose(constants.thermal_voltage(t), k * t / e)
+        np.testing.assert_allclose(constant.thermal_voltage(t), k * t / e)

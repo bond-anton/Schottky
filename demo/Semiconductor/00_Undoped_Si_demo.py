@@ -24,3 +24,11 @@ fig, ax = plt.subplots()
 ax.plot(temperature, np.asarray(e_f) / 1.6e-19)
 
 plt.show()
+
+temperature = np.linspace(1.0, 600.0, num=200, endpoint=True)
+band_gap_boltzmann = silicon.band_gap_boltzmann(temperature)
+e_i_boltzmann = silicon.e_i_boltzmann(temperature)
+fig, ax = plt.subplots()
+ax.plot(temperature, np.asarray(e_i_boltzmann) / np.asarray(band_gap_boltzmann), '-r')
+
+plt.show()

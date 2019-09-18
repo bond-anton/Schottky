@@ -17,6 +17,18 @@ cdef class Trap(object):
         TrapPotential __e_potential
         TrapPotential __h_potential
 
+    cpdef double energy_c_boltzmann_t(self, double temperature)
+    cpdef double[:] energy_c_boltzmann(self, double[:] temperature)
+    cpdef double energy_v_boltzmann_t(self, double temperature)
+    cpdef double[:] energy_v_boltzmann(self, double[:] temperature)
+
+    cpdef double e_cs_activation_boltzmann_t(self, double temperature)
+    cpdef double[:] e_cs_activation_boltzmann(self, double[:] temperature)
+    cpdef double h_cs_activation_boltzmann_t(self, double temperature)
+    cpdef double[:] h_cs_activation_boltzmann(self, double[:] temperature)
+
+    cpdef dict capture_barrier_boltzmann_t(self, double temperature)
+
     cpdef double e_cs(self, double temperature)
     cpdef double h_cs(self, double temperature)
     cpdef double e_c(self, double temperature, double v_e)

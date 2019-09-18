@@ -235,7 +235,7 @@ cdef class PointLikeInExternalField(TrapPotential):
             int i, j
             array[double] template = array('d')
             double[:] phi, theta, integrand_theta, integrand_phi
-            double kt = constant.__k * temperature
+            double thermal_voltage = constant.thermal_voltage_t(temperature)
         integrand_phi = clone(template, self.__phi_resolution, zero=False)
         integrand_theta = clone(template, self.__theta_resolution, zero=False)
         phi = linspace(0.0, 2 * M_PI, self.__phi_resolution)
@@ -243,7 +243,7 @@ cdef class PointLikeInExternalField(TrapPotential):
         for i in range(self.__phi_resolution):
             for j in range(self.__theta_resolution):
                 integrand_theta[j] = exp(
-                    self.energy_lowering_point(theta[j], phi[i]) * constant.__q / kt
+                    self.energy_lowering_point(theta[j], phi[i]) / thermal_voltage
                 ) * sin(theta[j])
             integrand_phi[i] = trapz_1d(integrand_theta, theta)
         return trapz_1d(integrand_phi, phi) / (4 * M_PI)
@@ -309,14 +309,14 @@ cdef class SphericallySymmetricInExternalField(PointLikeInExternalField):
             int i, j
             array[double] template = array('d')
             double[:] phi, theta, integrand_theta, integrand_phi
-            double ktq = constant.__k * temperature / constant.__q
+            double thermal_voltage = constant.thermal_voltage_t(temperature)
             bint aligned = self.is_aligned()
         integrand_theta = clone(template, self.__theta_resolution, zero=False)
         theta = linspace(0.0, M_PI, self.__theta_resolution)
         if aligned:
             for j in range(self.__theta_resolution):
                 integrand_theta[j] = exp(
-                    self.energy_lowering_point(theta[j], 0.0) / ktq
+                    self.energy_lowering_point(theta[j], 0.0) / thermal_voltage
                 ) * sin(theta[j])
             return trapz_1d(integrand_theta, theta) / 2
         else:
@@ -325,7 +325,7 @@ cdef class SphericallySymmetricInExternalField(PointLikeInExternalField):
             for i in range(self.__phi_resolution):
                 for j in range(self.__theta_resolution):
                     integrand_theta[j] = exp(
-                        self.energy_lowering_point(theta[j], phi[i]) / ktq
+                        self.energy_lowering_point(theta[j], phi[i]) / thermal_voltage
                     ) * sin(theta[j])
                 integrand_phi[i] = trapz_1d(integrand_theta, theta)
             return trapz_1d(integrand_phi, phi) / (4 * M_PI)
@@ -354,7 +354,7 @@ cdef class HyperbolicInExternalField(SphericallySymmetricInExternalField):
                 return sqrt(self.__trap_field.a / f / cos(theta))
             else:
                 return self.__r_max
-        return super(HyperbolicInExternalField, self).max_energy_r_point(theta, phi)
+        return SphericallySymmetricInExternalField.max_energy_r_point_calc(self, theta, phi)
 
     @boundscheck(False)
     @wraparound(False)
@@ -364,7 +364,7 @@ cdef class HyperbolicInExternalField(SphericallySymmetricInExternalField):
             array[double] template = array('d')
             double[:] phi, theta, integrand_theta, integrand_phi
             bint aligned = self.is_aligned()
-            double field, delta_e, a, ktq
+            double field, delta_e, a, thermal_voltage
         field = self.__external_field.magnitude
         if field < 1.0e-10:
             return 1.0
@@ -373,20 +373,21 @@ cdef class HyperbolicInExternalField(SphericallySymmetricInExternalField):
             theta = linspace(0.0, M_PI / 2, half_theta_num)
             integrand_theta = clone(template, half_theta_num, zero=False)
             a = self.__trap_field.a
-            ktq = constant.__k * temperature / constant.__q
+            thermal_voltage = constant.thermal_voltage_t(temperature)
             for j in range(half_theta_num):
-                delta_e = 2 * sqrt(a * field * cos(theta[j]))
-                integrand_theta[j] = exp(delta_e / ktq) * sin(theta[j])
+                delta_e = 2 * sqrt(a * field * cos(theta[j])) / thermal_voltage
+                integrand_theta[j] = exp(delta_e) * sin(theta[j])
             return trapz_1d(integrand_theta, theta) / 2 + 0.5
         else:
             theta = linspace(0.0, M_PI, self.__theta_resolution)
             integrand_theta = clone(template, self.__theta_resolution, zero=False)
             integrand_phi = clone(template, self.__phi_resolution, zero=False)
             phi = linspace(0.0, 2 * M_PI, self.__phi_resolution)
+            thermal_voltage = constant.thermal_voltage_t(temperature)
             for i in range(self.__phi_resolution):
                 for j in range(self.__theta_resolution):
                     integrand_theta[j] = exp(
-                        self.energy_lowering_point(theta[j], phi[i]) / constant.__k / temperature
+                        self.energy_lowering_point(theta[j], phi[i]) / thermal_voltage
                     ) * sin(theta[j])
                 integrand_phi[i] = trapz_1d(integrand_theta, theta)
             return trapz_1d(integrand_phi, phi) / (4 * M_PI)

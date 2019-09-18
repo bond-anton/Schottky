@@ -13,16 +13,42 @@ cdef class Semiconductor(object):
         Cache __el_chem_pot_cache
 
     cdef double __band_gap_t(self, double temperature)
-    cpdef double band_gap_t(self, double temperature, bint electron_volts=*)
-    cpdef double[:] band_gap(self, double[:] temperature, bint electron_volts=*)
+    cpdef double band_gap_t(self, double temperature)
+    cpdef double band_gap_ev_t(self, double temperature)
+    cpdef double band_gap_boltzmann_t(self, double temperature)
+    cpdef double[:] band_gap(self, double[:] temperature)
+    cpdef double[:] band_gap_ev(self, double[:] temperature)
+    cpdef double[:] band_gap_boltzmann(self, double[:] temperature)
+
     cpdef double n_c_t(self, double temperature)
     cpdef double[:] n_c(self, double[:] temperature)
     cpdef double n_v_t(self, double temperature)
     cpdef double[:] n_v(self, double[:] temperature)
+
+    cpdef double n_i_t(self, double temperature)
+    cpdef double[:] n_i(self, double[:] temperature)
+
+    cpdef double e_i_t(self, double temperature)
+    cpdef double[:] e_i(self, double[:] temperature)
+    cpdef double e_i_ev_t(self, double temperature)
+    cpdef double[:] e_i_ev(self, double[:] temperature)
+    cpdef double e_i_boltzmann_t(self, double temperature)
+    cpdef double[:] e_i_boltzmann(self, double[:] temperature)
+
     cpdef double n_e_t(self, double mu, double temperature)
     cpdef double[:] n_e(self, double[:] mu, double[:] temperature)
+    cpdef double n_e_ev_t(self, double mu_ev, double temperature)
+    cpdef double[:] n_e_ev(self, double[:] mu_ev, double[:] temperature)
+    cpdef double n_e_boltzmann_t(self, double mu, double temperature)
+    cpdef double[:] n_e_boltzmann(self, double[:] mu, double[:] temperature)
+
     cpdef double n_h_t(self, double mu, double temperature)
     cpdef double[:] n_h(self, double[:] mu, double[:] temperature)
+    cpdef double n_h_ev_t(self, double mu_ev, double temperature)
+    cpdef double[:] n_h_ev(self, double[:] mu_ev, double[:] temperature)
+    cpdef double n_h_boltzmann_t(self, double mu, double temperature)
+    cpdef double[:] n_h_boltzmann(self, double[:] mu, double[:] temperature)
+
     cpdef double v_e_t(self, double temperature)
     cpdef double[:] v_e(self, double[:] temperature)
     cpdef double v_h_t(self, double temperature)

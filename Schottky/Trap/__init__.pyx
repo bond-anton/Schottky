@@ -1,4 +1,6 @@
 from libc.math cimport fabs, exp
+from cython cimport boundscheck, wraparound
+from cpython.array cimport array, clone
 
 from Schottky.Potential.TrapPotential cimport TrapPotential, NullPotential
 from Schottky.Constants cimport constant
@@ -81,19 +83,49 @@ cdef class Trap(object):
 
     @property
     def energy_c_ev(self):
-        return self.__energy_c / constant.__q
+        return constant.joule_to_ev_point(self.__energy_c)
 
     @energy_c_ev.setter
     def energy_c_ev(self, double energy_c_ev):
-        self.__energy_c = energy_c_ev * constant.__q
+        self.__energy_c = constant.ev_to_joule_point(energy_c_ev)
 
     @property
     def energy_v_ev(self):
-        return self.__energy_v / constant.__q
+        return constant.joule_to_ev_point(self.__energy_v)
 
     @energy_v_ev.setter
     def energy_v_ev(self, double energy_v_ev):
-        self.__energy_v = energy_v_ev * constant.__q
+        self.__energy_v = constant.ev_to_joule_point(energy_v_ev)
+
+    cpdef double energy_c_boltzmann_t(self, double temperature):
+        return constant.joule_to_boltzmann_point(self.__energy_c, temperature)
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] energy_c_boltzmann(self, double[:] temperature):
+        cdef:
+            int n = temperature.shape[0]
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = constant.joule_to_boltzmann_point(self.__energy_c, temperature[i])
+        return result
+
+    cpdef double energy_v_boltzmann_t(self, double temperature):
+        return constant.joule_to_boltzmann_point(self.__energy_v, temperature)
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] energy_v_boltzmann(self, double[:] temperature):
+        cdef:
+            int n = temperature.shape[0]
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = constant.joule_to_boltzmann_point(self.__energy_v, temperature[i])
+        return result
 
     @property
     def e_cs0(self):
@@ -129,19 +161,49 @@ cdef class Trap(object):
 
     @property
     def e_cs_activation_ev(self):
-        return self.__e_cs_activation / constant.__q
+        return constant.joule_to_ev_point(self.__e_cs_activation)
 
     @e_cs_activation_ev.setter
     def e_cs_activation_ev(self, double e_cs_activation_ev):
-        self.__e_cs_activation = e_cs_activation_ev * constant.__q
+        self.__e_cs_activation = constant.ev_to_joule_point(e_cs_activation_ev)
 
     @property
     def h_cs_activation_ev(self):
-        return self.__h_cs_activation / constant.__q
+        return constant.joule_to_ev_point(self.__h_cs_activation)
 
     @h_cs_activation_ev.setter
     def h_cs_activation_ev(self, double h_cs_activation_ev):
-        self.__h_cs_activation = h_cs_activation_ev * constant.__q
+        self.__h_cs_activation = constant.ev_to_joule_point(h_cs_activation_ev)
+
+    cpdef double e_cs_activation_boltzmann_t(self, double temperature):
+        return constant.joule_to_boltzmann_point(self.__e_cs_activation, temperature)
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] e_cs_activation_boltzmann(self, double[:] temperature):
+        cdef:
+            int n = temperature.shape[0]
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = constant.joule_to_boltzmann_point(self.__e_cs_activation, temperature[i])
+        return result
+
+    cpdef double h_cs_activation_boltzmann_t(self, double temperature):
+        return constant.joule_to_boltzmann_point(self.__h_cs_activation, temperature)
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] h_cs_activation_boltzmann(self, double[:] temperature):
+        cdef:
+            int n = temperature.shape[0]
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = constant.joule_to_boltzmann_point(self.__h_cs_activation, temperature[i])
+        return result
 
     @property
     def capture_barrier(self):
@@ -154,12 +216,17 @@ cdef class Trap(object):
 
     @property
     def capture_barrier_ev(self):
-        return {0: self.__capture_barrier[0] / constant.__q, 1: self.__capture_barrier[1] / constant.__q}
+        return {0: constant.joule_to_ev_point(self.__capture_barrier[0]),
+                1: constant.joule_to_ev_point(self.__capture_barrier[1])}
 
     @capture_barrier_ev.setter
     def capture_barrier_ev(self, dict capture_barrier_ev):
-        self.__capture_barrier[0] = capture_barrier_ev[0] * constant.__q
-        self.__capture_barrier[1] = capture_barrier_ev[1] * constant.__q
+        self.__capture_barrier[0] = constant.ev_to_joule_point(capture_barrier_ev[0])
+        self.__capture_barrier[1] = constant.ev_to_joule_point(capture_barrier_ev[1])
+
+    cpdef dict capture_barrier_boltzmann_t(self, double temperature):
+        return {0: constant.joule_to_boltzmann_point(self.__capture_barrier[0], temperature),
+                1: constant.joule_to_boltzmann_point(self.__capture_barrier[1], temperature)}
 
     @property
     def e_potential(self):
@@ -178,10 +245,10 @@ cdef class Trap(object):
         self.__h_potential = h_potential
 
     cpdef double e_cs(self, double temperature):
-        return self.__e_cs0 * exp(-self.__e_cs_activation / (constant.__k * temperature))
+        return self.__e_cs0 * exp(-self.e_cs_activation_boltzmann_t(temperature))
 
     cpdef double h_cs(self, double temperature):
-        return self.__h_cs0 * exp(-self.__h_cs_activation / (constant.__k * temperature))
+        return self.__h_cs0 * exp(-self.h_cs_activation_boltzmann_t(temperature))
 
     cpdef double e_c(self, double temperature, double v_e):
         return self.e_cs(temperature) * v_e
@@ -190,29 +257,30 @@ cdef class Trap(object):
         return self.h_cs(temperature) * v_h
 
     cpdef double e_cr(self, double temperature, double v_e, double n_e, double f):
-        return self.e_c(temperature, v_e) * n_e * exp(-self.__capture_barrier[0] * f / (constant.__k * temperature))
+        return self.e_c(temperature, v_e) * n_e * exp(
+            -constant.joule_to_boltzmann_point(self.__capture_barrier[0], temperature) * f
+        )
 
     cpdef double h_cr(self, double temperature, double v_h, double n_h, double f):
-        return self.h_c(temperature, v_h) * n_h \
-               * exp(-self.__capture_barrier[1] * (1 - f) / (constant.__k * temperature))
+        return self.h_c(temperature, v_h) * n_h * exp(
+            -constant.joule_to_boltzmann_point(self.__capture_barrier[1], temperature) * (1 - f)
+        )
 
     cpdef double e_er(self, double temperature, double v_e, double n_c, double f):
         cdef:
-            double cr, exp_f, g, enhancement
+            double cr, g, enhancement
         e_c = self.e_c(temperature, v_e)
         g = self.__g[0] / self.__g[1]
-        exp_f = n_c * exp(-self.__energy_c /(constant.__k * temperature))
         enhancement = self.__e_potential.emission_rate_enhancement(temperature, f)
-        return e_c * g * exp_f * enhancement
+        return e_c * g * n_c * exp(-self.energy_c_boltzmann_t(temperature)) * enhancement
 
     cpdef double h_er(self, double temperature, double v_h, double n_v, double f):
         cdef:
-            double cr, exp_f, g, enhancement
+            double cr, g, enhancement
         h_c = self.h_c(temperature, v_h)
         g = self.__g[1] / self.__g[0]
-        exp_f = n_v * exp(-self.__energy_v /(constant.__k * temperature))
         enhancement = self.__h_potential.emission_rate_enhancement(temperature, f)
-        return h_c * g * exp_f * enhancement
+        return h_c * g * n_v * exp(-self.energy_v_boltzmann_t(temperature)) * enhancement
 
     cpdef double f_eq(self, double temperature,
                       double v_e, double n_e, double n_c,

@@ -42,10 +42,10 @@ t0 = time()
 emission_rate_enhancement = t_pot.emission_rate_enhancement()
 print('\nE3/E0 gen = %2.2f, elapsed %2.6f s' % (emission_rate_enhancement, time() - t0))
 t_pot.cache_info()
-t0 = time()
-emission_rate_enhancement = t_pot_sym.emission_rate_enhancement()
-print('\nE3/E0 sym = %2.2f, elapsed %2.6f s' % (emission_rate_enhancement, time() - t0))
-t_pot_sym.cache_info()
+# t0 = time()
+# emission_rate_enhancement = t_pot_sym.emission_rate_enhancement()
+# print('\nE3/E0 sym = %2.2f, elapsed %2.6f s' % (emission_rate_enhancement, time() - t0))
+# t_pot_sym.cache_info()
 t0 = time()
 emission_rate_enhancement = t_pot_hyp.emission_rate_enhancement()
 print('\nE3/E0 hyp = %2.2f, elapsed %2.6f s' % (emission_rate_enhancement, time() - t0))
@@ -77,3 +77,27 @@ plt.show()
 ax = draw_energy_lowering_polar_theta(t_pot, phi, meV=True)
 ax.legend()
 plt.show()
+
+# r_min = t_pot_hyp.max_energy_r_point(theta, phi)
+# delta_e = t_pot_hyp.energy_lowering_point(theta, phi)
+#
+# ax = draw_1d_profile_superposition_scalar_polar(t_pot_hyp, theta, phi, 0, 20, num=1000, scale=1.0e-9,
+#                                                 bw=False, draw_sum=True)
+#
+# ax.plot([r_min * 1e9], [-delta_e * 1000], 'ro')
+# ax.legend()
+# ax.grid(True)
+#
+# plt.show()
+#
+# ax = draw_r_min_polar(t_pot_hyp, theta, scale=1.0e-9)
+# ax.legend()
+# plt.show()
+#
+# ax = draw_energy_lowering_polar_phi(t_pot_hyp, theta, meV=True)
+# ax.legend()
+# plt.show()
+#
+# ax = draw_energy_lowering_polar_theta(t_pot_hyp, phi, meV=True)
+# ax.legend()
+# plt.show()
