@@ -157,9 +157,9 @@ cdef class Semiconductor(object):
         return result
 
     cpdef double n_i_t(self, double temperature):
-        return sqrt(self.__reference['N_c0'] * self.__reference['N_v0']) * exp(
-            -self.band_gap_boltzmann_t(temperature) / 2
-        ) * temperature ** (3 / 2)
+        return sqrt(self.__reference['N_c0'] * self.__reference['N_v0'])\
+               * exp(-self.band_gap_boltzmann_t(temperature) / 2)\
+               * temperature ** (3 / 2)
 
     @boundscheck(False)
     @wraparound(False)
@@ -224,6 +224,38 @@ cdef class Semiconductor(object):
             result[i] = self.e_i_boltzmann_t(temperature[i])
         return result
 
+    cpdef double n_c_n_i_t(self, double temperature):
+        return sqrt(self.__reference['N_c0'] / self.__reference['N_v0'])\
+               * exp(self.band_gap_boltzmann_t(temperature) / 2)
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] n_c_n_i(self, double[:] temperature):
+        cdef:
+            int n = temperature.shape[0]
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = self.n_c_n_i_t(temperature[i])
+        return result
+
+    cpdef double n_v_n_i_t(self, double temperature):
+        return sqrt(self.__reference['N_v0'] / self.__reference['N_c0'])\
+               * exp(self.band_gap_boltzmann_t(temperature) / 2)
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] n_v_n_i(self, double[:] temperature):
+        cdef:
+            int n = temperature.shape[0]
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = self.n_v_n_i_t(temperature[i])
+        return result
+
     cpdef double n_e_t(self, double mu, double temperature):
         return self.n_c_t(temperature) * exp(-constant.joule_to_boltzmann_point(mu, temperature))
 
@@ -267,6 +299,54 @@ cdef class Semiconductor(object):
         result = clone(template, n, zero=False)
         for i in range(n):
             result[i] = self.n_e_boltzmann_t(mu[i], temperature[i])
+        return result
+
+    cpdef double n_e_n_i_t(self, double mu, double temperature):
+        return sqrt(self.__reference['N_c0'] / self.__reference['N_v0'])\
+               * exp(self.band_gap_boltzmann_t(temperature) / 2 - constant.joule_to_boltzmann_point(mu, temperature))
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] n_e_n_i(self, double[:] mu, double[:] temperature):
+        cdef:
+            int n = temperature.shape[0]
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = self.n_e_n_i_t(mu[i], temperature[i])
+        return result
+
+    cpdef double n_e_n_i_ev_t(self, double mu, double temperature):
+        return sqrt(self.__reference['N_c0'] / self.__reference['N_v0'])\
+               * exp(self.band_gap_boltzmann_t(temperature) / 2 - constant.ev_to_boltzmann_point(mu, temperature))
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] n_e_n_i_ev(self, double[:] mu, double[:] temperature):
+        cdef:
+            int n = temperature.shape[0]
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = self.n_e_n_i_ev_t(mu[i], temperature[i])
+        return result
+
+    cpdef double n_e_n_i_boltzmann_t(self, double mu, double temperature):
+        return sqrt(self.__reference['N_c0'] / self.__reference['N_v0'])\
+               * exp(self.band_gap_boltzmann_t(temperature) / 2 - mu)
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] n_e_n_i_boltzmann(self, double[:] mu, double[:] temperature):
+        cdef:
+            int n = temperature.shape[0]
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = self.n_e_n_i_boltzmann_t(mu[i], temperature[i])
         return result
 
     cpdef double n_h_t(self, double mu, double temperature):
@@ -314,6 +394,54 @@ cdef class Semiconductor(object):
         result = clone(template, n, zero=False)
         for i in range(n):
             result[i] = self.n_h_boltzmann_t(mu[i], temperature[i])
+        return result
+
+    cpdef double n_h_n_i_t(self, double mu, double temperature):
+        return sqrt(self.__reference['N_v0'] / self.__reference['N_c0'])\
+               * exp(constant.joule_to_boltzmann_point(mu, temperature) - self.band_gap_boltzmann_t(temperature) / 2)
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] n_h_n_i(self, double[:] mu, double[:] temperature):
+        cdef:
+            int n = temperature.shape[0]
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = self.n_h_n_i_t(mu[i], temperature[i])
+        return result
+
+    cpdef double n_h_n_i_ev_t(self, double mu, double temperature):
+        return sqrt(self.__reference['N_v0'] / self.__reference['N_c0'])\
+               * exp(constant.ev_to_boltzmann_point(mu, temperature) - self.band_gap_boltzmann_t(temperature) / 2)
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] n_h_n_i_ev(self, double[:] mu, double[:] temperature):
+        cdef:
+            int n = temperature.shape[0]
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = self.n_h_n_i_ev_t(mu[i], temperature[i])
+        return result
+
+    cpdef double n_h_n_i_boltzmann_t(self, double mu, double temperature):
+        return sqrt(self.__reference['N_v0'] / self.__reference['N_c0'])\
+               * exp(mu - self.band_gap_boltzmann_t(temperature) / 2)
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] n_h_n_i_boltzmann(self, double[:] mu, double[:] temperature):
+        cdef:
+            int n = temperature.shape[0]
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = self.n_h_n_i_boltzmann_t(mu[i], temperature[i])
         return result
 
     cpdef double v_e_t(self, double temperature):
