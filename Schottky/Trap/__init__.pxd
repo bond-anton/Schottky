@@ -13,6 +13,8 @@ cdef class Trap(object):
         double __h_cs_activation
         dict __charge_state
         dict __g
+        double __gr_e
+        double __gr_h
         dict __capture_barrier
         TrapPotential __e_potential
         TrapPotential __h_potential
@@ -40,8 +42,8 @@ cdef class Trap(object):
     cpdef double h_er(self, double temperature, double v_h, double n_v, double f)
 
     cpdef double f_eq(self, double temperature,
-                      double v_e, double n_e, double n_c,
-                      double v_h, double n_h, double n_v,
+                      double n_e, double n_c,
+                      double n_h, double n_v,
                       double f,
                       bint verbose=*)
 

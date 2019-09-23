@@ -52,7 +52,7 @@ cdef class Metal(object):
             array[double] result, template = array('d')
         result = clone(template, n, zero=False)
         for i in range(n):
-            result[i] = constant.joule_to_boltzmann_point(self.__work_function, temperature[i])
+            result[i] = self.work_function_boltzmann_t(temperature[i])
         return result
 
     def __str__(self):

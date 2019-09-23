@@ -28,6 +28,9 @@ cdef class Semiconductor(object):
     cpdef double n_i_t(self, double temperature)
     cpdef double[:] n_i(self, double[:] temperature)
 
+    cpdef double one_by_n_i_t(self, double temperature)
+    cpdef double[:] one_by_n_i(self, double[:] temperature)
+
     cpdef double n_c_n_i_t(self, double temperature)
     cpdef double[:] n_c_n_i(self, double[:] temperature)
     cpdef double n_v_n_i_t(self, double temperature)
@@ -84,3 +87,11 @@ cdef class Semiconductor(object):
                                  double f_threshold=*, int max_iter=*, bint verbose=*)
     cpdef double[:] work_function(self, double[:] temperature,
                                   double f_threshold=*, int max_iter=*, bint verbose=*)
+    cpdef double work_function_ev_t(self, double temperature,
+                                    double f_threshold=*, int max_iter=*, bint verbose=*)
+    cpdef double[:] work_function_ev(self, double[:] temperature,
+                                     double f_threshold=*, int max_iter=*, bint verbose=*)
+    cpdef double work_function_boltzmann_t(self, double temperature,
+                                           double f_threshold=*, int max_iter=*, bint verbose=*)
+    cpdef double[:] work_function_boltzmann(self, double[:] temperature,
+                                            double f_threshold=*, int max_iter=*, bint verbose=*)

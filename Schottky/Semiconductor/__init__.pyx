@@ -159,7 +159,7 @@ cdef class Semiconductor(object):
     cpdef double n_i_t(self, double temperature):
         return sqrt(self.__reference['N_c0'] * self.__reference['N_v0'])\
                * exp(-self.band_gap_boltzmann_t(temperature) / 2)\
-               * temperature ** (3 / 2)
+               * temperature ** 1.5
 
     @boundscheck(False)
     @wraparound(False)
@@ -171,6 +171,23 @@ cdef class Semiconductor(object):
         result = clone(template, n, zero=False)
         for i in range(n):
             result[i] = self.n_i_t(temperature[i])
+        return result
+
+    cpdef double one_by_n_i_t(self, double temperature):
+        return sqrt(self.__reference['N_v0'] * self.__reference['N_c0'])\
+               * exp(self.band_gap_boltzmann_t(temperature) / 2)\
+               * temperature ** (-1.5)
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] one_by_n_i(self, double[:] temperature):
+        cdef:
+            int n = temperature.shape[0]
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = self.one_by_n_i_t(temperature[i])
         return result
 
     cpdef double e_i_t(self, double temperature):
@@ -350,7 +367,9 @@ cdef class Semiconductor(object):
         return result
 
     cpdef double n_h_t(self, double mu, double temperature):
-        return self.n_v_t(temperature) * exp((mu - self.band_gap_t(temperature)) / (constant.k * temperature))
+        return self.n_v_t(temperature) * exp(
+            constant.joule_to_boltzmann_point(mu, temperature) - self.band_gap_boltzmann_t(temperature)
+        )
 
     @boundscheck(False)
     @wraparound(False)
@@ -484,7 +503,7 @@ cdef class Semiconductor(object):
         cdef:
             int i = 0
             double fa, fb, fm=0.0, ff_a, ff_b, ff_m, dm
-            double band_gap, n_c, n_v, v_e, v_h, n_e, n_h
+            double band_gap, n_c, n_v, n_e, n_h
             long key = hash_list([trap, mu, temperature, f_threshold, max_iter])
         try:
             return self.__trap_eq_occupation_cache[key]
@@ -492,8 +511,6 @@ cdef class Semiconductor(object):
             band_gap = self.__band_gap_t(temperature)
             n_c = self.n_c_t(temperature)
             n_v = self.n_v_t(temperature)
-            v_e = self.v_e_t(temperature)
-            v_h = self.v_h_t(temperature)
             n_e = self.n_e_t(mu, temperature)
             n_h = self.n_h_t(mu, temperature)
             if trap.__cb_bound:
@@ -502,8 +519,8 @@ cdef class Semiconductor(object):
                 trap.energy_c = band_gap - trap.energy_v
             fa = 0.0
             fb = 1.0
-            ff_a = fa - trap.f_eq(temperature, v_e, n_e, n_c, v_h, n_h, n_v, fa, verbose=verbose)
-            ff_b = fb - trap.f_eq(temperature, v_e, n_e, n_c, v_h, n_h, n_v, fb, verbose=verbose)
+            ff_a = fa - trap.f_eq(temperature, n_e, n_c, n_h, n_v, fa, verbose=verbose)
+            ff_b = fb - trap.f_eq(temperature, n_e, n_c, n_h, n_v, fb, verbose=verbose)
             if ff_a == 0:
                 fm = fa
             elif ff_b == 0:
@@ -513,7 +530,7 @@ cdef class Semiconductor(object):
                 for i in range(max_iter):
                     dm *= 0.5
                     fm = fa + dm
-                    ff_m = fm - trap.f_eq(temperature, v_e, n_e, n_c, v_h, n_h, n_v, fm, verbose=verbose)
+                    ff_m = fm - trap.f_eq(temperature, n_e, n_c, n_h, n_v, fm, verbose=verbose)
                     if ff_m * ff_a >= 0:
                         fa = fm
                     if ff_m == 0 or fabs(dm) < f_threshold:
@@ -536,9 +553,7 @@ cdef class Semiconductor(object):
             return self.__bulk_charge_cache[key]
         except KeyError:
             _z[0] = z
-            n_e = self.n_e_t(mu, temperature)
-            n_h = self.n_h_t(mu, temperature)
-            result = n_h - n_e
+            result = self.n_h_t(mu, temperature) - self.n_e_t(mu, temperature)
             for dopant in self.__dopants:
                 fm = self.trap_eq_occupation(dopant, mu, temperature,
                                              f_threshold=f_threshold, max_iter=max_iter, verbose=verbose)
@@ -555,7 +570,7 @@ cdef class Semiconductor(object):
         cdef:
             int i = 0
             double dm, xm=0.0, fm, fa, fb
-            double tol, xtol = constant.k * temperature / 1000, rtol = 4.5e-16
+            double tol, xtol = constant.__k * temperature * 0.001, rtol = 4.5e-16
             double xa = 0.0, xb = self.__band_gap_t(temperature)
             long key = hash_list([temperature, f_threshold, max_iter])
         try:
@@ -620,10 +635,62 @@ cdef class Semiconductor(object):
             array[double] result, template = array('d')
         result = clone(template, n, zero=False)
         for i in range(n):
-            result[i] = self.el_chem_pot_t(temperature[i],
-                                           f_threshold=f_threshold,
-                                           max_iter=max_iter,
-                                           verbose=verbose) + self.__reference['affinity']
+            result[i] = self.work_function_t(temperature[i],
+                                             f_threshold=f_threshold,
+                                             max_iter=max_iter, verbose=verbose)
+        return result
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double work_function_ev_t(self, double temperature,
+                                    double f_threshold=1.0e-23, int max_iter=100,
+                                    bint verbose=False):
+        return constant.joule_to_ev_point(self.el_chem_pot_t(temperature,
+                                                             f_threshold=f_threshold,
+                                                             max_iter=max_iter,
+                                                             verbose=verbose) + self.__reference['affinity'])
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] work_function_ev(self, double[:] temperature,
+                                     double f_threshold=1.0e-23, int max_iter=100,
+                                     bint verbose=False):
+        cdef:
+            int n = temperature.shape[0]
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = self.work_function_ev_t(temperature[i],
+                                                f_threshold=f_threshold,
+                                                max_iter=max_iter, verbose=verbose)
+        return result
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double work_function_boltzmann_t(self, double temperature,
+                                           double f_threshold=1.0e-23, int max_iter=100,
+                                           bint verbose=False):
+        return constant.joule_to_boltzmann_point(self.el_chem_pot_t(temperature,
+                                                                    f_threshold=f_threshold,
+                                                                    max_iter=max_iter,
+                                                                    verbose=verbose) + self.__reference['affinity'],
+                                                 temperature)
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] work_function_boltzmann(self, double[:] temperature,
+                                            double f_threshold=1.0e-23, int max_iter=100,
+                                            bint verbose=False):
+        cdef:
+            int n = temperature.shape[0]
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = self.work_function_boltzmann_t(temperature[i],
+                                                       f_threshold=f_threshold,
+                                                       max_iter=max_iter, verbose=verbose)
         return result
 
     def __str__(self):

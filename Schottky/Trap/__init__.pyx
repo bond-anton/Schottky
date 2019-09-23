@@ -29,6 +29,8 @@ cdef class Trap(object):
         self.__h_cs_activation = h_cs_activation
         self.__charge_state = {0: 0, 1: -1}
         self.__g = {0: 1, 1: 2}
+        self.__gr_e = self.__g[0] / self.__g[1]
+        self.__gr_h = self.__g[1] / self.__g[0]
         self.__capture_barrier = {0: 0.0, 1: 0.0}
         if e_potential is None:
             self.__e_potential = NullPotential('electron null potential', trap=self)
@@ -268,31 +270,36 @@ cdef class Trap(object):
 
     cpdef double e_er(self, double temperature, double v_e, double n_c, double f):
         cdef:
-            double cr, g, enhancement
+            double e_c, enhancement
         e_c = self.e_c(temperature, v_e)
-        g = self.__g[0] / self.__g[1]
         enhancement = self.__e_potential.emission_rate_enhancement(temperature, f)
-        return e_c * g * n_c * exp(-self.energy_c_boltzmann_t(temperature)) * enhancement
+        return e_c * self.__gr_e * n_c * exp(-self.energy_c_boltzmann_t(temperature)) * enhancement
 
     cpdef double h_er(self, double temperature, double v_h, double n_v, double f):
         cdef:
-            double cr, g, enhancement
+            double h_c, enhancement
         h_c = self.h_c(temperature, v_h)
-        g = self.__g[1] / self.__g[0]
         enhancement = self.__h_potential.emission_rate_enhancement(temperature, f)
-        return h_c * g * n_v * exp(-self.energy_v_boltzmann_t(temperature)) * enhancement
+        return h_c * self.__gr_h * n_v * exp(-self.energy_v_boltzmann_t(temperature)) * enhancement
 
     cpdef double f_eq(self, double temperature,
-                      double v_e, double n_e, double n_c,
-                      double v_h, double n_h, double n_v,
+                      double n_e, double n_c,
+                      double n_h, double n_v,
                       double f,
                       bint verbose=False):
         cdef:
-            double e_c, e_e, h_c, h_e
-        e_c = self.e_cr(temperature, v_e, n_e, f)
-        e_e = self.e_er(temperature, v_e, n_c, f)
-        h_c = self.h_cr(temperature, v_h, n_h, f)
-        h_e = self.h_er(temperature, v_h, n_v, f)
+            double e_c, h_c, e_e, h_e, enhancement_e, enhancement_h
+        e_c = n_e * exp(
+            -constant.joule_to_boltzmann_point(self.__capture_barrier[0], temperature) * f
+        )
+        enhancement_e = self.__e_potential.emission_rate_enhancement(temperature, f)
+        e_e = self.__gr_e * n_c * exp(-self.energy_c_boltzmann_t(temperature)) * enhancement_e
+
+        h_c = n_h * exp(
+            -constant.joule_to_boltzmann_point(self.__capture_barrier[1], temperature) * (1 - f)
+        )
+        enhancement_h = self.__h_potential.emission_rate_enhancement(temperature, f)
+        h_e = self.__gr_h * n_v * exp(-self.energy_v_boltzmann_t(temperature)) * enhancement_h
         if fabs(e_c + e_e) > fabs(h_c + h_e):
             return e_c / (e_c + e_e)
         else:
@@ -329,6 +336,8 @@ cdef class Trap(object):
     def g(self, g):
         self.__g[0] = g[0]
         self.__g[1] = g[1]
+        self.__gr_e = self.__g[0] / self.__g[1]
+        self.__gr_h = self.__g[1] / self.__g[0]
 
     def __str__(self):
         description = 'Trap: %s\n' % self.label
