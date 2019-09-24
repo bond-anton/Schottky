@@ -104,3 +104,10 @@ cdef class Semiconductor(object):
     cpdef double mobility_h_point_t(self, double dopants_n, double field, double pn, double temperature)
     cpdef double[:] mobility_h_point(self, double dopants_n, double field, double pn, double[:] temperature)
     cpdef double[:] mobility_h_t(self, double[:] dopants_n, double[:] field, double[:] pn, double temperature)
+
+    cpdef double diffusivity_e_point_t(self, double dopants_n, double field, double pn, double temperature)
+    cpdef double[:] diffusivity_e_point(self, double dopants_n, double field, double pn, double[:] temperature)
+    cpdef double[:] diffusivity_e_t(self, double[:] dopants_n, double[:] field, double[:] pn, double temperature)
+    cpdef double diffusivity_h_point_t(self, double dopants_n, double field, double pn, double temperature)
+    cpdef double[:] diffusivity_h_point(self, double dopants_n, double field, double pn, double[:] temperature)
+    cpdef double[:] diffusivity_h_t(self, double[:] dopants_n, double[:] field, double[:] pn, double temperature)

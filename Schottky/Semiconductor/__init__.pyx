@@ -805,6 +805,60 @@ cdef class Semiconductor(object):
             result[i] = self.mobility_h_point_t(dopants_n[i], field[i], pn[i], temperature)
         return result
 
+    cpdef double diffusivity_e_point_t(self, double dopants_n, double field, double pn, double temperature):
+        return constant.thermal_voltage_t(temperature) * self.mobility_e_point_t(dopants_n, field, pn, temperature)
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] diffusivity_e_point(self, double dopants_n, double field, double pn, double[:] temperature):
+        cdef:
+            int n = temperature.shape[0]
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = self.diffusivity_e_point_t(dopants_n, field, pn, temperature[i])
+        return result
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] diffusivity_e_t(self, double[:] dopants_n, double[:] field, double[:] pn, double temperature):
+        cdef:
+            int n = dopants_n.shape[0]
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = self.diffusivity_e_point_t(dopants_n[i], field[i], pn[i], temperature)
+        return result
+
+    cpdef double diffusivity_h_point_t(self, double dopants_n, double field, double pn, double temperature):
+        return constant.thermal_voltage_t(temperature) * self.mobility_h_point_t(dopants_n, field, pn, temperature)
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] diffusivity_h_point(self, double dopants_n, double field, double pn, double[:] temperature):
+        cdef:
+            int n = temperature.shape[0]
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = self.diffusivity_h_point_t(dopants_n, field, pn, temperature[i])
+        return result
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] diffusivity_h_t(self, double[:] dopants_n, double[:] field, double[:] pn, double temperature):
+        cdef:
+            int n = dopants_n.shape[0]
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = self.diffusivity_h_point_t(dopants_n[i], field[i], pn[i], temperature)
+        return result
+
     def __str__(self):
         return 'Semiconductor: ' + self.__label
 
