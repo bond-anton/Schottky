@@ -859,6 +859,34 @@ cdef class Semiconductor(object):
             result[i] = self.diffusivity_h_point_t(dopants_n[i], field[i], pn[i], temperature)
         return result
 
+    cpdef double debye_length_point_t(self, double dopants_n, double temperature):
+        return sqrt(constant.__epsilon_0 * self.__reference['epsilon'] * constant.k * temperature / dopants_n)\
+               / constant.__q
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] debye_length_point(self, double dopants_n, double[:] temperature):
+        cdef:
+            int n = temperature.shape[0]
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = self.debye_length_point_t(dopants_n, temperature[i])
+        return result
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] debye_length_t(self, double[:] dopants_n, double temperature):
+        cdef:
+            int n = dopants_n.shape[0]
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = self.debye_length_point_t(dopants_n[i], temperature)
+        return result
+
     def __str__(self):
         return 'Semiconductor: ' + self.__label
 

@@ -111,3 +111,7 @@ cdef class Semiconductor(object):
     cpdef double diffusivity_h_point_t(self, double dopants_n, double field, double pn, double temperature)
     cpdef double[:] diffusivity_h_point(self, double dopants_n, double field, double pn, double[:] temperature)
     cpdef double[:] diffusivity_h_t(self, double[:] dopants_n, double[:] field, double[:] pn, double temperature)
+
+    cpdef double debye_length_point_t(self, double dopants_n, double temperature)
+    cpdef double[:] debye_length_point(self, double dopants_n, double[:] temperature)
+    cpdef double[:] debye_length_t(self, double[:] dopants_n, double temperature)
