@@ -156,6 +156,23 @@ cdef class Semiconductor(object):
             result[i] = self.n_v_t(temperature[i])
         return result
 
+    cpdef double pn_t(self, double temperature):
+        return self.__reference['N_c0'] * self.__reference['N_v0']\
+               * exp(-self.band_gap_boltzmann_t(temperature))\
+               * temperature ** 3
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] pn(self, double[:] temperature):
+        cdef:
+            int n = temperature.shape[0]
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = self.pn_t(temperature[i])
+        return result
+
     cpdef double n_i_t(self, double temperature):
         return sqrt(self.__reference['N_c0'] * self.__reference['N_v0'])\
                * exp(-self.band_gap_boltzmann_t(temperature) / 2)\
@@ -549,6 +566,7 @@ cdef class Semiconductor(object):
             double fm, result
             array[double] _z = clone(array('d'), 1, zero=False)
             long key = hash_list([mu, temperature, z, f_threshold, max_iter])
+            Dopant dopant
         try:
             return self.__bulk_charge_cache[key]
         except KeyError:
@@ -691,6 +709,100 @@ cdef class Semiconductor(object):
             result[i] = self.work_function_boltzmann_t(temperature[i],
                                                        f_threshold=f_threshold,
                                                        max_iter=max_iter, verbose=verbose)
+        return result
+
+    cpdef double mobility_e_point_t(self, double dopants_n, double field, double pn, double temperature):
+        cdef:
+            double mu_l, mu_i, mu_ccs, mu, x, _pn, field_coeff
+        _pn = pn * 1e-12
+        mu_l = self.__reference['mobility_e']['mu_L0'] * (
+                (temperature / 300.0) ** (-self.__reference['mobility_e']['alpha'])
+        )
+        mu_i = (self.__reference['mobility_e']['A'] * (temperature ** 1.5) / (dopants_n * 1e-6)) \
+               / (log(1 + self.__reference['mobility_e']['B'] * (temperature ** 2) / (dopants_n * 1e-6))
+                  - self.__reference['mobility_e']['B'] * (temperature ** 2)
+                  / (self.__reference['mobility_e']['B'] * (temperature ** 2) + (dopants_n * 1e-6)))
+        if pn > 0:
+            mu_ccs = 2e17 * (temperature ** 1.5) / sqrt(_pn) / log(1 + 8.28e8 * (temperature ** 2) * (_pn ** (-1 / 3)))
+            x = sqrt(6 * mu_l * (mu_i + mu_ccs) / (mu_i * mu_ccs))
+        else:
+            x = sqrt(6 * mu_l / mu_i)
+        mu = mu_l * (1.025 / (1 + ((x / 1.68) ** 1.43)) - 0.025)
+        field_coeff = (1 +
+                       (mu * field * 1e-2 / self.__reference['mobility_e']['v_s'])
+                       ** self.__reference['mobility_e']['beta']
+                      ) ** (-1 / self.reference['mobility_e']['beta'])
+        return mu * field_coeff * 1e-4
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] mobility_e_point(self, double dopants_n, double field, double pn, double[:] temperature):
+        cdef:
+            int n = temperature.shape[0]
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = self.mobility_e_point_t(dopants_n, field, pn, temperature[i])
+        return result
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] mobility_e_t(self, double[:] dopants_n, double[:] field, double[:] pn, double temperature):
+        cdef:
+            int n = dopants_n.shape[0]
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = self.mobility_e_point_t(dopants_n[i], field[i], pn[i], temperature)
+        return result
+
+    cpdef double mobility_h_point_t(self, double dopants_n, double field, double pn, double temperature):
+        cdef:
+            double mu_l, mu_i, mu_ccs, mu, x, _pn, field_coeff
+        _pn = pn * 1e-12
+        mu_l = self.__reference['mobility_h']['mu_L0'] * (
+                (temperature / 300.0) ** (-self.__reference['mobility_h']['alpha'])
+        )
+        mu_i = (self.__reference['mobility_h']['A'] * (temperature ** 1.5) / (dopants_n * 1e-6)) \
+               / (log(1 + self.__reference['mobility_h']['B'] * (temperature ** 2) / (dopants_n * 1e-6))
+                  - self.__reference['mobility_h']['B'] * (temperature ** 2)
+                  / (self.__reference['mobility_h']['B'] * (temperature ** 2) + (dopants_n * 1e-6)))
+        if pn > 0:
+            mu_ccs = 2e17 * (temperature ** 1.5) / sqrt(_pn) / log(1 + 8.28e8 * (temperature ** 2) * (_pn ** (-1 / 3)))
+            x = sqrt(6 * mu_l * (mu_i + mu_ccs) / (mu_i * mu_ccs))
+        else:
+            x = sqrt(6 * mu_l / mu_i)
+        mu = mu_l * (1.025 / (1 + ((x / 1.68) ** 1.43)) - 0.025)
+        field_coeff = (1 +
+                       (mu * field * 1e-2 / self.__reference['mobility_h']['v_s'])
+                       ** self.__reference['mobility_h']['beta']
+                      ) ** (-1 / self.reference['mobility_h']['beta'])
+        return mu * field_coeff * 1e-4
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] mobility_h_point(self, double dopants_n, double field, double pn, double[:] temperature):
+        cdef:
+            int n = temperature.shape[0]
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = self.mobility_h_point_t(dopants_n, field, pn, temperature[i])
+        return result
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] mobility_h_t(self, double[:] dopants_n, double[:] field, double[:] pn, double temperature):
+        cdef:
+            int n = dopants_n.shape[0]
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = self.mobility_h_point_t(dopants_n[i], field[i], pn[i], temperature)
         return result
 
     def __str__(self):

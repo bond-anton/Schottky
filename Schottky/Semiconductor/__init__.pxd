@@ -25,6 +25,8 @@ cdef class Semiconductor(object):
     cpdef double n_v_t(self, double temperature)
     cpdef double[:] n_v(self, double[:] temperature)
 
+    cpdef double pn_t(self, double temperature)
+    cpdef double[:] pn(self, double[:] temperature)
     cpdef double n_i_t(self, double temperature)
     cpdef double[:] n_i(self, double[:] temperature)
 
@@ -95,3 +97,10 @@ cdef class Semiconductor(object):
                                            double f_threshold=*, int max_iter=*, bint verbose=*)
     cpdef double[:] work_function_boltzmann(self, double[:] temperature,
                                             double f_threshold=*, int max_iter=*, bint verbose=*)
+
+    cpdef double mobility_e_point_t(self, double dopants_n, double field, double pn, double temperature)
+    cpdef double[:] mobility_e_point(self, double dopants_n, double field, double pn, double[:] temperature)
+    cpdef double[:] mobility_e_t(self, double[:] dopants_n, double[:] field, double[:] pn, double temperature)
+    cpdef double mobility_h_point_t(self, double dopants_n, double field, double pn, double temperature)
+    cpdef double[:] mobility_h_point(self, double dopants_n, double field, double pn, double[:] temperature)
+    cpdef double[:] mobility_h_t(self, double[:] dopants_n, double[:] field, double[:] pn, double temperature)
