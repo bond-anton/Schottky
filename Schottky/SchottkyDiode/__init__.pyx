@@ -74,23 +74,57 @@ cdef class SchottkyDiode(object):
     def serial_resistance(self, double serial_resistance):
         self.__serial_resistance = fabs(serial_resistance)
 
-    cpdef double built_in_voltage_t(self, double temperature, bint electron_volts=False):
+    cpdef double built_in_voltage_t(self, double temperature):
         cdef double result
-        result = self.__metal.__work_function - self.__semiconductor.work_function_t(temperature,
-                                                                                     f_threshold=1.0e-23,
-                                                                                     max_iter=100, verbose=False)
-        if electron_volts:
-            return result / constant.__q
-        return result
+        return self.__metal.work_function - self.__semiconductor.work_function_t(temperature,
+                                                                                 f_threshold=1.0e-23,
+                                                                                 max_iter=100, verbose=False)
 
     @boundscheck(False)
     @wraparound(False)
-    cpdef double[:] built_in_voltage(self, double[:] temperature, bint electron_volts=False):
+    cpdef double[:] built_in_voltage(self, double[:] temperature):
         cdef:
             int n = temperature.shape[0]
             int i
             array[double] result, template = array('d')
         result = clone(template, n, zero=False)
         for i in range(n):
-            result[i] = self.built_in_voltage_t(temperature[i], electron_volts=electron_volts)
+            result[i] = self.built_in_voltage_t(temperature[i])
+        return result
+
+    cpdef double built_in_voltage_ev_t(self, double temperature):
+        cdef double result
+        return self.__metal.work_function_ev - self.__semiconductor.work_function_ev_t(temperature,
+                                                                                       f_threshold=1.0e-23,
+                                                                                       max_iter=100, verbose=False)
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] built_in_voltage_ev(self, double[:] temperature):
+        cdef:
+            int n = temperature.shape[0]
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = self.built_in_voltage_ev_t(temperature[i])
+        return result
+
+    cpdef double built_in_voltage_boltzmann_t(self, double temperature):
+        cdef double result
+        return self.__metal.work_function_boltzmann_t(temperature)\
+               - self.__semiconductor.work_function_boltzmann_t(temperature,
+                                                                f_threshold=1.0e-23,
+                                                                max_iter=100, verbose=False)
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] built_in_voltage_boltzmann(self, double[:] temperature):
+        cdef:
+            int n = temperature.shape[0]
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = self.built_in_voltage_boltzmann_t(temperature[i])
         return result
