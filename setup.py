@@ -5,7 +5,7 @@ from Cython.Build import cythonize
 
 from codecs import open
 import sys
-from os import path
+from os import path, remove
 import re
 
 
@@ -97,7 +97,9 @@ def has_flag(compiler, flagname):
     with tempfile.NamedTemporaryFile('w', suffix='.cpp') as f:
         f.write('int main (int argc, char **argv) { return 0; }')
         try:
-            compiler.compile([f.name], extra_postargs=[flagname])
+            res = compiler.compile([f.name], extra_postargs=[flagname])
+            for item in res:
+                remove(item)
         except CompileError:
             return False
     return True
