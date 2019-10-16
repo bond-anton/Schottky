@@ -81,6 +81,11 @@ extensions = [
         ['Schottky/SchottkyDiode/__init__.pyx'],
         depends=['Schottky/SchottkyDiode/__init__.pxd'],
     ),
+    Extension(
+        'Schottky.DCMeasurement',
+        ['Schottky/DCMeasurement/__init__.pyx'],
+        depends=['Schottky/DCMeasurement/__init__.pxd'],
+    ),
 ]
 
 copt = {'msvc': ['/openmp', '/Ox', '/fp:fast', '/favor:INTEL64', '/Og'],
@@ -165,6 +170,7 @@ setup(
                   'Schottky/Semiconductor': ['*.pxd'],
                   'Schottky/Potential': ['*.pxd'],
                   'Schottky/SchottkyDiode': ['*.pxd'],
+                  'Schottky/DCMeasurement': ['*.pxd'],
                   },
     install_requires=['numpy', 'Cython', 'scipy', 'matplotlib', 'BDSpace', 'BDMesh', 'BDPoisson1D'],
     test_suite='nose.collector',

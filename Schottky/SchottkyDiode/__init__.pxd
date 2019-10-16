@@ -1,5 +1,8 @@
+from BDMesh.TreeMesh1DUniform cimport TreeMesh1DUniform
+
 from Schottky.Metal cimport Metal
 from Schottky.Semiconductor cimport Semiconductor
+
 
 cdef class SchottkyDiode(object):
     cdef:

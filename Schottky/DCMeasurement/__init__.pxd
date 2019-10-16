@@ -1,0 +1,19 @@
+from BDMesh.TreeMesh1DUniform cimport TreeMesh1DUniform
+
+from Schottky.SchottkyDiode cimport SchottkyDiode
+
+
+cdef class DCMeasurement(object):
+    cdef:
+
+        SchottkyDiode __diode
+
+        str __label
+
+        TreeMesh1DUniform __ep
+        TreeMesh1DUniform __qfe
+        TreeMesh1DUniform __qfh
+        TreeMesh1DUniform __ne
+        TreeMesh1DUniform __nh
+        TreeMesh1DUniform __generation
+        TreeMesh1DUniform __recombination
