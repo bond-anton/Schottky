@@ -13,7 +13,7 @@ from Schottky import constant
 
 from Schottky.DCMeasurement import DCMeasurement
 
-from Schottky.Visual.DCMeasurement import plot_n_eh
+from Schottky.Visual.DCMeasurement import plot_n_eh, plot_generation_recombination
 
 
 reference = database[0]
@@ -41,4 +41,7 @@ print('Diode area is %2.2f mm^2' % (diode.area * 1e6))
 
 measurement = DCMeasurement('The measurement', diode, initial_step=1e-7)
 plot_n_eh(measurement)
+plt.show()
+
+plot_generation_recombination(measurement)
 plt.show()
