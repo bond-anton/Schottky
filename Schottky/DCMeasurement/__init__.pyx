@@ -9,6 +9,7 @@ cdef class DCMeasurement(object):
     def __init__(self, str label, SchottkyDiode diode, double initial_step=5e-7 ):
         self.__label = label
         self.__diode = diode
+        self.__initial_step = initial_step
         self.__ep = TreeMesh1DUniform(Mesh1DUniform(0.0, self.__diode.__length, physical_step=initial_step),
                                       aligned=True)
         self.__qfe = TreeMesh1DUniform(Mesh1DUniform(0.0, self.__diode.__length, physical_step=initial_step),
@@ -63,3 +64,11 @@ cdef class DCMeasurement(object):
     @property
     def recombination(self):
         return self.__recombination
+
+    cpdef prepare_psi0(self, double bias, double temperature):
+        v_bi = self.__diode.built_in_voltage_ev_t(temperature)
+        v_bc = v_bi - bias
+        psi_0 = Mesh1DUniform(0.0, self.__diode.__length, physical_step=self.__initial_step)
+        print(psi_0.solution)
+        self.__ep = TreeMesh1DUniform(psi_0, aligned=True)
+
