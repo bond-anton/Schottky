@@ -12,7 +12,7 @@ def plot_ep(measurement, ax=None):
     ax.fill_between(z, ep, 0, facecolor='silver', alpha=0.5)
     ax.set_xlim([0, measurement.diode.length * 1e6])
     ax.set_xlabel('z, $\mu$m')
-    ax.set_ylabel('Electric Potential, V$')
+    ax.set_ylabel('Electric Potential, V')
     return ax
 
 
@@ -26,7 +26,7 @@ def plot_qfe(measurement, ax=None):
     ax.fill_between(z, qfe, 0, facecolor='blue', alpha=0.5)
     ax.set_xlim([0, measurement.diode.length * 1e6])
     ax.set_xlabel('z, $\mu$m')
-    ax.set_ylabel('Energy, J$')
+    ax.set_ylabel('Energy, J')
     return ax
 
 
@@ -40,7 +40,7 @@ def plot_qfh(measurement, ax=None):
     ax.fill_between(z, qfh, 0, facecolor='red', alpha=0.5)
     ax.set_xlim([0, measurement.diode.length * 1e6])
     ax.set_xlabel('z, $\mu$m')
-    ax.set_ylabel('Energy, J$')
+    ax.set_ylabel('Energy, J')
     return ax
 
 
@@ -54,7 +54,7 @@ def plot_qfeh(measurement, ax=None):
     ax.fill_between(z, qfh, 0, facecolor='red', alpha=0.5)
     ax.set_xlim([0, measurement.diode.length * 1e6])
     ax.set_xlabel('z, $\mu$m')
-    ax.set_ylabel('Energy, J$')
+    ax.set_ylabel('Energy, J')
     return ax
 
 

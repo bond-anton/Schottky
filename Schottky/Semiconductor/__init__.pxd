@@ -85,6 +85,10 @@ cdef class Semiconductor(object):
                                double f_threshold=*, int max_iter=*, bint verbose=*)
     cpdef double[:] el_chem_pot(self, double[:] temperature,
                                 double f_threshold=*, int max_iter=*, bint verbose=*)
+    cpdef double el_chem_pot_ev_t(self, double temperature,
+                                  double f_threshold=*, int max_iter=*, bint verbose=*)
+    cpdef double[:] el_chem_pot_ev(self, double[:] temperature,
+                                   double f_threshold=*, int max_iter=*, bint verbose=*)
     cpdef double work_function_t(self, double temperature,
                                  double f_threshold=*, int max_iter=*, bint verbose=*)
     cpdef double[:] work_function(self, double[:] temperature,

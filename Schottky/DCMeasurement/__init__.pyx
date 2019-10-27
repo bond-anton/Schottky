@@ -1,4 +1,5 @@
-from BDMesh.Mesh1DUniform import Mesh1DUniform
+import numpy as np
+from BDMesh.Mesh1DUniform cimport Mesh1DUniform
 from BDMesh.TreeMesh1DUniform cimport TreeMesh1DUniform
 
 from Schottky.SchottkyDiode cimport SchottkyDiode
@@ -69,6 +70,14 @@ cdef class DCMeasurement(object):
         v_bi = self.__diode.built_in_voltage_ev_t(temperature)
         v_bc = v_bi - bias
         psi_0 = Mesh1DUniform(0.0, self.__diode.__length, physical_step=self.__initial_step)
-        print(psi_0.solution)
+        psi_0.solution = v_bc - np.asarray(psi_0.physical_nodes) * v_bc / psi_0.physical_nodes[-1]
+        print(np.asarray(psi_0.physical_nodes))
+        print(np.asarray(psi_0.solution))
         self.__ep = TreeMesh1DUniform(psi_0, aligned=True)
+        qfe_0 = Mesh1DUniform(0.0, self.__diode.__length, physical_step=self.__initial_step)
+        qfe_0.solution = np.asarray(qfe_0.solution) + self.__diode.semiconductor.el_chem_pot_ev_t(temperature)
+        self.__qfe = TreeMesh1DUniform(qfe_0, aligned=True)
+        qfh_0 = Mesh1DUniform(0.0, self.__diode.__length, physical_step=self.__initial_step)
+        qfh_0.solution = np.asarray(qfh_0.solution) + self.__diode.semiconductor.el_chem_pot_ev_t(temperature)
+        self.__qfh = TreeMesh1DUniform(qfh_0, aligned=True)
 

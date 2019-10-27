@@ -619,6 +619,16 @@ cdef class Semiconductor(object):
 
     @boundscheck(False)
     @wraparound(False)
+    cpdef double el_chem_pot_ev_t(self, double temperature,
+                                  double f_threshold=1.0e-23, int max_iter=100,
+                                  bint verbose=False):
+        return constant.joule_to_ev_point(self.el_chem_pot_t(temperature,
+                                                             f_threshold=f_threshold,
+                                                             max_iter=max_iter,
+                                                             verbose=verbose))
+
+    @boundscheck(False)
+    @wraparound(False)
     cpdef double[:] el_chem_pot(self, double[:] temperature,
                                 double f_threshold=1.0e-23, int max_iter=100,
                                 bint verbose=False):
@@ -630,6 +640,21 @@ cdef class Semiconductor(object):
         for i in range(n):
             result[i] = self.el_chem_pot_t(temperature[i],
                                            f_threshold=f_threshold, max_iter=max_iter, verbose=verbose)
+        return result
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] el_chem_pot_ev(self, double[:] temperature,
+                                   double f_threshold=1.0e-23, int max_iter=100,
+                                   bint verbose=False):
+        cdef:
+            int n = temperature.shape[0]
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = self.el_chem_pot_ev_t(temperature[i],
+                                              f_threshold=f_threshold, max_iter=max_iter, verbose=verbose)
         return result
 
     @boundscheck(False)
