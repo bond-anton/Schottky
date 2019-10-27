@@ -13,7 +13,7 @@ from Schottky import constant
 
 from Schottky.DCMeasurement import DCMeasurement
 
-from Schottky.Visual.DCMeasurement import plot_n_eh, plot_generation_recombination, plot_ep
+from Schottky.Visual.DCMeasurement import plot_n_eh, plot_generation_recombination, plot_ep, plot_qfe, plot_qfh
 
 
 reference = database[0]
@@ -49,4 +49,10 @@ plt.show()
 measurement.prepare_psi0(1.0, 300)
 
 plot_ep(measurement)
+plt.show()
+
+plot_qfe(measurement)
+plt.show()
+
+plot_qfh(measurement)
 plt.show()
