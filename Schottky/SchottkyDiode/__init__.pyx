@@ -74,11 +74,108 @@ cdef class SchottkyDiode(object):
     def serial_resistance(self, double serial_resistance):
         self.__serial_resistance = fabs(serial_resistance)
 
+    cpdef double phi_b_n_t(self, double temperature):
+        return self.__metal.__work_function - self.__semiconductor.__reference['affinity']
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] phi_b_n(self, double[:] temperature):
+        cdef:
+            int n = temperature.shape[0]
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = self.phi_b_n_t(temperature[i])
+        return result
+
+    cpdef double phi_b_n_ev_t(self, double temperature):
+        return constant.joule_to_ev_point(self.__metal.__work_function
+                                          - self.__semiconductor.__reference['affinity'])
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] phi_b_n_ev(self, double[:] temperature):
+        cdef:
+            int n = temperature.shape[0]
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = self.phi_b_n_ev_t(temperature[i])
+        return result
+
+    cpdef double phi_b_n_boltzmann_t(self, double temperature):
+        return constant.joule_to_boltzmann_point(self.__metal.__work_function
+                                                 - self.__semiconductor.__reference['affinity'],
+                                                 temperature)
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] phi_b_n_boltzmann(self, double[:] temperature):
+        cdef:
+            int n = temperature.shape[0]
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = self.phi_b_n_boltzmann_t(temperature[i])
+        return result
+
+    cpdef double phi_b_p_t(self, double temperature):
+        return self.__metal.__work_function - self.__semiconductor.__reference['affinity'] \
+               - self.__semiconductor.band_gap_t(temperature)
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] phi_b_p(self, double[:] temperature):
+        cdef:
+            int n = temperature.shape[0]
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = self.phi_b_p_t(temperature[i])
+        return result
+
+    cpdef double phi_b_p_ev_t(self, double temperature):
+        return constant.joule_to_ev_point(self.__metal.__work_function - self.__semiconductor.__reference['affinity'] \
+               - self.__semiconductor.band_gap_t(temperature))
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] phi_b_p_ev(self, double[:] temperature):
+        cdef:
+            int n = temperature.shape[0]
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = self.phi_b_p_ev_t(temperature[i])
+        return result
+
+    cpdef double phi_b_p_boltzmann_t(self, double temperature):
+        return constant.joule_to_boltzmann_point(self.__metal.__work_function
+                                                 - self.__semiconductor.__reference['affinity']
+                                                 - self.__semiconductor.band_gap_t(temperature),
+                                                 temperature)
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] phi_b_p_boltzmann(self, double[:] temperature):
+        cdef:
+            int n = temperature.shape[0]
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = self.phi_b_p_boltzmann_t(temperature[i])
+        return result
+
     cpdef double built_in_voltage_t(self, double temperature):
-        cdef double result
-        return self.__metal.work_function - self.__semiconductor.work_function_t(temperature,
-                                                                                 f_threshold=1.0e-23,
-                                                                                 max_iter=100, verbose=False)
+        return self.__metal.__work_function - self.__semiconductor.work_function_t(temperature,
+                                                                                   f_threshold=1.0e-23,
+                                                                                   max_iter=100, verbose=False)
 
     @boundscheck(False)
     @wraparound(False)
@@ -93,10 +190,10 @@ cdef class SchottkyDiode(object):
         return result
 
     cpdef double built_in_voltage_ev_t(self, double temperature):
-        cdef double result
-        return self.__metal.work_function_ev - self.__semiconductor.work_function_ev_t(temperature,
-                                                                                       f_threshold=1.0e-23,
-                                                                                       max_iter=100, verbose=False)
+        return constant.joule_to_ev_point(
+            self.__metal.__work_function - self.__semiconductor.work_function_t(temperature,
+                                                                                f_threshold=1.0e-23,
+                                                                                max_iter=100, verbose=False))
 
     @boundscheck(False)
     @wraparound(False)
@@ -111,11 +208,12 @@ cdef class SchottkyDiode(object):
         return result
 
     cpdef double built_in_voltage_boltzmann_t(self, double temperature):
-        cdef double result
-        return self.__metal.work_function_boltzmann_t(temperature)\
-               - self.__semiconductor.work_function_boltzmann_t(temperature,
-                                                                f_threshold=1.0e-23,
-                                                                max_iter=100, verbose=False)
+        return constant.joule_to_boltzmann_point(
+            self.__metal.__work_function - self.__semiconductor.work_function_t(temperature,
+                                                                                f_threshold=1.0e-23,
+                                                                                max_iter=100, verbose=False),
+            temperature
+        )
 
     @boundscheck(False)
     @wraparound(False)

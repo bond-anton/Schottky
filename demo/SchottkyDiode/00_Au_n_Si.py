@@ -13,7 +13,7 @@ from Schottky import constant
 
 from Schottky.DCMeasurement import DCMeasurement
 
-from Schottky.Visual.DCMeasurement import plot_n_eh, plot_generation_recombination, plot_ep, plot_qfe, plot_qfh
+from Schottky.Visual.DCMeasurement import plot_n_eh, plot_generation_recombination, plot_ep, plot_qfe, plot_qfh, plot_band_diagram
 
 
 reference = database[0]
@@ -39,14 +39,20 @@ diode = SchottkyDiode('Au-n-Si', electrode, silicon,
 diode.contact_diameter = 1.0e-3
 print('Diode area is %2.2f mm^2' % (diode.area * 1e6))
 
-measurement = DCMeasurement('The measurement', diode, initial_step=1e-7)
+temperature = 300.0
+
+measurement = DCMeasurement('The measurement', diode, temperature=temperature, initial_step=1e-7)
+measurement.temperature = temperature
+
+plot_band_diagram(measurement)
+
 plot_n_eh(measurement)
 plt.show()
 
 plot_generation_recombination(measurement)
 plt.show()
 
-measurement.prepare_psi0(0.0, 300)
+measurement.prepare_psi0(0.0)
 
 plot_ep(measurement)
 plt.show()

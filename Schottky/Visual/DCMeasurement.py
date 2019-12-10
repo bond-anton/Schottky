@@ -2,6 +2,16 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 
+def plot_band_diagram(measurement, ax=None):
+    # if ax is None:
+    #     _, ax = plt.subplots()
+    ep_flat_mesh = measurement.electric_potential.flatten()
+    z_ep = np.asarray(ep_flat_mesh.physical_nodes) * 1e6
+    ep = np.asarray(ep_flat_mesh.solution)
+    print(measurement.diode.phi_b_n_t(measurement.temperature))
+    # return ax
+
+
 def plot_ep(measurement, ax=None):
     if ax is None:
         _, ax = plt.subplots()

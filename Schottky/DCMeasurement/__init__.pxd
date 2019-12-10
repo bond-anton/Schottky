@@ -10,6 +10,8 @@ cdef class DCMeasurement(object):
 
         str __label
 
+        double __temperature
+
         double __initial_step
 
         TreeMesh1DUniform __ep
@@ -20,4 +22,4 @@ cdef class DCMeasurement(object):
         TreeMesh1DUniform __generation
         TreeMesh1DUniform __recombination
 
-    cpdef prepare_psi0(self, double bias, double temperature)
+    cpdef prepare_psi0(self, double bias)

@@ -7,9 +7,10 @@ from Schottky.SchottkyDiode cimport SchottkyDiode
 
 cdef class DCMeasurement(object):
 
-    def __init__(self, str label, SchottkyDiode diode, double initial_step=5e-7 ):
+    def __init__(self, str label, SchottkyDiode diode, double temperature=0, double initial_step=5e-7):
         self.__label = label
         self.__diode = diode
+        self.__temperature = temperature
         self.__initial_step = initial_step
         self.__ep = TreeMesh1DUniform(Mesh1DUniform(0.0, self.__diode.__length, physical_step=initial_step),
                                       aligned=True)
@@ -33,6 +34,14 @@ cdef class DCMeasurement(object):
     @label.setter
     def label(self, str label):
         self.__label = label
+
+    @property
+    def temperature(self):
+        return self.__temperature
+
+    @temperature.setter
+    def temperature(self, double temperature):
+        self.__temperature = temperature
 
     @property
     def diode(self):
@@ -66,8 +75,8 @@ cdef class DCMeasurement(object):
     def recombination(self):
         return self.__recombination
 
-    cpdef prepare_psi0(self, double bias, double temperature):
-        v_bi = self.__diode.built_in_voltage_ev_t(temperature)
+    cpdef prepare_psi0(self, double bias):
+        v_bi = self.__diode.built_in_voltage_ev_t(self.__temperature)
         v_bc = v_bi - bias
         psi_0 = Mesh1DUniform(0.0, self.__diode.__length, physical_step=self.__initial_step)
         psi_0.solution = v_bc - np.asarray(psi_0.physical_nodes) * v_bc / psi_0.physical_nodes[-1]
@@ -75,9 +84,8 @@ cdef class DCMeasurement(object):
         print(np.asarray(psi_0.solution))
         self.__ep = TreeMesh1DUniform(psi_0, aligned=True)
         qfe_0 = Mesh1DUniform(0.0, self.__diode.__length, physical_step=self.__initial_step)
-        qfe_0.solution = np.asarray(qfe_0.solution) + self.__diode.semiconductor.el_chem_pot_ev_t(temperature)
+        qfe_0.solution = np.asarray(qfe_0.solution) + self.__diode.semiconductor.el_chem_pot_ev_t(self.__temperature)
         self.__qfe = TreeMesh1DUniform(qfe_0, aligned=True)
         qfh_0 = Mesh1DUniform(0.0, self.__diode.__length, physical_step=self.__initial_step)
-        qfh_0.solution = np.asarray(qfh_0.solution) + self.__diode.semiconductor.el_chem_pot_ev_t(temperature)
+        qfh_0.solution = np.asarray(qfh_0.solution) + self.__diode.semiconductor.el_chem_pot_ev_t(self.__temperature)
         self.__qfh = TreeMesh1DUniform(qfh_0, aligned=True)
-
