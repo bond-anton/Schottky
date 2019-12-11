@@ -52,12 +52,20 @@ cdef class Semiconductor(object):
     cpdef double n_e_boltzmann_t(self, double mu, double temperature)
     cpdef double[:] n_e_boltzmann(self, double[:] mu, double[:] temperature)
 
+    cpdef double n_e_to_mu_t(self, double n_e, double temperature)
+    cpdef double n_e_to_mu_ev_t(self, double n_e, double temperature)
+    cpdef double n_e_to_mu_boltzmann_t(self, double n_e, double temperature)
+
     cpdef double n_h_t(self, double mu, double temperature)
     cpdef double[:] n_h(self, double[:] mu, double[:] temperature)
     cpdef double n_h_ev_t(self, double mu_ev, double temperature)
     cpdef double[:] n_h_ev(self, double[:] mu_ev, double[:] temperature)
     cpdef double n_h_boltzmann_t(self, double mu, double temperature)
     cpdef double[:] n_h_boltzmann(self, double[:] mu, double[:] temperature)
+
+    cpdef double n_h_to_mu_t(self, double n_h, double temperature)
+    cpdef double n_h_to_mu_ev_t(self, double n_h, double temperature)
+    cpdef double n_h_to_mu_boltzmann_t(self, double n_h, double temperature)
 
     cpdef double n_e_n_i_t(self, double mu, double temperature)
     cpdef double[:] n_e_n_i(self, double[:] mu, double[:] temperature)

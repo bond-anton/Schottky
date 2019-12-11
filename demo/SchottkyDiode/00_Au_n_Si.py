@@ -40,25 +40,30 @@ diode.contact_diameter = 1.0e-3
 print('Diode area is %2.2f mm^2' % (diode.area * 1e6))
 
 temperature = 300.0
+bias = 0.0
 
-measurement = DCMeasurement('The measurement', diode, temperature=temperature, initial_step=1e-7)
+measurement = DCMeasurement('The measurement', diode,
+                            temperature=temperature, bias=bias, initial_step=1e-7)
 measurement.temperature = temperature
+measurement.bias = bias
+
+#measurement.prepare_psi0()
 
 plot_band_diagram(measurement)
+plt.show()
 
 plot_n_eh(measurement)
 plt.show()
+#
+# plot_generation_recombination(measurement)
+# plt.show()
+#
+# plot_ep(measurement)
+# plt.show()
+#
+# plot_qfe(measurement)
+# plt.show()
 
-plot_generation_recombination(measurement)
-plt.show()
-
-measurement.prepare_psi0(0.0)
-
-plot_ep(measurement)
-plt.show()
-
-plot_qfe(measurement)
-plt.show()
-
-plot_qfh(measurement)
-plt.show()
+#
+# plot_qfh(measurement)
+# plt.show()

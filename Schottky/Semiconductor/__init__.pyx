@@ -383,6 +383,15 @@ cdef class Semiconductor(object):
             result[i] = self.n_e_n_i_boltzmann_t(mu[i], temperature[i])
         return result
 
+    cpdef double n_e_to_mu_t(self, double n_e, double temperature):
+        return constant.__k * temperature * log (self.n_c_t(temperature) / n_e)
+
+    cpdef double n_e_to_mu_ev_t(self, double n_e, double temperature):
+        return constant.__k * temperature * log (self.n_c_t(temperature) / n_e) / constant.__q
+
+    cpdef double n_e_to_mu_boltzmann_t(self, double n_e, double temperature):
+        return log (self.n_c_t(temperature) / n_e)
+
     cpdef double n_h_t(self, double mu, double temperature):
         return self.n_v_t(temperature) * exp(
             constant.joule_to_boltzmann_point(mu, temperature) - self.band_gap_boltzmann_t(temperature)
@@ -479,6 +488,16 @@ cdef class Semiconductor(object):
         for i in range(n):
             result[i] = self.n_h_n_i_boltzmann_t(mu[i], temperature[i])
         return result
+
+    cpdef double n_h_to_mu_t(self, double n_h, double temperature):
+        return constant.__k * temperature * log (n_h / self.n_v_t(temperature)) + self.band_gap_t(temperature)
+
+    cpdef double n_h_to_mu_ev_t(self, double n_h, double temperature):
+        return constant.__k * temperature * log (n_h / self.n_v_t(temperature)) / constant.__q \
+               + self.band_gap_ev_t(temperature)
+
+    cpdef double n_h_to_mu_boltzmann_t(self, double n_h, double temperature):
+        return log (n_h / self.n_v_t(temperature)) + self.band_gap_boltzmann_t(temperature)
 
     cpdef double v_e_t(self, double temperature):
         return sqrt(3 * constant.k * temperature /

@@ -226,16 +226,3 @@ cdef class SchottkyDiode(object):
         for i in range(n):
             result[i] = self.built_in_voltage_boltzmann_t(temperature[i])
         return result
-
-    # @boundscheck(False)
-    # @wraparound(False)
-    # cpdef double[:] n_e(self, double[:] phi, double temperature):
-    #     cdef:
-    #         int n = phi.shape[0]
-    #         int i
-    #         array[double] result, template = array('d')
-    #     result = clone(template, n, zero=False)
-    #     for i in range(n):
-    #         result[i] = self.__semiconductor.n_e(phi[i], temperature)
-    #     return result
-    

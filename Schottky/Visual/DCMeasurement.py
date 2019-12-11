@@ -1,15 +1,48 @@
 import numpy as np
 from matplotlib import pyplot as plt
+from matplotlib.patches import Rectangle
 
 
 def plot_band_diagram(measurement, ax=None):
-    # if ax is None:
-    #     _, ax = plt.subplots()
+    if ax is None:
+        _, ax = plt.subplots()
     ep_flat_mesh = measurement.electric_potential.flatten()
     z_ep = np.asarray(ep_flat_mesh.physical_nodes) * 1e6
-    ep = np.asarray(ep_flat_mesh.solution)
-    print(measurement.diode.phi_b_n_t(measurement.temperature))
-    # return ax
+    ep = np.asarray(ep_flat_mesh.solution) - measurement.v_bi + measurement.bias
+    flat_mesh = measurement.quasi_fermi_e.flatten()
+    z_qfe = np.asarray(flat_mesh.physical_nodes) * 1e6
+    qfe = np.asarray(flat_mesh.solution)
+    flat_mesh = measurement.quasi_fermi_h.flatten()
+    z_qfh = np.asarray(flat_mesh.physical_nodes) * 1e6
+    qfh = np.asarray(flat_mesh.solution)
+    phi_b_n = measurement.diode.phi_b_n_ev_t(measurement.temperature)
+    phi_b_p = measurement.diode.phi_b_p_ev_t(measurement.temperature)
+    ec = ep + phi_b_n
+    ev = ep + phi_b_p
+    length = measurement.diode.length * 1e6
+    if phi_b_p < 0:
+        metal_energy_width = -phi_b_p * 1.25
+    else:
+        metal_energy_width = (phi_b_n - phi_b_p) * 0.75
+    metal_energy_width = (phi_b_n - phi_b_p) * 0.75
+    metal_length = length / 5.0
+    metal_patch = Rectangle((-metal_length, -metal_energy_width), metal_length, metal_energy_width,
+                            facecolor='lightgray', edgecolor='k', linewidth=1)
+    ax.plot(z_ep, ec, color='k', linewidth=1)
+    ax.plot(z_ep, ev, color='k', linewidth=1)
+    ax.plot(z_qfe, ec-qfe, color='b', linewidth=1, linestyle=':')
+    ax.plot(z_qfh, ec - qfh, color='r', linewidth=1, linestyle=':')
+    ax.plot(z_ep, np.ones_like(z_ep) * measurement.bias, color='k', linewidth=1, linestyle='-.')
+    ax.plot([0., 0.], [phi_b_p, phi_b_n], color='k', linewidth=1)
+    ax.add_patch(metal_patch)
+    ax.text(-metal_length / 2.0, -metal_energy_width / 2, measurement.diode.metal.label,
+            horizontalalignment='center', verticalalignment='center')
+
+    ax.set_xlim([-metal_length * 1.1, length])
+    ax.set_ylim([min(min(ev), -metal_energy_width) - 0.1, max(max(ec), 0) + 0.1])
+    ax.set_xlabel('z, $\mu$m')
+    ax.set_ylabel('E, eV')
+    return ax
 
 
 def plot_ep(measurement, ax=None):
@@ -112,6 +145,7 @@ def plot_n_eh(measurement, ax=None):
     ax.set_xlim([0, measurement.diode.length * 1e6])
     ax.set_xlabel('z, $\mu$m')
     ax.set_ylabel('N, cm$^{-3}$')
+    ax.set_yscale('log')
     return ax
 
 def plot_generation(measurement, ax=None):

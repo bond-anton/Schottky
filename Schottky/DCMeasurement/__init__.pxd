@@ -11,15 +11,20 @@ cdef class DCMeasurement(object):
         str __label
 
         double __temperature
+        double __bias
 
         double __initial_step
 
         TreeMesh1DUniform __ep
-        TreeMesh1DUniform __qfe
-        TreeMesh1DUniform __qfh
-        TreeMesh1DUniform __ne
-        TreeMesh1DUniform __nh
+        TreeMesh1DUniform __qf_e
+        TreeMesh1DUniform __qf_h
+        TreeMesh1DUniform __n_e
+        TreeMesh1DUniform __n_h
         TreeMesh1DUniform __generation
         TreeMesh1DUniform __recombination
 
-    cpdef prepare_psi0(self, double bias)
+    cpdef prepare_psi0(self)
+    cpdef double[:] qf_e_to_n_e(self, double[:] qf_e)
+    cpdef double[:] qf_h_to_n_h(self, double[:] qf_h)
+    cpdef double[:] n_e_to_qf_e(self, double[:] n_e)
+    cpdef double[:] n_h_to_qf_h(self, double[:] n_h)
