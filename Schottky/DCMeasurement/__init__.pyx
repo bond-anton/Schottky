@@ -107,10 +107,10 @@ cdef class DCMeasurement(object):
         psi_0.solution = v_bc - np.asarray(psi_0.physical_nodes) * v_bc / psi_0.physical_nodes[-1]
         self.__ep = TreeMesh1DUniform(psi_0, aligned=True)
         qf_e_0 = Mesh1DUniform(0.0, self.__diode.__length, physical_step=self.__initial_step)
-        qf_e_0.solution = np.asarray(qf_e_0.solution) + self.__diode.__semiconductor.el_chem_pot_ev_t(self.__temperature)
+        qf_e_0.solution = np.asarray(psi_0.solution) + self.__diode.__semiconductor.el_chem_pot_ev_t(self.__temperature)
         self.__qf_e = TreeMesh1DUniform(qf_e_0, aligned=True)
         qf_h_0 = Mesh1DUniform(0.0, self.__diode.__length, physical_step=self.__initial_step)
-        qf_h_0.solution = np.asarray(qf_h_0.solution) + self.__diode.__semiconductor.el_chem_pot_ev_t(self.__temperature)
+        qf_h_0.solution = np.asarray(psi_0.solution) + self.__diode.__semiconductor.el_chem_pot_ev_t(self.__temperature)
         self.__qf_h = TreeMesh1DUniform(qf_h_0, aligned=True)
         n_e_0 = Mesh1DUniform(0.0, self.__diode.__length, physical_step=self.__initial_step)
         n_e_0.solution = self.qf_e_to_n_e(qf_e_0.solution)
