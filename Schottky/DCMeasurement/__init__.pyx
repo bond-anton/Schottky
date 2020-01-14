@@ -103,14 +103,17 @@ cdef class DCMeasurement(object):
     cpdef prepare_psi0(self):
         v_bi = self.__diode.built_in_voltage_ev_t(self.__temperature)
         v_bc = v_bi - self.__bias
+        phi_b_n = self.diode.phi_b_n_ev_t(self.__temperature)
+        xi = self.__diode.__semiconductor.el_chem_pot_ev_t(self.__temperature)
+        phi_b_p = self.diode.phi_b_p_ev_t(self.__temperature)
         psi_0 = Mesh1DUniform(0.0, self.__diode.__length, physical_step=self.__initial_step)
         psi_0.solution = v_bc - np.asarray(psi_0.physical_nodes) * v_bc / psi_0.physical_nodes[-1]
         self.__ep = TreeMesh1DUniform(psi_0, aligned=True)
         qf_e_0 = Mesh1DUniform(0.0, self.__diode.__length, physical_step=self.__initial_step)
-        qf_e_0.solution = np.asarray(psi_0.solution) + self.__diode.__semiconductor.el_chem_pot_ev_t(self.__temperature)
+        qf_e_0.solution = phi_b_n + np.asarray(qf_e_0.physical_nodes) * (xi - phi_b_n) / qf_e_0.physical_nodes[-1]
         self.__qf_e = TreeMesh1DUniform(qf_e_0, aligned=True)
         qf_h_0 = Mesh1DUniform(0.0, self.__diode.__length, physical_step=self.__initial_step)
-        qf_h_0.solution = np.asarray(psi_0.solution) + self.__diode.__semiconductor.el_chem_pot_ev_t(self.__temperature)
+        qf_h_0.solution = phi_b_n + np.asarray(qf_h_0.physical_nodes) * (xi - phi_b_n) / qf_h_0.physical_nodes[-1]
         self.__qf_h = TreeMesh1DUniform(qf_h_0, aligned=True)
         n_e_0 = Mesh1DUniform(0.0, self.__diode.__length, physical_step=self.__initial_step)
         n_e_0.solution = self.qf_e_to_n_e(qf_e_0.solution)

@@ -40,7 +40,7 @@ diode.contact_diameter = 1.0e-3
 print('Diode area is %2.2f mm^2' % (diode.area * 1e6))
 
 temperature = 300.0
-bias = 0.0
+bias = 1.0
 
 measurement = DCMeasurement('The measurement', diode,
                             temperature=temperature, bias=bias, initial_step=1e-7)
