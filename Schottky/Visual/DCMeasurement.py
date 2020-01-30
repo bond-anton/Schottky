@@ -18,13 +18,13 @@ def plot_band_diagram(measurement, ax=None):
     phi_b_n = measurement.diode.phi_b_n_ev_t(measurement.temperature)
     phi_b_p = measurement.diode.phi_b_p_ev_t(measurement.temperature)
     ec = ep + phi_b_n
-    ev = ep + phi_b_p
+    ev = ep - phi_b_p
     length = measurement.diode.length * 1e6
-    if phi_b_p < 0:
-        metal_energy_width = -phi_b_p * 1.25
+    if phi_b_p > 0:
+        metal_energy_width = phi_b_p * 1.25
     else:
-        metal_energy_width = (phi_b_n - phi_b_p) * 0.75
-    metal_energy_width = (phi_b_n - phi_b_p) * 0.75
+        metal_energy_width = (phi_b_n + phi_b_p) * 0.75
+    metal_energy_width = (phi_b_n + phi_b_p) * 0.75
     metal_length = length / 5.0
     metal_patch = Rectangle((-metal_length, -metal_energy_width), metal_length, metal_energy_width,
                             facecolor='lightgray', edgecolor='k', linewidth=1)
@@ -33,7 +33,7 @@ def plot_band_diagram(measurement, ax=None):
     ax.plot(z_qfe, ec-qfe, color='b', linewidth=1, linestyle=':')
     ax.plot(z_qfh, ec - qfh, color='r', linewidth=1, linestyle=':')
     ax.plot(z_ep, np.ones_like(z_ep) * measurement.bias, color='k', linewidth=1, linestyle='-.')
-    ax.plot([0., 0.], [phi_b_p, phi_b_n], color='k', linewidth=1)
+    ax.plot([0., 0.], [-phi_b_p, phi_b_n], color='k', linewidth=1)
     ax.add_patch(metal_patch)
     ax.text(-metal_length / 2.0, -metal_energy_width / 2, measurement.diode.metal.label,
             horizontalalignment='center', verticalalignment='center')

@@ -31,3 +31,7 @@ cdef class SchottkyDiode(object):
     cpdef double[:] built_in_voltage_ev(self, double[:] temperature)
     cpdef double built_in_voltage_boltzmann_t(self, double temperature)
     cpdef double[:] built_in_voltage_boltzmann(self, double[:] temperature)
+    cpdef double n0_t(self, double temperature)
+    cpdef double[:] n0(self, double[:] temperature)
+    cpdef double p0_t(self, double temperature)
+    cpdef double[:] p0(self, double[:] temperature)

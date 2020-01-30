@@ -123,8 +123,8 @@ cdef class SchottkyDiode(object):
         return result
 
     cpdef double phi_b_p_t(self, double temperature):
-        return self.__metal.__work_function - self.__semiconductor.__reference['affinity'] \
-               - self.__semiconductor.band_gap_t(temperature)
+        return self.__semiconductor.__reference['affinity'] \
+               + self.__semiconductor.band_gap_t(temperature) - self.__metal.__work_function
 
     @boundscheck(False)
     @wraparound(False)
@@ -139,8 +139,8 @@ cdef class SchottkyDiode(object):
         return result
 
     cpdef double phi_b_p_ev_t(self, double temperature):
-        return constant.joule_to_ev_point(self.__metal.__work_function - self.__semiconductor.__reference['affinity'] \
-               - self.__semiconductor.band_gap_t(temperature))
+        return constant.joule_to_ev_point(self.__semiconductor.__reference['affinity'] \
+               + self.__semiconductor.band_gap_t(temperature) - self.__metal.__work_function)
 
     @boundscheck(False)
     @wraparound(False)
@@ -155,9 +155,9 @@ cdef class SchottkyDiode(object):
         return result
 
     cpdef double phi_b_p_boltzmann_t(self, double temperature):
-        return constant.joule_to_boltzmann_point(self.__metal.__work_function
-                                                 - self.__semiconductor.__reference['affinity']
-                                                 - self.__semiconductor.band_gap_t(temperature),
+        return constant.joule_to_boltzmann_point(self.__semiconductor.__reference['affinity'] \
+                                                 + self.__semiconductor.band_gap_t(temperature) \
+                                                 - self.__metal.__work_function,
                                                  temperature)
 
     @boundscheck(False)
@@ -225,4 +225,34 @@ cdef class SchottkyDiode(object):
         result = clone(template, n, zero=False)
         for i in range(n):
             result[i] = self.built_in_voltage_boltzmann_t(temperature[i])
+        return result
+
+    cpdef double n0_t(self, double temperature):
+        return self.__semiconductor.n_e_t(self.phi_b_n_t(temperature), temperature)
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] n0(self, double[:] temperature):
+        cdef:
+            int n = temperature.shape[0]
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = self.n0_t(temperature[i])
+        return result
+
+    cpdef double p0_t(self, double temperature):
+        return self.__semiconductor.n_h_t(self.phi_b_n_t(temperature), temperature)
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double[:] p0(self, double[:] temperature):
+        cdef:
+            int n = temperature.shape[0]
+            int i
+            array[double] result, template = array('d')
+        result = clone(template, n, zero=False)
+        for i in range(n):
+            result[i] = self.p0_t(temperature[i])
         return result
