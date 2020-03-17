@@ -50,7 +50,9 @@ measurement = DCMeasurement('The measurement', diode,
 measurement.temperature = temperature
 measurement.bias = bias
 
-#measurement.prepare_psi0()
+print(measurement.thermionic_emission_current_e())
+print(measurement.thermionic_emission_current_h())
+
 
 plot_band_diagram(measurement)
 plt.show()

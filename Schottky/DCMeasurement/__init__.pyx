@@ -7,6 +7,7 @@ from BDMesh.Mesh1DUniform cimport Mesh1DUniform
 from BDMesh.TreeMesh1DUniform cimport TreeMesh1DUniform
 
 from Schottky.SchottkyDiode cimport SchottkyDiode
+from Schottky.Constants cimport constant
 
 
 cdef class DCMeasurement(object):
@@ -169,3 +170,35 @@ cdef class DCMeasurement(object):
         for i in range(n):
             result[i] = self.__diode.__semiconductor.n_h_to_mu_ev_t(n_h[i], self.__temperature)
         return result
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double thermionic_emission_current_e(self):
+        cdef:
+            double n0, nb, a, nc, t2
+        n0 = self.__n_e.flatten().solution[0]
+        nb = self.__diode.n0_t(self.__temperature)
+        nc = self.__diode.__semiconductor.n_c_t(self.__temperature)
+        a = self.__diode.__semiconductor.__reference['thermionic_emission']['A_R_coeff_n'] * constant.__A_R
+        t2 = self.__temperature * self.__temperature
+        return a * t2 * (n0 - nb) / nc
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double thermionic_emission_current_h(self):
+        cdef:
+            double p0, pb, a, nv, t2
+        p0 = self.__n_h.flatten().solution[0]
+        pb = self.__diode.p0_t(self.__temperature)
+        nv = self.__diode.__semiconductor.n_v_t(self.__temperature)
+        a = self.__diode.__semiconductor.__reference['thermionic_emission']['A_R_coeff_p'] * constant.__A_R
+        t2 = self.__temperature * self.__temperature
+        return a * t2 * (pb - p0) / nv
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double grad_qf_e_bc(self):
+        cdef:
+            double n0, mu, j
+        j = self.thermionic_emission_current_e()
+        mu = self.__diode.__semiconductor.mobility_e_point_t(dopants_n, double field, double pn, double temperature)
