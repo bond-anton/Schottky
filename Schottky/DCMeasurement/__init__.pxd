@@ -30,3 +30,5 @@ cdef class DCMeasurement(object):
     cpdef double[:] n_h_to_qf_h(self, double[:] n_h)
     cpdef double thermionic_emission_current_e(self)
     cpdef double thermionic_emission_current_h(self)
+    cpdef double grad_qf_e_bc(self)
+    cpdef double grad_qf_h_bc(self)

@@ -53,6 +53,8 @@ measurement.bias = bias
 print(measurement.thermionic_emission_current_e())
 print(measurement.thermionic_emission_current_h())
 
+print(measurement.grad_qf_e_bc())
+print(measurement.grad_qf_h_bc())
 
 plot_band_diagram(measurement)
 plt.show()

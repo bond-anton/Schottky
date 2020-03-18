@@ -3,10 +3,12 @@ import numpy as np
 from cython cimport boundscheck, wraparound
 from cpython.array cimport array, clone
 
+from BDMesh.Mesh1D cimport Mesh1D
 from BDMesh.Mesh1DUniform cimport Mesh1DUniform
 from BDMesh.TreeMesh1DUniform cimport TreeMesh1DUniform
 
 from Schottky.SchottkyDiode cimport SchottkyDiode
+from Schottky.Dopant cimport Dopant
 from Schottky.Constants cimport constant
 
 
@@ -199,6 +201,32 @@ cdef class DCMeasurement(object):
     @wraparound(False)
     cpdef double grad_qf_e_bc(self):
         cdef:
-            double n0, mu, j
+            double n0, p0, mu, j, nd = 0, ef, h
+            Mesh1D ep = self.__ep.flatten()
+            Dopant dopant
+        n0 = self.__n_e.flatten().solution[0]
+        p0 = self.__n_h.flatten().solution[0]
+        h = ep.jacobian * (ep.local_nodes[1] - ep.local_nodes[0])
+        ef = (ep.solution[0] - ep.solution[1]) / h
+        for dopant in self.__diode.__semiconductor.__dopants:
+            nd += dopant.__concentration.flatten().solution[0]
         j = self.thermionic_emission_current_e()
-        mu = self.__diode.__semiconductor.mobility_e_point_t(dopants_n, double field, double pn, double temperature)
+        mu = self.__diode.__semiconductor.mobility_e_point_t(nd, ef, p0*n0, self.__temperature)
+        return -j / (constant.__q * n0 * mu)
+
+    @boundscheck(False)
+    @wraparound(False)
+    cpdef double grad_qf_h_bc(self):
+        cdef:
+            double n0, p0, mu, j, nd = 0, ef, h
+            Mesh1D ep = self.__ep.flatten()
+            Dopant dopant
+        n0 = self.__n_e.flatten().solution[0]
+        p0 = self.__n_h.flatten().solution[0]
+        h = ep.jacobian * (ep.local_nodes[1] - ep.local_nodes[0])
+        ef = (ep.solution[0] - ep.solution[1]) / h
+        for dopant in self.__diode.__semiconductor.__dopants:
+            nd += dopant.__concentration.flatten().solution[0]
+        j = self.thermionic_emission_current_h()
+        mu = self.__diode.__semiconductor.mobility_h_point_t(nd, ef, p0*n0, self.__temperature)
+        return -j / (constant.__q * p0 * mu)
