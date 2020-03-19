@@ -86,6 +86,16 @@ extensions = [
         ['Schottky/DCMeasurement/__init__.pyx'],
         depends=['Schottky/DCMeasurement/__init__.pxd'],
     ),
+    Extension(
+        'Schottky.Generation',
+        ['Schottky/Generation/__init__.pyx'],
+        depends=['Schottky/Generation/__init__.pxd'],
+    ),
+    Extension(
+        'Schottky.Recombination',
+        ['Schottky/Recombination/__init__.pyx'],
+        depends=['Schottky/Recombination/__init__.pxd'],
+    ),
 ]
 
 copt = {'msvc': ['/openmp', '/Ox', '/fp:fast', '/favor:INTEL64', '/Og'],
@@ -171,6 +181,8 @@ setup(
                   'Schottky/Potential': ['*.pxd'],
                   'Schottky/SchottkyDiode': ['*.pxd'],
                   'Schottky/DCMeasurement': ['*.pxd'],
+                  'Schottky/Generation': ['*.pxd'],
+                  'Schottky/Recombination': ['*.pxd'],
                   },
     install_requires=['numpy', 'Cython', 'scipy', 'matplotlib', 'BDSpace', 'BDMesh', 'BDPoisson1D'],
     test_suite='nose.collector',

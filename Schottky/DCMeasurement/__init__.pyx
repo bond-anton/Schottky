@@ -7,9 +7,12 @@ from BDMesh.Mesh1D cimport Mesh1D
 from BDMesh.Mesh1DUniform cimport Mesh1DUniform
 from BDMesh.TreeMesh1DUniform cimport TreeMesh1DUniform
 
+from BDPoisson1D.Function cimport Function, Functional, InterpolateFunction
+
 from Schottky.SchottkyDiode cimport SchottkyDiode
 from Schottky.Dopant cimport Dopant
 from Schottky.Constants cimport constant
+from Schottky.Helpers.array cimport gradient1d
 
 
 cdef class DCMeasurement(object):
@@ -230,3 +233,10 @@ cdef class DCMeasurement(object):
         j = self.thermionic_emission_current_h()
         mu = self.__diode.__semiconductor.mobility_h_point_t(nd, ef, p0*n0, self.__temperature)
         return -j / (constant.__q * p0 * mu)
+
+    cpdef solve_for_grad_phi_n(self):
+        cdef:
+            double q_kt = constant.__q / (constant.__k * self.__temperature)
+            Mesh1D ep = self.__ep.flatten()
+            Function field_inv
+        field_inv = InterpolateFunction(ep.physical_nodes, gradient1d(ep.solution))
