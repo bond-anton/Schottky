@@ -7,11 +7,14 @@ from BDMesh.Mesh1D cimport Mesh1D
 from BDMesh.Mesh1DUniform cimport Mesh1DUniform
 from BDMesh.TreeMesh1DUniform cimport TreeMesh1DUniform
 
-from BDPoisson1D.Function cimport Function, Functional, InterpolateFunction
+from BDPoisson1D.Function cimport Function, Functional, InterpolateFunction, ScaledFunction
+from BDPoisson1D.Function cimport FunctionSum, FunctionDifference, PowFunction
 
 from Schottky.SchottkyDiode cimport SchottkyDiode
 from Schottky.Dopant cimport Dopant
 from Schottky.Constants cimport constant
+from Schottky.Generation cimport ZeroGenerationFunction
+from Schottky.Recombination cimport ZeroRecombinationFunction, CostantRecombinationFunction
 from Schottky.Helpers.array cimport gradient1d
 
 
@@ -234,9 +237,25 @@ cdef class DCMeasurement(object):
         mu = self.__diode.__semiconductor.mobility_h_point_t(nd, ef, p0*n0, self.__temperature)
         return -j / (constant.__q * p0 * mu)
 
-    cpdef solve_for_grad_phi_n(self):
+    cpdef solve_for_grad_qf_e(self):
         cdef:
             double q_kt = constant.__q / (constant.__k * self.__temperature)
             Mesh1D ep = self.__ep.flatten()
-            Function field_inv
-        field_inv = InterpolateFunction(ep.physical_nodes, gradient1d(ep.solution))
+            Mesh1D qfe = self.__qf_e.flatten()
+            double[:] ef = gradient1d(ep.solution, ep.physical_nodes, scale=-1)
+            double[:] ne = self.__n_e.flatten().solution
+            double[:] nh = self.__n_h.flatten().solution
+            int n_nodes = ne.shape[0], i
+            double[:] mu_n = clone(array('d'), n_nodes, zero=False)
+            Function p, f, g_u, qf_e_0, n
+            Dopant dopant
+        for dopant in self.__diode.__semiconductor.__dopants:
+            nd += dopant.__concentration.flatten().solution[0]
+        for i in range(n_nodes):
+            mu_n[i] = ne[i] * self.__diode.__semiconductor.mobility_h_point_t(nd, ef[i], ne[i] * nh[i], self.__temperature)
+        n = InterpolateFunction(ne.physical_nodes, ne.solution)
+        mu =
+
+        qf_e_0 = InterpolateFunction(qfe.physical_nodes, qfe.solution)
+        p = InterpolateFunction(ep.physical_nodes, gradient1d(ep.solution, ep.physical_nodes, scale=q_kt))
+        g_u = FunctionDifference(ZeroGenerationFunction(), ZeroRecombinationFunction())
