@@ -1,8 +1,7 @@
 import numpy as np
 from matplotlib import pyplot as plt
 
-from BDMesh.Mesh1DUniform import Mesh1DUniform
-from BDMesh.TreeMesh1DUniform import TreeMesh1DUniform
+from BDFunction1D.Standard import Constant
 
 from Schottky.Dopant import Dopant
 from Schottky.Semiconductor import Semiconductor
@@ -20,11 +19,7 @@ reference = database[0]
 
 silicon = Semiconductor('Si', reference)
 
-c_p = Mesh1DUniform(0.0, 5e-6, physical_step=1e-6)
-f_p = Mesh1DUniform(0.0, 5e-6, physical_step=1e-6)
-c_p.solution = np.ones(c_p.num) * 1e21
-f_p.solution = np.zeros(f_p.num)
-phosphorus = Dopant('P', True, TreeMesh1DUniform(c_p, aligned=True), TreeMesh1DUniform(f_p, aligned=True),
+phosphorus = Dopant('P', True, Constant(1e21),
                     0.045 * constant.q, silicon.band_gap_t(0.0) - 0.045 * constant.q,
                     1e-15, 1e-15)
 phosphorus.charge_state = {0: +1, 1: 0}
@@ -45,11 +40,7 @@ deep_trap_potential = HyperbolicInExternalField('Coulomb potential', point_charg
                                                 r_min=1.0e-10, r_max=1.0e-7,
                                                 phi_resolution=360, theta_resolution=50)
 # Create trap with Coulomb potential for electrons
-c_t = Mesh1DUniform(0.0, 5e-6, physical_step=1e-6)
-f_t = Mesh1DUniform(0.0, 5e-6, physical_step=1e-6)
-c_t.solution = np.ones(c_t.num) * 1e17
-f_t.solution = np.zeros(f_t.num)
-deep_trap = Dopant('Et', True, TreeMesh1DUniform(c_t, aligned=True), TreeMesh1DUniform(f_t, aligned=True),
+deep_trap = Dopant('Et', True, Constant(1e17),
                    0.3 * constant.q,  silicon.band_gap_t(0.0) - 0.3 * constant.q,
                    1e-15, 1e-15,
                    e_potential=deep_trap_potential)

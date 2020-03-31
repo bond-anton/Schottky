@@ -1,7 +1,8 @@
 numpy
-scipy
+scipy>=0.17.0
 Cython
 matplotlib
-BDSpace
-BDMesh
-BDPoisson1D
+BDSpace>=0.3.11
+BDMesh>=0.2.11
+BDFunction1D>=0.0.5
+BDPoisson1D>=0.3.1

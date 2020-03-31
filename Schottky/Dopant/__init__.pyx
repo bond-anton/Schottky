@@ -1,9 +1,5 @@
-from cython cimport boundscheck, wraparound
-from cpython.array cimport array, clone
+from BDFunction1D cimport Function
 
-from BDMesh.Mesh1D cimport Mesh1D
-from BDMesh.TreeMesh1D cimport TreeMesh1D
-from BDMesh.TreeMesh1DUniform cimport TreeMesh1DUniform
 from Schottky.Trap cimport Trap
 from Schottky.Potential.TrapPotential cimport TrapPotential
 
@@ -14,7 +10,7 @@ cdef class Dopant(Trap):
     '''
 
     def __init__(self, str label, bint conduction_band_bound,
-                 TreeMesh1DUniform concentration, TreeMesh1DUniform f,
+                 Function concentration,
                  double energy_c, double energy_v,
                  double e_cs0, double h_cs0,
                  double e_cs_activation=0.0, double h_cs_activation=0.0,
@@ -23,8 +19,6 @@ cdef class Dopant(Trap):
         Constructor
         '''
         self.__concentration = concentration
-        self.__f = f
-        self.__coerce_mesh_tree_occupation(self.__f)
         self.__color = 'k'
         self.__linestyle = '-'
         self.__marker = ''
@@ -38,51 +32,9 @@ cdef class Dopant(Trap):
     def concentration(self):
         return self.__concentration
 
-    @boundscheck(False)
-    @wraparound(False)
-    cdef void __coerce_mesh_occupation(self, Mesh1D mesh):
-        cdef:
-            Py_ssize_t n = mesh.num
-            int i
-            array[double] new_solution, template = array('d')
-        new_solution = clone(template, n, zero=False)
-        for i in range(n):
-            if mesh.solution[i] > 1.0:
-                new_solution[i] = 1.0
-            elif mesh.solution[i] < 0.0:
-                new_solution[i] = 0.0
-            else:
-                new_solution[i] = mesh.solution[i]
-        mesh.solution = new_solution
-
-    @boundscheck(False)
-    @wraparound(False)
-    cdef void __coerce_mesh_tree_occupation(self, TreeMesh1D mesh_tree):
-        cdef:
-            Py_ssize_t n
-            int level
-        for level in mesh_tree.levels:
-            for i in range(len(mesh_tree.tree[level])):
-                self.__coerce_mesh_occupation(mesh_tree.tree[level][i])
-
     @concentration.setter
-    def concentration(self, TreeMesh1DUniform concentration):
+    def concentration(self, Function concentration):
         self.__concentration = concentration
-
-    @property
-    def occupation(self):
-        return self.__f
-
-    @occupation.setter
-    def occupation(self, TreeMesh1DUniform f):
-        self.__f = f
-        self.__coerce_mesh_tree_occupation(self.__f)
-
-    cpdef double[:] n_t(self, double[:] z):
-        return self.__concentration.interpolate_solution(z)
-
-    cpdef double[:] f(self, double[:] z):
-        return self.__f.interpolate_solution(z)
 
     @property
     def color(self):

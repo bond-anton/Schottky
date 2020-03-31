@@ -1,3 +1,4 @@
+from BDFunction1D cimport Function
 from Schottky.Trap cimport Trap
 from Schottky.Helpers.Cache cimport Cache
 
@@ -11,6 +12,7 @@ cdef class Semiconductor(object):
         Cache __trap_eq_occupation_cache
         Cache __bulk_charge_cache
         Cache __el_chem_pot_cache
+        Function __dopants_n
 
     cdef double __band_gap_t(self, double temperature)
     cpdef double band_gap_t(self, double temperature)

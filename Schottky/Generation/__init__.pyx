@@ -1,46 +1,30 @@
 from libc.math cimport exp
 
 from cython cimport boundscheck, wraparound
-from cpython.array cimport array, clone
 
-from BDPoisson1D.Function cimport Function, Functional
+from BDFunction1D cimport Function
+from BDFunction1D.Standard cimport Constant, Zero
 
 
-cdef class ConstantGenerationFunction(Function):
+cdef class ConstantGenerationFunction(Constant):
 
     def __init__(self, double rate):
-        super(ConstantGenerationFunction, self).__init__()
-        self.__rate = rate
+        super(ConstantGenerationFunction, self).__init__(rate)
 
     @property
     def rate(self):
-        return self.__rate
+        return self.c
 
     @rate.setter
     def rate(self, double rate):
-        self.__rate = rate
-
-    @boundscheck(False)
-    @wraparound(False)
-    cpdef double[:] evaluate(self, double[:] x):
-        cdef:
-            array[double] result
-            int i, n = x.shape[0]
-        result = clone(array('d'), n, zero=False)
-        for i in range(n):
-            result[i] = self.__rate
+        self.c = rate
 
 
-cdef class ZeroGenerationFunction(Function):
+cdef class ZeroGenerationFunction(Zero):
 
     @property
     def rate(self):
         return 0.0
-
-    @boundscheck(False)
-    @wraparound(False)
-    cpdef double[:] evaluate(self, double[:] x):
-        return clone(array('d'), x.shape[0], zero=True)
 
 
 cdef class ExponentialGenerationFunction(Function):
@@ -68,10 +52,5 @@ cdef class ExponentialGenerationFunction(Function):
 
     @boundscheck(False)
     @wraparound(False)
-    cpdef double[:] evaluate(self, double[:] x):
-        cdef:
-            array[double] result
-            int i, n = x.shape[0]
-        result = clone(array('d'), n, zero=False)
-        for i in range(n):
-            result[i] = self.__rate * exp(-x[i] / self.__absorption_length)
+    cpdef double evaluate_point(self, double x):
+        return self.__rate * exp(-x / self.__absorption_length)

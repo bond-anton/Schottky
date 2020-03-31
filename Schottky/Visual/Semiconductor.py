@@ -4,17 +4,10 @@ from matplotlib import pyplot as plt
 from Schottky import constant
 
 
-def draw_bands_diagram(semiconductor, temperature, f_threshold=1.0e-23, max_iter=100, verbose=False, ax=None):
+def draw_bands_diagram(semiconductor, temperature, f_threshold=1.0e-23, max_iter=100, max_x=5, verbose=False, ax=None):
     if ax is None:
         _, ax = plt.subplots()
     band_gap = semiconductor.band_gap_ev_t(temperature)
-    max_x = 0
-    for dopant in semiconductor.dopants:
-        mesh = dopant.concentration.flatten()
-        x = np.asarray(mesh.physical_nodes) * 1e6
-        max_x = max(max_x, max(x))
-    if max_x == 0:
-        max_x = 5
     x = np.linspace(0.0, max_x, num=100, endpoint=True, dtype=np.double)
     ax.plot(x, np.zeros_like(x), 'k-', linewidth=2)
     ax.plot(x, np.ones_like(x) * band_gap, 'k-', linewidth=2)
@@ -51,18 +44,13 @@ def draw_bands_diagram(semiconductor, temperature, f_threshold=1.0e-23, max_iter
     return ax
 
 
-def draw_dopants_profile(semiconductor, ax=None):
+def draw_dopants_profile(semiconductor, max_x=5, ax=None):
     if ax is None:
         _, ax = plt.subplots()
-    max_x = 0
+    x = np.linspace(0.0, max_x, num=500) * 1e6
     for dopant in semiconductor.dopants:
-        mesh = dopant.concentration.flatten()
-        x = np.asarray(mesh.physical_nodes) * 1e6
-        n = np.asarray(dopant.n_t(x)) * 1e-6
-        max_x = max(max_x, max(x))
+        n = np.asarray(dopant.concentration.evaluate(x)) * 1e-6
         ax.semilogy(x, n, color=dopant.color, linestyle=dopant.linestyle, linewidth=1, label=dopant.label)
-    if max_x == 0:
-        max_x = 5
     ax.set_xlim([0, max_x])
     ax.set_xlabel('z, $\mu$m')
     ax.set_ylabel('N, cm$^{-3}$')

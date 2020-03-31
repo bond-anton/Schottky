@@ -1,8 +1,7 @@
 import numpy as np
 from matplotlib import pyplot as plt
 
-from BDMesh.Mesh1DUniform import Mesh1DUniform
-from BDMesh.TreeMesh1DUniform import TreeMesh1DUniform
+from BDFunction1D.Standard import Constant
 
 from Schottky.Dopant import Dopant
 from Schottky.Semiconductor import Semiconductor
@@ -17,11 +16,7 @@ reference = database[0]
 
 silicon = Semiconductor('Si', reference)
 
-c_b = Mesh1DUniform(0.0, 5e-6, physical_step=1e-6)
-f_b = Mesh1DUniform(0.0, 5e-6, physical_step=1e-6)
-c_b.solution = np.ones(c_b.num) * 1e21
-f_b.solution = np.zeros(f_b.num)
-boron = Dopant('B', False, TreeMesh1DUniform(c_b, aligned=True), TreeMesh1DUniform(f_b, aligned=True),
+boron = Dopant('B', False, Constant(1e21),
                silicon.band_gap_t(0.0) - 0.045 * constant.q,  0.045 * constant.q,
                1e-15, 1e-15)
 boron.charge_state = {0: 0, 1: -1}

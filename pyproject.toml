@@ -1,0 +1,4 @@
+[build-system]
+# Minimum requirements for the build system to execute.
+requires = ["setuptools", "wheel", "cython", "scipy>=0.17.0", "matplotlib",
+            "BDSpace>=0.3.11", "BDMesh>=0.2.11", "BDFunction1D>=0.0.5", "BDPoisson1D>=0.3.1"]

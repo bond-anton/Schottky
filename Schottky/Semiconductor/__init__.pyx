@@ -2,6 +2,8 @@ from libc.math cimport sqrt, exp, log, fabs
 from cython cimport boundscheck, wraparound
 from cpython.array cimport array, clone
 
+from BDFunction1D.Standard cimport Zero
+
 from Schottky.Constants cimport constant
 from Schottky.Dopant cimport Dopant
 from Schottky.Trap cimport Trap
@@ -18,10 +20,12 @@ cdef class Semiconductor(object):
         self.__trap_eq_occupation_cache = Cache('Trap Eq Occupation Cache')
         self.__bulk_charge_cache = Cache('Bulk Charge Cache')
         self.__el_chem_pot_cache = Cache('El-Chem Potential Cache')
+        self.__dopants_n = Zero()
         if dopants is not None:
             for dopant in dopants:
                 if isinstance(dopant, Dopant):
                     self.__dopants.append(dopant)
+                    self.__dopants_n += dopant.concentration
 
     @property
     def label(self):
@@ -46,9 +50,11 @@ cdef class Semiconductor(object):
     @dopants.setter
     def dopants(self, list dopants):
         self.__dopants = []
+        self.__dopants_n = Zero()
         for dopant in dopants:
             if isinstance(dopant, Dopant):
                 self.__dopants.append(dopant)
+                self.__dopants_n += dopant.concentration
 
     @boundscheck(False)
     @wraparound(False)
@@ -583,19 +589,18 @@ cdef class Semiconductor(object):
                              bint verbose=False):
         cdef:
             double fm, result
-            array[double] _z = clone(array('d'), 1, zero=False)
             long key = hash_list([mu, temperature, z, f_threshold, max_iter])
             Dopant dopant
         try:
             return self.__bulk_charge_cache[key]
         except KeyError:
-            _z[0] = z
             result = self.n_h_t(mu, temperature) - self.n_e_t(mu, temperature)
             for dopant in self.__dopants:
                 fm = self.trap_eq_occupation(dopant, mu, temperature,
                                              f_threshold=f_threshold, max_iter=max_iter, verbose=verbose)
-                result += dopant.n_t(_z)[0] * ((dopant.charge_state[1] - dopant.charge_state[0]) * fm
-                                              + dopant.charge_state[0])
+                result += dopant.__concentration.evaluate_point(z) * (
+                        (dopant.charge_state[1] - dopant.charge_state[0]) * fm
+                        + dopant.charge_state[0])
             self.__bulk_charge_cache[key] = result
         return self.__bulk_charge_cache[key]
 

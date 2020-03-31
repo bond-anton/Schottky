@@ -1,9 +1,14 @@
-from BDPoisson1D.Function cimport Function
+from BDFunction1D cimport Function
+from BDFunction1D.Standard cimport Constant, Zero
 
 
-cdef class ConstantGenerationFunction(Function):
+cdef class ConstantGenerationFunction(Constant):
+    pass
+
+cdef class ZeroGenerationFunction(Zero):
+    pass
+
+cdef class ExponentialGenerationFunction(Function):
     cdef:
         double __rate
-
-cdef class ZeroGenerationFunction(Function):
-    pass
+        double __absorption_length

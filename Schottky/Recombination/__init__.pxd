@@ -1,14 +1,8 @@
-from BDPoisson1D.Function cimport Function
+from BDFunction1D.Standard cimport Constant, Zero
 
 
-cdef class ConstantRecombinationFunction(Function):
-    cdef:
-        double __rate
-
-cdef class ZerorecombinationFunction(Function):
+cdef class ConstantRecombinationFunction(Constant):
     pass
 
-cdef class ExponentialGenerationFunction(Function):
-    cdef:
-        double __rate
-        double __absorption_length
+cdef class ZeroRecombinationFunction(Zero):
+    pass

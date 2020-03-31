@@ -1,4 +1,4 @@
-from BDMesh.TreeMesh1DUniform cimport TreeMesh1DUniform
+from BDFunction1D cimport Function, Functional
 
 from Schottky.Metal cimport Metal
 from Schottky.Semiconductor cimport Semiconductor
@@ -12,6 +12,21 @@ cdef class SchottkyDiode(object):
         double __area
         double __length
         double __serial_resistance
+
+        double __temperature
+        double __bias
+
+        Function __ep
+        Function __ef
+        Function __qf_e
+        Function __qf_h
+        Function __generation
+        Function __recombination
+        Function __ne
+        Function __nh
+        Function __pn
+        Function __mu_e
+        Function __mu_h
 
     cpdef double phi_b_n_t(self, double temperature)
     cpdef double[:] phi_b_n(self, double[:] temperature)
@@ -35,3 +50,35 @@ cdef class SchottkyDiode(object):
     cpdef double[:] n0(self, double[:] temperature)
     cpdef double p0_t(self, double temperature)
     cpdef double[:] p0(self, double[:] temperature)
+    cpdef double thermionic_emission_current_e(self)
+    cpdef double thermionic_emission_current_h(self)
+
+
+cdef class QFeNe(Functional):
+    cdef:
+        SchottkyDiode __diode
+
+
+cdef class QFhNh(Functional):
+    cdef:
+        SchottkyDiode __diode
+
+
+cdef class NeQFe(Functional):
+    cdef:
+        SchottkyDiode __diode
+
+
+cdef class NhQFh(Functional):
+    cdef:
+        SchottkyDiode __diode
+
+
+cdef class MobilityE(Function):
+    cdef:
+        SchottkyDiode __diode
+
+
+cdef class MobilityH(Function):
+    cdef:
+        SchottkyDiode __diode

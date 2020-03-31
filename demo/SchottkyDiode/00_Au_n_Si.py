@@ -1,8 +1,6 @@
-import numpy as np
 from matplotlib import pyplot as plt
 
-from BDMesh.Mesh1DUniform import Mesh1DUniform
-from BDMesh.TreeMesh1DUniform import TreeMesh1DUniform
+from BDFunction1D.Standard import Constant
 
 from Schottky.Dopant import Dopant
 from Schottky.Semiconductor import Semiconductor
@@ -11,20 +9,15 @@ from Schottky.Metal import Metal
 from Schottky.SchottkyDiode import SchottkyDiode
 from Schottky import constant
 
-from Schottky.DCMeasurement import DCMeasurement
-
-from Schottky.Visual.DCMeasurement import plot_n_eh, plot_generation_recombination, plot_ep, plot_qfe, plot_qfh, plot_band_diagram
+from Schottky.Visual.SchottkyDiode import plot_n_eh, plot_generation_recombination, \
+    plot_ep, plot_qfe, plot_qfh, plot_band_diagram
 
 
 reference = database[0]
 
 silicon = Semiconductor('Si', reference)
 
-c_p = Mesh1DUniform(0.0, 5e-6, physical_step=1e-6)
-f_p = Mesh1DUniform(0.0, 5e-6, physical_step=1e-6)
-c_p.solution = np.ones(c_p.num) * 1e21  # 1e21 m^-3 = 1e15 cm^-3
-f_p.solution = np.zeros(f_p.num)
-phosphorus = Dopant('P', True, TreeMesh1DUniform(c_p, aligned=True), TreeMesh1DUniform(f_p, aligned=True),
+phosphorus = Dopant('P', True, Constant(1e21),
                     0.045 * constant.q, silicon.band_gap_t(0.0) - 0.045 * constant.q,
                     1e-15, 1e-15)
 phosphorus.charge_state = {0: +1, 1: 0}
@@ -45,32 +38,28 @@ bias = 1.5
 print(diode.phi_b_n_ev_t(temperature), diode.phi_b_p_ev_t(temperature))
 print(diode.n0_t(temperature), diode.p0_t(temperature))
 
-measurement = DCMeasurement('The measurement', diode,
-                            temperature=temperature, bias=bias, initial_step=1e-7)
-measurement.temperature = temperature
-measurement.bias = bias
 
-print(measurement.thermionic_emission_current_e())
-print(measurement.thermionic_emission_current_h())
+diode.temperature = temperature
+diode.bias = bias
 
-print(measurement.grad_qf_e_bc())
-print(measurement.grad_qf_h_bc())
+print(diode.thermionic_emission_current_e())
+print(diode.thermionic_emission_current_h())
 
-plot_band_diagram(measurement)
+plot_band_diagram(diode)
 plt.show()
 
-plot_n_eh(measurement)
+plot_n_eh(diode)
 plt.show()
 #
-# plot_generation_recombination(measurement)
+# plot_generation_recombination(diode)
 # plt.show()
 #
-# plot_ep(measurement)
-# plt.show()
+plot_ep(diode)
+plt.show()
 #
-# plot_qfe(measurement)
+# plot_qfe(diode)
 # plt.show()
 
 #
-# plot_qfh(measurement)
+# plot_qfh(diode)
 # plt.show()
