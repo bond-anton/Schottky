@@ -20,6 +20,8 @@ cdef class SchottkyDiode(object):
         Function __ef
         Function __qf_e
         Function __qf_h
+        Function __grad_qf_e
+        Function __grad_qf_h
         Function __generation
         Function __recombination
         Function __ne
@@ -27,6 +29,7 @@ cdef class SchottkyDiode(object):
         Function __pn
         Function __mu_e
         Function __mu_h
+        Function __dopants_charge
 
     cpdef double phi_b_n_t(self, double temperature)
     cpdef double[:] phi_b_n(self, double[:] temperature)
@@ -52,6 +55,13 @@ cdef class SchottkyDiode(object):
     cpdef double[:] p0(self, double[:] temperature)
     cpdef double thermionic_emission_current_e(self)
     cpdef double thermionic_emission_current_h(self)
+    cpdef stationary_grad_qf_e_solver(self)
+    cpdef stationary_grad_qf_h_solver(self)
+    cpdef Function poisson_eq_solver(self)
+
+
+cdef class TestSCR(Function):
+    pass
 
 
 cdef class QFeNe(Functional):
@@ -82,3 +92,28 @@ cdef class MobilityE(Function):
 cdef class MobilityH(Function):
     cdef:
         SchottkyDiode __diode
+
+
+cdef class DopantsEqCharge(Function):
+    cdef:
+        SchottkyDiode __diode
+
+
+cdef class GradQFeF(Functional):
+    cdef:
+        Function __g
+        Function __r
+        Function __mu
+        Function __n
+        double __temperature
+        double __qkt
+
+
+cdef class GradQFhF(Functional):
+    cdef:
+        Function __g
+        Function __r
+        Function __mu
+        Function __n
+        double __temperature
+        double __qkt

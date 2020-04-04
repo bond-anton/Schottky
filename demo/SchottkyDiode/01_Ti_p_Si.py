@@ -10,7 +10,7 @@ from Schottky.SchottkyDiode import SchottkyDiode
 from Schottky import constant
 
 from Schottky.Visual.SchottkyDiode import plot_n_eh, plot_generation_recombination, \
-    plot_ep, plot_qfe, plot_qfh, plot_band_diagram
+    plot_ep, plot_ef, plot_qfe, plot_qfh, plot_band_diagram
 
 
 reference = database[0]
@@ -51,6 +51,9 @@ plt.show()
 #
 #
 plot_ep(diode)
+plt.show()
+
+plot_ef(diode)
 plt.show()
 #
 # plot_qfe(measurement)

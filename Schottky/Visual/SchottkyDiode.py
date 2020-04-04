@@ -53,6 +53,32 @@ def plot_ep(diode, ax=None):
     return ax
 
 
+def plot_ef(diode, ax=None):
+    if ax is None:
+        _, ax = plt.subplots()
+    z = np.linspace(0.0, diode.length, num=500, dtype=np.float)
+    ef = np.asarray(diode.electric_field.evaluate(z))
+    ax.plot(z * 1e6, ef, color='k', linewidth=2, linestyle='-')
+    ax.fill_between(z * 1e6, ef, 0, facecolor='silver', alpha=0.5)
+    ax.set_xlim([0, diode.length * 1e6])
+    ax.set_xlabel('z, $\mu$m')
+    ax.set_ylabel('Electric Field, V/m')
+    return ax
+
+
+def plot_any_fun(diode, fun, ax=None):
+    if ax is None:
+        _, ax = plt.subplots()
+    z = np.linspace(0.0, diode.length, num=500, dtype=np.float)
+    ef = np.asarray(fun.evaluate(z))
+    ax.plot(z * 1e6, ef, color='k', linewidth=2, linestyle='-')
+    ax.fill_between(z * 1e6, ef, 0, facecolor='silver', alpha=0.5)
+    ax.set_xlim([0, diode.length * 1e6])
+    ax.set_xlabel('z, $\mu$m')
+    ax.set_ylabel('Fun, a. u.')
+    return ax
+
+
 def plot_qfe(diode, ax=None):
     if ax is None:
         _, ax = plt.subplots()
@@ -132,6 +158,35 @@ def plot_n_eh(diode, ax=None):
     ax.set_xlabel('z, $\mu$m')
     ax.set_ylabel('N, cm$^{-3}$')
     ax.set_yscale('log')
+    return ax
+
+def plot_charge_density(diode, ax=None):
+    if ax is None:
+        _, ax = plt.subplots()
+    z = np.linspace(0.0, diode.length, num=500, dtype=np.float)
+    n_e = np.asarray(diode.n_e.evaluate(z)) * 1e-6
+    n_h = np.asarray(diode.n_h.evaluate(z)) * 1e-6
+    # rho_eh = n_h - n_e
+    rho_eh = -n_e
+    rho_dopants = np.asarray(diode.dopants_charge.evaluate(z)) * 1e-6
+    rho = rho_dopants + rho_eh
+    # ax.plot(z * 1e6, n_e, color='blue', linewidth=2, linestyle='-')
+    # ax.fill_between(z * 1e6, n_e, 0, facecolor='blue', alpha=0.5)
+    # ax.plot(z * 1e6, n_h, color='red', linewidth=2, linestyle='-')
+    # ax.fill_between(z * 1e6, n_h, 0, facecolor='red', alpha=0.5)
+    ax.plot(z * 1e6, rho_eh, color='black', linewidth=2, linestyle='-')
+    ax.fill_between(z * 1e6, rho_eh, 0, facecolor='gray', alpha=0.5)
+
+    ax.plot(z * 1e6, rho_dopants, color='green', linewidth=2, linestyle='-')
+    ax.fill_between(z * 1e6, rho_dopants, 0, facecolor='green', alpha=0.5)
+
+    ax.plot(z * 1e6, rho, color='red', linewidth=2, linestyle='-')
+    ax.fill_between(z * 1e6, rho, 0, facecolor='red', alpha=0.5)
+
+    ax.set_xlim([0, diode.length * 1e6])
+    ax.set_xlabel('z, $\mu$m')
+    ax.set_ylabel('N, cm$^{-3}$')
+    # ax.set_yscale('log')
     return ax
 
 def plot_generation(diode, ax=None):
