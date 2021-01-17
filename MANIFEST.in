@@ -16,4 +16,4 @@ recursive-exclude build *
 recursive-exclude dist *
 recursive-exclude tools *
 recursive-exclude venv *
-recursive-exclude venv_2.7 *
+recursive-exclude var *

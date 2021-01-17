@@ -539,22 +539,23 @@ cdef class Semiconductor(object):
 
     @boundscheck(False)
     @wraparound(False)
-    cpdef double trap_eq_occupation(self, Trap trap, double mu, double temperature,
+    cpdef double trap_eq_occupation(self, Trap trap, double temperature, double mu_e, double delta_mu_h_e=0.0,
                                     double f_threshold=1.0e-23, int max_iter=100,
                                     bint verbose=False):
         cdef:
             int i = 0
             double fa, fb, fm=0.0, ff_a, ff_b, ff_m, dm
             double band_gap, n_c, n_v, n_e, n_h
-            long key = hash_list([trap, mu, temperature, f_threshold, max_iter])
+            double mu_h = mu_e + delta_mu_h_e
+            long key = hash_list([trap, mu_e, mu_h, temperature, f_threshold, max_iter])
         try:
             return self.__trap_eq_occupation_cache[key]
         except KeyError:
             band_gap = self.__band_gap_t(temperature)
             n_c = self.n_c_t(temperature)
             n_v = self.n_v_t(temperature)
-            n_e = self.n_e_t(mu, temperature)
-            n_h = self.n_h_t(mu, temperature)
+            n_e = self.n_e_t(mu_e, temperature)
+            n_h = self.n_h_t(mu_h, temperature)
             if trap.__cb_bound:
                 trap.energy_v = band_gap - trap.energy_c
             else:
@@ -596,7 +597,7 @@ cdef class Semiconductor(object):
         except KeyError:
             result = self.n_h_t(mu, temperature) - self.n_e_t(mu, temperature)
             for dopant in self.__dopants:
-                fm = self.trap_eq_occupation(dopant, mu, temperature,
+                fm = self.trap_eq_occupation(dopant, temperature, mu,
                                              f_threshold=f_threshold, max_iter=max_iter, verbose=verbose)
                 result += dopant.__concentration.evaluate_point(z) * (
                         (dopant.charge_state[1] - dopant.charge_state[0]) * fm

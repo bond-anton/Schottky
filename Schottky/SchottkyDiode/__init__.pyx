@@ -26,11 +26,11 @@ from Schottky.Recombination cimport ZeroRecombinationFunction, ConstantRecombina
 cdef class SchottkyDiode(object):
 
     def __init__(self, str label, Metal metal, Semiconductor semiconductor,
-                 double length=1.0e-5,
-                 double area=1.0, double serial_resistance=0.0,
+                 double length=1.0e-5, double area=1.0, double serial_resistance=0.0,
                  double temperature=300, double bias=0.0,
-                 Function electric_potential=None, Function quasi_fermi_e=None, Function quasi_fermi_h=None,
-                 Function generation=None, Function recombination=None,):
+                 Function electric_potential=None,
+                 Function quasi_fermi_e=None, Function quasi_fermi_h=None,
+                 Function generation=None, Function recombination=None):
         self.__label = label
         self.__metal = metal
         self.__semiconductor = semiconductor
@@ -55,7 +55,6 @@ cdef class SchottkyDiode(object):
                                             self.__semiconductor.el_chem_pot_ev_t(self.__temperature))
         else:
             self.__qf_e = quasi_fermi_e
-        self.__grad_qf_e = NumericGradient(self.__qf_e)
         if quasi_fermi_h is None:
             self.__qf_h = LineThroughPoints(0.0,
                                             self.phi_b_n_ev_t(self.__temperature),
@@ -63,7 +62,6 @@ cdef class SchottkyDiode(object):
                                             self.__semiconductor.el_chem_pot_ev_t(self.__temperature))
         else:
             self.__qf_h = quasi_fermi_h
-        self.__grad_qf_h = NumericGradient(self.__qf_h)
         self.__ne = QFeNe(self, self.__qf_e)
         self.__nh = QFhNh(self, self.__qf_h)
         self.__pn = self.__ne * self.__nh
@@ -225,7 +223,7 @@ cdef class SchottkyDiode(object):
         if isinstance(self.__qf_h, NhQFh):
             self.__qf_h.f = self.__nh
         else:
-            self.__qf_h = NeQFe(self.__nh)
+            self.__qf_h = NhQFh(self.__nh)
         self.__pn = self.__ne * self.__nh
 
     @property
@@ -465,71 +463,70 @@ cdef class SchottkyDiode(object):
 
     cpdef stationary_grad_qf_e_solver(self):
         cdef:
-            double qkt, qee, bc1, bc2
+            double qkt, bc1, bc2
             Mesh1DUniform mesh
-            Function p, sol
+            Function p, qf_star, qf_grad
             Functional f, df_dy
+        qf_star = -self.__qf_e - self.__ep
+        qf_grad = NumericGradient(qf_star)
         qkt = constant.__q / (constant.__k * self.__temperature)
-        bc1 = 0*self.thermionic_emission_current_e() / (constant.__q *
-                                                       self.__ne.evaluate_point(0) * self.__mu_e.evaluate_point(0))
-        bc2 = -self.__ef.evaluate_point(self.length)*0
-        print('BC:', bc1, bc2)
+        bc1 = self.thermionic_emission_current_e() / (constant.__q *
+                                                      self.__ne.evaluate_point(0) * self.__mu_e.evaluate_point(0))
+        bc2 = self.__ef.evaluate_point(self.length)
+        print('BC (e):', bc1, bc2)
         p = -qkt * self.__ef
-        f = GradQFeF(self.__grad_qf_e, self.__generation, self.__recombination,
+        f = GradQFeF(qf_grad, self.__generation, self.__recombination,
                      self.__mu_e, self.__ne, self.__temperature)
-        df_dy = ScaledFunction(self.__grad_qf_e, 2 * qkt)
+        df_dy = GradQFdFdy(qf_grad, self.__temperature)
+        # print(type(df_dy))
         mesh = Mesh1DUniform(0.0, self.__length, bc1, bc2, 1.0e-8)
-        # self.__grad_qf_e = dirichlet_non_linear_first_order_solver_mesh(mesh, self.__grad_qf_e, p, f, df_dy, w=0.7)
-        self.__grad_qf_e = dirichlet_non_linear_first_order_solver_recurrent_mesh(mesh, self.__grad_qf_e, p, f, df_dy, w=0.7)
-        mesh.boundary_condition_2 = self.xi
-        self.quasi_fermi_e = cauchy_first_order_solver_mesh(mesh, self.__grad_qf_e, ic=0.0, idx=-1)
+        qf_grad = dirichlet_non_linear_first_order_solver_mesh(mesh, qf_grad, p, f, df_dy, w=0.7)
+        # qf_grad = dirichlet_non_linear_first_order_solver_recurrent_mesh(mesh, qf_grad, p, f, df_dy, w=0.7)
+        mesh.boundary_condition_2 = -self.xi
+        qf_star = cauchy_first_order_solver_mesh(mesh, qf_grad, ic=0.0, idx=-1)
+        self.quasi_fermi_e = -qf_star - self.__ep
 
     cpdef stationary_grad_qf_h_solver(self):
         cdef:
             double qkt, bc1, bc2
             Mesh1DUniform mesh
-            Function p, sol
+            Function p, qf_star, qf_grad
             Functional f, df_dy
+        qf_star = self.__qf_h + self.__ep - self.__semiconductor.band_gap_ev_t(self.__temperature)
+        qf_grad = NumericGradient(qf_star)
         qkt = constant.__q / (constant.__k * self.__temperature)
-        bc1 = -self.thermionic_emission_current_h() / (constant.__q *
-                                                       self.__nh.evaluate_point(0) * self.__mu_h.evaluate_point(0))
+        bc1 = 0.0
+        # bc1 = self.thermionic_emission_current_h() / (constant.__q *
+        #                                               self.__nh.evaluate_point(0) * self.__mu_h.evaluate_point(0))
         bc2 = -self.__ef.evaluate_point(self.length)
-        print('BC:', bc1, bc2)
+        print('BC (h):', bc1, bc2)
         p = qkt * self.__ef
-        f = GradQFhF(self.__grad_qf_h, self.__generation, self.__recombination,
+        f = GradQFhF(qf_grad, self.__generation, self.__recombination,
                      self.__mu_h, self.__nh, self.__temperature)
-        df_dy = ScaledFunction(self.__grad_qf_h, -2 * qkt)
+        df_dy = GradQFdFdy(qf_grad, self.__temperature)
         mesh = Mesh1DUniform(0.0, self.__length, bc1, bc2, 1.0e-8)
-        # self.__grad_qf_h = dirichlet_non_linear_first_order_solver_mesh(mesh, self.__grad_qf_h, p, f, df_dy, w=0.7)
-        mesh.__boundary_condition_2 = self.xi
-        # self.quasi_fermi_h = cauchy_first_order_solver_mesh(mesh, self.__grad_qf_h, ic=0.0, idx=-1)
-        self.__grad_qf_h = self.__grad_qf_e
-        self.quasi_fermi_h = self.quasi_fermi_e
+        qf_grad = dirichlet_non_linear_first_order_solver_mesh(mesh, qf_grad, p, f, df_dy, w=0.7)
+        # qf_grad = dirichlet_non_linear_first_order_solver_recurrent_mesh(mesh, qf_grad, p, f, df_dy, w=0.7)
+        mesh.__boundary_condition_2 = -self.xi
+        qf_star = cauchy_first_order_solver_mesh(mesh, qf_grad, ic=0.0, idx=-1)
+        self.quasi_fermi_h = qf_star - self.__ep + self.__semiconductor.band_gap_ev_t(self.__temperature)
 
     cpdef Function poisson_eq_solver(self):
         cdef:
             double qee, bc1, bc2
+            Function ep
         qee = constant.__q / (constant.__epsilon_0 * self.__semiconductor.__reference['epsilon'])
         # rho = qee * (self.__dopants_charge - self.__ne + self.__nh)
         rho = qee * (self.__dopants_charge - self.__ne)
-        # rho = qee * TestSCR()
-        # rho1 = TestSCR()
-        # rho1 = self.__dopants_charge - self.__ne + self.__nh
-        rho1 = self.__dopants_charge - self.__ne
         bc1 = self.v_bi - self.bias
         bc2 = 0.0
         mesh = Mesh1DUniform(0.0, self.__length, bc1, bc2, 1.0e-8)
+        ep = dirichlet_poisson_solver_mesh(mesh, rho)
+        # self.quasi_fermi_e = self.__qf_e + (ep - self.__ep)
+        self.quasi_fermi_e = Constant(0)
         self.__ep = dirichlet_poisson_solver_mesh(mesh, rho)
         self.__ef = -NumericGradient(self.__ep)
-        return rho1
-
-
-cdef class TestSCR(Function):
-
-    cpdef double evaluate_point(self, double x):
-        if x < 1e-6:
-            return 1.0e21
-        return 0.0
+        return rho
 
 
 cdef class QFeNe(Functional):
@@ -615,11 +612,8 @@ cdef class DopantsEqCharge(Function):
         result = 0.0
         for dopant in self.__diode.__semiconductor.__dopants:
             f_e = self.__diode.__semiconductor.trap_eq_occupation(
-                dopant, mu_e, self.__diode.__temperature,
+                dopant, self.__diode.__temperature, mu_e, mu_h - mu_e,
                 f_threshold=1.0e-23, max_iter=100, verbose=False)
-            # f_h = self.__diode.__semiconductor.trap_eq_occupation(
-            #     dopant, mu_h, self.__diode.__temperature,
-            #     f_threshold=1.0e-23, max_iter=100, verbose=False)
             result += dopant.__concentration.evaluate_point(x) * (
                     (dopant.charge_state[1] - dopant.charge_state[0]) * f_e + dopant.charge_state[0])
         return result
@@ -660,7 +654,7 @@ cdef class GradQFeF(Functional):
                 gr -= self.__r.evaluate_point(x)
         if gr != 0.0:
             gr /= self.__mu.evaluate_point(x) * self.__n.evaluate_point(x)
-        return self.__qkt * self.__f.evaluate_point(x) * self.__f.evaluate_point(x) + gr
+        return -self.__qkt * self.__f.evaluate_point(x) * self.__f.evaluate_point(x) - gr
 
 
 cdef class GradQFhF(Functional):
@@ -688,14 +682,34 @@ cdef class GradQFhF(Functional):
             double gr = 0.0
         if not isinstance(self.__g, Zero):
             if isinstance(self.__g, Constant):
-                gr -= self.__g.c
+                gr += self.__g.c
             else:
-                gr -= self.__g.evaluate_point(x)
+                gr += self.__g.evaluate_point(x)
         if not isinstance(self.__r, Zero):
             if isinstance(self.__r, Constant):
-                gr += self.__r.c
+                gr -= self.__r.c
             else:
-                gr += self.__r.evaluate_point(x)
+                gr -= self.__r.evaluate_point(x)
         if gr != 0.0:
             gr /= self.__mu.evaluate_point(x) * self.__n.evaluate_point(x)
-        return -self.__qkt * self.__f.evaluate_point(x) * self.__f.evaluate_point(x) + gr
+        return -self.__qkt * self.__f.evaluate_point(x) * self.__f.evaluate_point(x) - gr
+
+
+cdef class GradQFdFdy(Functional):
+
+    def __init__(self, Function y, double temperature):
+        super(GradQFdFdy, self).__init__(y)
+        self.__temperature = temperature
+        self.__2qkt = 2 * constant.__q / (constant.__k * self.__temperature)
+
+    @property
+    def temperature(self):
+        return self.__temperature
+
+    @temperature.setter
+    def temperature(self, double temperature):
+        self.__temperature = temperature
+        self.__2qkt = constant.__q / (constant.__k * self.__temperature)
+
+    cpdef double evaluate_point(self, double x):
+        return -self.__2qkt * self.__f.evaluate_point(x)

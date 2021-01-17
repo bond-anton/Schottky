@@ -33,7 +33,7 @@ diode.contact_diameter = 1.0e-3
 print('Diode area is %2.2f mm^2' % (diode.area * 1e6))
 
 temperature = 300.0
-bias = -0.5
+bias = -0.0
 
 print(diode.phi_b_n_ev_t(temperature), diode.phi_b_p_ev_t(temperature))
 print(diode.n0_t(temperature), diode.p0_t(temperature))
@@ -42,9 +42,18 @@ print(diode.n0_t(temperature), diode.p0_t(temperature))
 diode.temperature = temperature
 diode.bias = bias
 
+plot_band_diagram(diode)
+plt.show()
+
+plot_n_eh(diode)
+plt.show()
+
+plot_charge_density(diode)
+plt.show()
+
 for i in range(1):
-    diode.stationary_grad_qf_e_solver()
-    diode.stationary_grad_qf_h_solver()
+    # diode.stationary_grad_qf_e_solver()
+    # diode.stationary_grad_qf_h_solver()
     rho = diode.poisson_eq_solver()
 
 
@@ -70,8 +79,8 @@ plt.show()
 plot_ef(diode)
 plt.show()
 
-plot_any_fun(diode, rho)
-plt.show()
+# plot_any_fun(diode, rho)
+# plt.show()
 
 #
 # plot_qfe(diode)

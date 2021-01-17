@@ -20,8 +20,6 @@ cdef class SchottkyDiode(object):
         Function __ef
         Function __qf_e
         Function __qf_h
-        Function __grad_qf_e
-        Function __grad_qf_h
         Function __generation
         Function __recombination
         Function __ne
@@ -58,10 +56,6 @@ cdef class SchottkyDiode(object):
     cpdef stationary_grad_qf_e_solver(self)
     cpdef stationary_grad_qf_h_solver(self)
     cpdef Function poisson_eq_solver(self)
-
-
-cdef class TestSCR(Function):
-    pass
 
 
 cdef class QFeNe(Functional):
@@ -117,3 +111,8 @@ cdef class GradQFhF(Functional):
         Function __n
         double __temperature
         double __qkt
+
+cdef class GradQFdFdy(Functional):
+    cdef:
+        double __temperature
+        double __2qkt

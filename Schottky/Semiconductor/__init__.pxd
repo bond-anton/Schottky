@@ -87,7 +87,7 @@ cdef class Semiconductor(object):
     cpdef double[:] v_e(self, double[:] temperature)
     cpdef double v_h_t(self, double temperature)
     cpdef double[:] v_h(self, double[:] temperature)
-    cpdef double trap_eq_occupation(self, Trap trap, double mu, double temperature,
+    cpdef double trap_eq_occupation(self, Trap trap, double temperature, double mu_e, double delta_mu_h_e=*,
                                     double f_threshold=*, int max_iter=*, bint verbose=*)
     cpdef double bulk_charge(self, double mu, double temperature, double z=*,
                              double f_threshold=*, int max_iter=*, bint verbose=*)

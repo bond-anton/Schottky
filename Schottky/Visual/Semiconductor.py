@@ -122,7 +122,7 @@ def draw_dopants_occupation_diagram_t(semiconductor, temperature,
     f = np.empty(temperature.shape[0], dtype=np.double)
     for dopant in semiconductor.dopants:
         for i in range(temperature.shape[0]):
-            f[i] = semiconductor.trap_eq_occupation(dopant, e_f[i], temperature[i],
+            f[i] = semiconductor.trap_eq_occupation(dopant, temperature[i], e_f[i],
                                                     f_threshold=f_threshold, max_iter=max_iter, verbose=verbose)
         ax.plot(temperature, f, marker=dopant.marker, color=dopant.color,
                 linestyle=dopant.linestyle, linewidth=1, label=dopant.label)
